@@ -1,0 +1,7 @@
+issuer: https://token.actions.githubusercontent.com
+subject: repo:shopware/shopware-operator:ref:refs/heads/main
+
+permissions:
+  contents: write
+  issues: write
+  pull_requests: write
