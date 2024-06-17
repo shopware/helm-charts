@@ -1,0 +1,70 @@
+{{ if hasKey .Values "minio" }}
+{{ if .Values.minio.enabled | default false }}
+---
+# https://min.io/docs/minio/kubernetes/upstream/reference/operator-crd.html#tenantspec
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: '{{ .Release.Name }}-minio'
+  labels:
+    app: minio
+  annotations:
+    prometheus.io/path: /minio/v2/metrics/cluster
+    prometheus.io/port: "9000"
+    prometheus.io/scrape: "true"
+spec:
+  prometheusOperator: false
+  {{ if eq .Values.minio.useTLS false }}
+  # activate mTLS between Pods default true. Istio is handeling mtls so we deactivate it
+  # when using istio.
+  requestAutoCert: false
+  {{ end }}
+
+  image: {{ .Values.minio.tenantVersion }}
+  imagePullPolicy: IfNotPresent
+  configuration:
+    name: minio-configuration
+  users:
+    - name: {{ template "getTenantUserSecretName" . }}
+  pools:
+    - servers: 4
+      name: pool-0
+      volumesPerServer: 2
+      resources:
+        limits:
+          cpu: 1000m
+          memory: 2Gi
+        requests:
+          cpu: 1000m
+          memory: 2Gi
+      volumeClaimTemplate:
+        metadata:
+          name: data
+        spec:
+          storageClassName: {{ .Values.minio.storageClassName | default "standard" }}
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: {{ .Values.minio.storageSize | default "10Gi" }}
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+      containerSecurityContext:
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+  mountPath: /export
+  subPath: /data
+  features:
+    bucketDNS: false
+    enableSFTP: false
+  buckets:
+    - name: shopware-private
+    - name: shopware-public
+  podManagementPolicy: Parallel
+{{ end }}
+{{ end }}

@@ -1,0 +1,21 @@
+{{ if hasKey .Values "minio" }}
+{{ if .Values.minio.enabled | default false }}
+
+{{- $ak := include "getTenantUserAccessKeyName" . -}}
+{{- $sk := include "getTenantUserSecretAccessKeyName" . -}}
+{{- $secret := include "getTenantUserSecretName" . -}}
+apiVersion: v1
+data:
+{{- if .Release.IsInstall }}
+  {{ $ak }}: {{ template "generatePasswordEncoded" }}
+  {{ $sk }}: {{ template "generatePasswordEncoded" }}
+{{ else }}
+  {{ $ak }}: {{ index (lookup "v1" "Secret" .Release.Namespace $secret).data $ak }}
+  {{ $sk }}: {{ index (lookup "v1" "Secret" .Release.Namespace $secret).data $sk }}
+{{ end }}
+kind: Secret
+metadata:
+  name: {{ template "getTenantUserSecretName" . }}
+type: Opaque
+{{ end }}
+{{ end }}
