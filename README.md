@@ -12,7 +12,8 @@ Useful links:
 
 ## Installing Charts from this Repository
 
-You will need [Helm v3](https://github.com/helm/helm) for the installation. See detailed installation instructions in the README file of each chart.
+You will need [Helm v3](https://github.com/helm/helm) for the installation.
+See detailed installation instructions in the README file of each chart.
 
 # Contributing
 

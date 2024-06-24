@@ -11,9 +11,14 @@
 
 # Installation
 
-This Helm chart can be installed locally or within an existing Kubernetes cluster, using tools like ArgoCD. This guide focuses on a simple local installation to help you get started. For advanced configurations, please refer to the [Istio example](examples/values_istio.yaml).
+This Helm chart can be installed locally or within an existing Kubernetes cluster, using tools like ArgoCD.
+This guide focuses on a simple local installation to help you get started.
+For advanced configurations, please refer to the [Istio example](examples/values_istio.yaml).
 
-This Helm chart installs the Percona Operator along with a MySQL database. For more information on Percona, visit [Percona's website](https://www.percona.com/). Currently, this Helm chart supports Percona and S3 MinIO by default. However, you can modify the configuration as needed.
+This Helm chart installs the Percona Operator along with a MySQL database.
+For more information on Percona, visit [Percona's website](https://www.percona.com/).
+Currently, this Helm chart supports Percona and S3 MinIO by default.
+However, you can modify the configuration to your needs.
 
 ### Existing Cluster
 #### Prerequisites
@@ -21,7 +26,7 @@ This Helm chart installs the Percona Operator along with a MySQL database. For m
 - [Helm v3](https://helm.sh/docs/intro/install/)
 - S3
 
-If you have a existing cluster make sure the Prerequisites are installed and go directly to [Usage](#usage).
+If you have an existing cluster make sure the prerequisites are installed and go directly to [Usage](#usage).
 
 ### Local Test Cluster
 #### Prerequisites
@@ -31,7 +36,8 @@ If you have a existing cluster make sure the Prerequisites are installed and go 
 
 #### Install Kind
 
-Kind is a tool for running local Kubernetes clusters using Docker container “nodes”. It was primarily designed for testing Kubernetes itself but is also useful for local development or CI.
+Kind is a tool for running local Kubernetes clusters using Docker container “nodes”.
+It was primarily designed for testing Kubernetes itself but is also useful for local development or CI.
 
 For more information, visit the [Kind documentation](https://kind.sigs.k8s.io/).
 
@@ -42,14 +48,20 @@ kind create cluster --config kind-config.yaml
 
 #### Install MinIO Operator
 
-MinIO is a high-performance, S3-compatible object store built for large-scale AI/ML, data lake, and database workloads. MinIO is used for public assets and private files.
+MinIO is a high-performance, S3-compatible object store built for large-scale AI/ML, data lake, and database workloads.
+MinIO is used for public assets and private files.
 
 For more information, visit the [MinIO documentation](https://min.io/).
 
-We use MinIO here to force Shopware to use S3, reducing write operations since Shopware optimizes for S3 usage. You can also use AWS S3. To disable MinIO, set `minio.enabled` to `false` in the [values.yaml](values.yaml) file.
+We use MinIO here to force Shopware to use S3, reducing write operations since Shopware is optimized for S3 usage.
+You can also use AWS S3.
+To disable MinIO, set `minio.enabled` to `false` in the [values.yaml](values.yaml) file.
 
 > **Warning:**
-> Do not use this setup in production! mTLS is disabled in the MinIO values because Kind provides a self-signed certificate for MinIO, which is incompatible with Shopware. One solution could be to use a proper certificate authority for the cluster. With Istio, this is not an issue as mTLS is handled by Istio.
+> Do not use this setup in production!
+> mTLS is disabled in the MinIO values because Kind provides a self-signed certificate for MinIO, which is incompatible with Shopware.
+> One solution could be to use a proper certificate authority for the cluster.
+> With Istio, this is not an issue as mTLS is handled by Istio.
 
 To install the MinIO Operator in your cluster, execute:
 ```
@@ -58,7 +70,8 @@ kubectl apply -k "github.com/minio/operator?ref=v5.0.15"
 
 #### Install Ingress in Kind
 
-Ingress is a Kubernetes resource that manages external access to services in a cluster, providing load balancing, SSL termination, and name-based virtual hosting. To enable this, deploy an ingress resource such as NGINX:
+Ingress is a Kubernetes resource that manages external access to services in a cluster, providing load balancing, SSL termination, and name-based virtual hosting.
+To enable this, deploy an ingress resource such as NGINX:
 ```
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
 ```
@@ -74,7 +87,9 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main
 
 #### ImagePullSecrets
 
-This is only required if your Docker image is not locally available and is behind authentication. To pull your image from GitHub, create a `docker-registry` secret. Alternatively, you can avoid this step by pulling your image into your local Docker registry or building it locally.
+This is only required if your Docker image is not locally available and is behind authentication.
+To pull your image from GitHub, create a `docker-registry` secret.
+Alternatively, you can avoid this step by pulling your image into your local Docker registry or building it locally.
 
 For instructions on loading images into the Kind cluster, see [Loading an Image into Your Cluster](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster).
 
@@ -86,8 +101,8 @@ kubectl create secret docker-registry regcred --docker-server=ghcr.io --docker-u
 
 #### Load local Images into your cluster
 
-You can use this process to load a local image into your cluster, a common practice for this test environment. For a complete guide, refer to [Loading an Image into Your Cluster](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster).
-
+You can use this process to load a local image into your cluster, a common practice for this test environment.
+For a complete guide, refer to [Loading an Image into Your Cluster](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster).
 
 You can build a local shopware image and load the image into the Kind cluster:
 ```
@@ -97,21 +112,22 @@ kind load docker-image <your-image>
 > **Note:**
 > Ensure that the `PullImagePolicy` is not set to `Always`, as this will force the cluster to attempt to pull the image from a remote repository, which may not be available.
 
-
 # Usage
 
-Once you have a running cluster with S3 and ingress support, you can install this Helm chart. Customize the installation using the [values.yaml](values.yaml) file.
+Once you have a running cluster with S3 and ingress support, you can install this Helm chart.
+Customize the installation using the [values.yaml](values.yaml) file.
 
 ## Minimal Installation
 For a minimal installation, run:
 
-#TODO: Before the official release, ensure to update this command to point to the public repository.
+[//]: # (TODO: Before the official release, ensure to update this command pointing to the public repository.)
 ```
 helm install shopware . --namespace shopware --create-namespace
 ```
 
 > **Note:**
-> The s3 tenant setup may take a few seconds. So Shopware is running before the assets are public.
+> The s3 tenant setup may take a few seconds.
+> So Shopware is running before the assets are public.
 
 ## Installation With Istio
 For a more complex setup with additional prerequisites, you can install this Helm chart with Istio support:
@@ -123,11 +139,15 @@ helm install shopware . --namespace shopware --values examples/values_istio.yaml
 ```
 
 > **Note:**
-> This process does not include the installation or configuration of Istio itself. It assumes that Istio is already set up and configured in your environment.
+> This process does not include the installation or configuration of Istio itself.
+> It assumes that Istio is already set up and configured in your environment.
 
 # Information
 ### Naming Conventions
-Each customer namespace contains only one store and is identified by a unique name. Use the format `<organization-name>-<project-name>-<application-name>`, e.g., `shopware-redstone-staging`.
+Each customer namespace contains only one store and is identified by a unique name.
+It uses the format `<organization-name>-<project-name>-<application-name>`, e.g., `shopware-redstone-staging`.
 
 ### Operator
-A Shopware operator is installed for each namespace by default. You can disable this in the [values.yaml](values.yaml) file if you prefer to use it cluster-wide. As the operator is still in beta, we advise against using it at the cluster level.
+A Shopware operator is installed for each namespace by default.
+You can disable this in the [values.yaml](values.yaml) file if you prefer to use it cluster-wide.
+As the operator is still in beta, we advise against using it at the cluster level.
