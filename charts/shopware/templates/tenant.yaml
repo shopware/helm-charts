@@ -15,8 +15,7 @@ metadata:
 spec:
   prometheusOperator: false
   {{ if eq .Values.minio.useTLS false }}
-  # activate mTLS between Pods default true. Istio is handeling mtls so we deactivate it
-  # when using istio.
+  # activate mTLS between Pods. The default is true. Istio is handling mTLS, so we deactivate it when using Istio.
   requestAutoCert: false
   {{ end }}
 

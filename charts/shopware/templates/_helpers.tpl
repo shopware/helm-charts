@@ -6,8 +6,8 @@
 {{- randAlphaNum 18 | nospace | b64enc -}}
 {{- end -}}
 
-# TODO: This should be set hard coded and if not set we can maybe generate it.
-# I think it's not required to set the applicationName projectName and org by this helm chart.
+# TODO: This should be set hard coded and if not set it can maybe be generated.
+# It's probably not required to set the applicationName projectName and org by this helm chart.
 {{ define "generateHost" -}}
 {{- if hasKey .Values.store "host" }}
 {{- .Values.store.host }}
@@ -54,7 +54,7 @@ secretAccessKeyRef:
   key: "CONSOLE_SECRET_KEY"
 
 {{- if hasKey .Values.store "s3Storage" }}
-{{- fail "If you use minio the s3Storage variables will get overwritten! Please remove them" }}
+{{- fail "If you use MinIO the s3Storage variables will get overwritten! Please remove them" }}
 {{- end }}
 
 {{- else }}

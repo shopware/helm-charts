@@ -1,7 +1,7 @@
 {{ if hasKey .Values "minio" }}
 {{ if .Values.minio.enabled | default false }}
 {{ if .Values.minio.publishPublicBucket | default false }}
-# the following job spawns a minio cli container and waits until the bucket is available
+# The following job spawns a MinIO CLI container and waits until the bucket is available,
 # then it changes the download policy to download of the shopware-public bucket
 {{ if and (.Values.minio.useTLS) (.Values.useIstio) }}
 
@@ -15,7 +15,7 @@ spec:
       spec:
         containers:
         - name: minio-cli
-          # Use own image here because curl is not available and we need to finish the istio sidecar with:
+          # Use own image here because curl is not available, and it needs to finish the Istio sidecar with:
           # curl -fsI -X POST http://localhost:15020/quitquitquit
           image: minio/mc
           command: ["sh", "-c"]

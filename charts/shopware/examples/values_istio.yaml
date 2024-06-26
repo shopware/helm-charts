@@ -3,12 +3,12 @@ useIstio: true
 region: eu-central-1
 
 percona:
-  # You can disable percona and use your own database. Just modify the storage database
+  # You can disable Percona and use your own database. Just modify the storage database
   # part in this file.
   # TODO: Not tested yet, database part is not variable
   enabled: true
 
-  # The version for percona to use. This is also the image version for the percona-xtradb-cluster
+  # The version for Percona to use. This is also the image version for the percona-xtradb-cluster
   version: 1.14.0
   # Allows only one database and allows to overwrite the topologySpreadConstraints
   allowUnsafeConfigurations: false
@@ -18,9 +18,9 @@ percona:
     # These are the default values for the data
     size: 3
 
-    # You can overwrite these default values from percona. To see which values are valid check
+    # You can overwrite these default values from Percona. To see which values are valid check
     # the Percona documentation on this: https://github.com/percona/percona-helm-charts/blob/main/charts/pxc-db/values.yaml
-    # If there are values missing for you, add them to the template and make a pr.
+    # If there are values missing for you, add them to the template and make a PR.
     resources:
       requests:
         memory: 4Gi
@@ -38,9 +38,9 @@ percona:
 
     # We overwrite the topologySpreadConstraints for this to schedule only one database
     topologySpreadConstraints:
-    # Currently percona only supports amd64, so we set a node seletor. This could also be
-    # a problem for our mac users here.
-    # TODO: Change the image if they support amd and arm architectures
+    # Currently Percona only supports amd64, so we set a node selector.
+    # This could also be a problem for Mac users here.
+    # TODO: Change the image once they support AMD and ARM architectures
     nodeSelector:
       kubernetes.io/arch: amd64
       karpenter.k8s.aws/instance-generation: '7'
@@ -49,9 +49,9 @@ percona:
   proxy:
     enabled: true
 
-    # You can overwrite these default values from percona. To see which values are valid check
+    # You can overwrite these default values from Percona. To see which values are valid check
     # the Percona documentation on this: https://github.com/percona/percona-helm-charts/blob/main/charts/pxc-db/values.yaml
-    # If there are values missing for you, add them to the template and make a pr.
+    # If there are values missing for you, add them to the template and make a PR.
     # size: 1
     # annotations:
     resources:
@@ -70,15 +70,16 @@ percona:
     storageClassName: gp2
     storageSize: 10G
 
-    # Currently percona only supports amd64, so we set a node seletor. This could also be
+    # Currently Percona only supports amd64, so we set a node selector. This could also be
     # a problem for our mac users here.
-    # TODO: Change the image if they support amd and arm architectures
+    # TODO: Change the image once they support AMD and ARM architectures
     nodeSelector:
       kubernetes.io/arch: amd64
 
 store:
   # We use traefik.me to resolve to 127.0.0.1
-  # you can change to any ip address if you want to change it.
+  # Enter your DNS name for the shop.
+  # This will make sure that your sales-channel is set up correctly and the ingress is using the host address.
   host: localhost.traefik.me
 
   # blackfire:
@@ -93,7 +94,7 @@ store:
   container:
     # This image is used for the setup job and the deployment. If you want to migrate to a new
     # version just update this and the operator makes sure to handle the migrations.
-    # TODO: link to shopware operator
+    # TODO: link to Shopware operator
     image: ghcr.io/shopware-redstone/customer:76f31d75df7e18b090856fff8ef0a646c4197cc6
     # imagePullPolicy: IfNotPresent
     # restartPolicy: Always
@@ -147,16 +148,15 @@ store:
             type: AverageValue
 
 minio:
-  # This enabled the s3 minio and creates a Tenant. This requires the minio operator
+  # This enabled the s3 MinIO and creates a tenant. This requires the MinIO operator
   # to work properly. You can use aws s3 also, but then need to overwrite the values
   # in the store resource.
   enabled: true
-  # This disable the minio mtls. Please don't use this in production! This is required
+  # This disables the MinIO mtls. Please don't use this in production! This is required
   # for a local or Istio installation.
   useTLS: false
-  # This enabled readonly for anonymoud on the shopware-public bucket. This is required
-  # for shopware to work properly. But you can disable it. This will trigger a job in
-  # kubernetes.
+  # This enabled readonly for anonymous on the shopware-public bucket. This is required
+  # for Shopware to work properly. But you can disable it. This will create a job in Kubernetes.
   publishPublicBucket: true
   certSecretName: tenant-cert
   secretName: minio-s3
@@ -172,12 +172,12 @@ minio:
     className: nginx
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt
-      # Shopware addmin app.js is to big for the default more then 64MB
+      # Shopware admin app.js is too big for the default. It is more than 64MB
       nginx.ingress.kubernetes.io/proxy-body-size: '0'
       nginx.ingress.kubernetes.io/service-upstream: "true"
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
 
-# This is used by shopware to map the aws secret into our cluster to pull images
+# This is used by Shopware to map the aws secret into our cluster to pull images
 regcred:
   clusterStore:
     name: aws-secrets
@@ -242,16 +242,16 @@ blackfire:
       memory: 512Mi
       cpu: 100m
 
-# Percona has currently only amd images, so we make sure with a mixed cluster that we
-# use the amd clusters.
+# Percona has currently only AMD images, so we make sure with a mixed cluster that we
+# use the AMD clusters.
 pxc-operator:
   nodeSelector:
     kubernetes.io/arch: amd64
 
-# This controls the shopware operator helm chart which can be found here:
+# This controls the Shopware operator helm chart which can be found here:
 # TODO: Helm chart link
 shopware-operator:
-  # Disableing makes sense if you want to test the Operator itself
+  # Disabling makes sense if you want to test the Operator itself
   enabled: false
 
 grafana:
