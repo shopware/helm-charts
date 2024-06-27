@@ -4707,6 +4707,9 @@ spec:
                 - user
                 - version
                 type: object
+              disableChecks:
+                default: false
+                type: boolean
               fpm:
                 properties:
                   listen:
