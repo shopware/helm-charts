@@ -143,6 +143,10 @@ helm install shopware . --namespace shopware --values examples/values_istio.yaml
 > It assumes that Istio is already set up and configured in your environment.
 
 # Information
+### TLS and Certificates on Kind
+If the shop is unable to load styles from MinIO, you may need to accept the certificate in your browser.
+To verify this, try opening the `all.css` file directly in your browser. You can locate the URL in your browser's network debugging tab.
+
 ### Naming Conventions
 Each customer namespace contains only one store and is identified by a unique name.
 It uses the format `<organization-name>-<project-name>-<application-name>`, e.g., `shopware-redstone-staging`.

@@ -29,11 +29,11 @@ dependencies:
     version: 1.14.0
     repository: https://percona.github.io/percona-helm-charts/
 
-  - name: operator
-    alias: shopware-operator
-    version: 1.0.12
-    repository: https://shopware-redstone.github.io/helm-charts
-    condition: shopware-operator.enabled
+  # - name: operator
+  #   alias: shopware-operator
+  #   version: 1.0.12
+  #   repository: https://shopware-redstone.github.io/helm-charts
+  #   condition: shopware-operator.enabled
 
   - name: redis
     alias: redisapp
@@ -52,7 +52,6 @@ dependencies:
     version: 19.1.2
     repository: oci://registry-1.docker.io/bitnamicharts
     condition: redisqueue.enabled
-    condition: redis.enabled
 
   # - name: grafana
   #   version: 7.3.11

@@ -17,8 +17,9 @@ spec:
         - name: minio-cli
           # Use own image here because curl is not available, and it needs to finish the Istio sidecar with:
           # curl -fsI -X POST http://localhost:15020/quitquitquit
-          image: minio/mc
+          image: {{ .Values.minio.clientImage | default "minio/mc" }}
           command: ["sh", "-c"]
+          imagePullPolicy: Always
           args:
           - |
             {{- if .Values.minio.useTLS }}
