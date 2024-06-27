@@ -29,7 +29,8 @@ jobs:
           helm repo add percona https://percona.github.io/percona-helm-charts
           helm repo add grafana https://grafana.github.io/helm-charts
           helm repo add prometheus https://prometheus-community.github.io/helm-charts
-          helm repo add shopware https://shopware-redstone.github.io/helm-charts
+          # TODO: Not yet possible, we need to publish this first
+          #helm repo add shopware https://shopware-redstone.github.io/helm-charts
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.6.0
