@@ -1204,7 +1204,7 @@ spec:
                                     command:
                                       description: |-
                                         Command is the command line to execute inside the container, the working directory for the
-                                        command  is root ('/') in the container's filesystem. The command is simply executed, it is
+                                        command  is root ('/') in the container's filesystem. The command is simply exec'd, it is
                                         not run inside a shell, so traditional shell instructions ('|', etc) won't work. To use
                                         a shell, you need to explicitly call out to that shell.
                                         Exit status of 0 is treated as live/healthy and non-zero is unhealthy.
@@ -1314,7 +1314,7 @@ spec:
                                     command:
                                       description: |-
                                         Command is the command line to execute inside the container, the working directory for the
-                                        command  is root ('/') in the container's filesystem. The command is simply executed, it is
+                                        command  is root ('/') in the container's filesystem. The command is simply exec'd, it is
                                         not run inside a shell, so traditional shell instructions ('|', etc) won't work. To use
                                         a shell, you need to explicitly call out to that shell.
                                         Exit status of 0 is treated as live/healthy and non-zero is unhealthy.
@@ -1420,7 +1420,7 @@ spec:
                                 command:
                                   description: |-
                                     Command is the command line to execute inside the container, the working directory for the
-                                    command  is root ('/') in the container's filesystem. The command is simply executed, it is
+                                    command  is root ('/') in the container's filesystem. The command is simply exec'd, it is
                                     not run inside a shell, so traditional shell instructions ('|', etc) won't work. To use
                                     a shell, you need to explicitly call out to that shell.
                                     Exit status of 0 is treated as live/healthy and non-zero is unhealthy.
@@ -1632,7 +1632,7 @@ spec:
                                 command:
                                   description: |-
                                     Command is the command line to execute inside the container, the working directory for the
-                                    command  is root ('/') in the container's filesystem. The command is simply executed, it is
+                                    command  is root ('/') in the container's filesystem. The command is simply exec'd, it is
                                     not run inside a shell, so traditional shell instructions ('|', etc) won't work. To use
                                     a shell, you need to explicitly call out to that shell.
                                     Exit status of 0 is treated as live/healthy and non-zero is unhealthy.
@@ -2059,7 +2059,7 @@ spec:
                                 command:
                                   description: |-
                                     Command is the command line to execute inside the container, the working directory for the
-                                    command  is root ('/') in the container's filesystem. The command is simply executed, it is
+                                    command  is root ('/') in the container's filesystem. The command is simply exec'd, it is
                                     not run inside a shell, so traditional shell instructions ('|', etc) won't work. To use
                                     a shell, you need to explicitly call out to that shell.
                                     Exit status of 0 is treated as live/healthy and non-zero is unhealthy.
@@ -4943,7 +4943,7 @@ spec:
                             with any Kubernetes object. It allows autoscaling based on information
                             coming from components running outside of cluster
                             (for example length of queue in cloud messaging service, or
-                            QPS from load balancer running outside of cluster).
+                            QPS from loadbalancer running outside of cluster).
                           properties:
                             metric:
                               description: metric identifies the target metric by
@@ -5340,6 +5340,16 @@ spec:
                 - enabled
                 - maxReplicas
                 type: object
+              migrationHook:
+                properties:
+                  after:
+                    type: string
+                  before:
+                    type: string
+                required:
+                - after
+                - before
+                type: object
               network:
                 properties:
                   annotations:
@@ -5493,6 +5503,8 @@ spec:
                       type: string
                   type: object
                 type: array
+              currentImageTag:
+                type: string
               message:
                 type: string
               ready:
