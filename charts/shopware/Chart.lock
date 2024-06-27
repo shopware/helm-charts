@@ -2,9 +2,6 @@ dependencies:
 - name: pxc-operator
   repository: https://percona.github.io/percona-helm-charts/
   version: 1.14.0
-- name: operator
-  repository: https://shopware-redstone.github.io/helm-charts
-  version: 1.0.12
 - name: redis
   repository: oci://registry-1.docker.io/bitnamicharts
   version: 19.1.2
@@ -14,5 +11,5 @@ dependencies:
 - name: redis
   repository: oci://registry-1.docker.io/bitnamicharts
   version: 19.1.2
-digest: sha256:1e0834462d7392b626b0757b5007e73263753a0c15024c2fc322a0987cfc47fb
-generated: "2024-06-21T15:50:17.4900639+02:00"
+digest: sha256:f5874ce78e97588242a7bbbeceb09379fcd89a74c605db0117b81aacfcf7adb7
+generated: "2024-06-25T10:36:20.033638877+02:00"
