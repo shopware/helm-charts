@@ -1,21 +1,26 @@
 {{ if hasKey .Values "minio" }}
 {{ if .Values.minio.enabled | default false }}
-
-{{- $ak := include "getTenantUserAccessKeyName" . -}}
-{{- $sk := include "getTenantUserSecretAccessKeyName" . -}}
-{{- $secret := include "getTenantUserSecretName" . -}}
-apiVersion: v1
-data:
-{{- if .Release.IsInstall }}
-  {{ $ak }}: {{ template "generatePasswordEncoded" }}
-  {{ $sk }}: {{ template "generatePasswordEncoded" }}
-{{ else }}
-  {{ $ak }}: {{ index (lookup "v1" "Secret" .Release.Namespace $secret).data $ak }}
-  {{ $sk }}: {{ index (lookup "v1" "Secret" .Release.Namespace $secret).data $sk }}
-{{ end }}
+---
+#
+# {{- $ak := include "getTenantUserAccessKeyName" . -}}
+# {{- $sk := include "getTenantUserSecretAccessKeyName" . -}}
+# {{- $secret := include "getTenantUserSecretName" . -}}
+# apiVersion: v1
+# data:
+# {{- if .Release.IsInstall }}
+#   {{ $ak }}: {{ template "generatePasswordEncoded" }}
+#   {{ $sk }}: {{ template "generatePasswordEncoded" }}
+# {{ else }}
+#   {{ $ak }}: {{ index (lookup "v1" "Secret" .Release.Namespace $secret).data $ak }}
+#   {{ $sk }}: {{ index (lookup "v1" "Secret" .Release.Namespace $secret).data $sk }}
+# {{ end }}
 kind: Secret
+apiVersion: v1
 metadata:
   name: {{ template "getTenantUserSecretName" . }}
 type: Opaque
+stringData:
+  CONSOLE_ACCESS_KEY: iVQFUj9Vy0EqP5pGSI
+  CONSOLE_SECRET_KEY: rIfDdO920yef8Rawfh
 {{ end }}
 {{ end }}
