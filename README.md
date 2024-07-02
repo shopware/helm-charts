@@ -1,27 +1,42 @@
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-
 # Shopware Helm Charts
 
-This repository contains Helm charts for the following Shopware products.
+![Shopware Helm Charts](shopware.svg)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+## Overview
+
+This repository contains Helm charts for the following components.
 
 * [Shopware Operator](charts/shopware-operator/)
 * [Shopware](charts/shopware/)
 
 Useful links:
+
 * [About Shopware Operator](https://github.com/shopware-redstone/shopware-operator)
 
-## Installing Charts from this Repository
+## Installation
 
 You will need [Helm v3](https://github.com/helm/helm) for the installation.
 See detailed installation instructions in the README file of each chart.
 
-# Contributing
+## Contributing
 
 Shopware welcomes and encourages community contributions to help improve Shopware Operator as well as other Shopware projects.
 
 See the [Contribution Guide](CONTRIBUTING.md) for more information.
 
-# Join Shopware Kubernetes TaskForce!
+### Submitting Bug Reports
+
+If you find a bug related to one of these Helm charts, please submit a bug report to the appropriate repository:
+
+* [Shopware Operator](https://github.com/shopware-redstone/shopware-operator/issues)
+* [Shopware](https://github.com/shopware-redstone/helm-charts/issues)
+
+Learn more about submitting bugs, new feature ideas, and improvements in the [Contribution Guide](CONTRIBUTING.md).
+
+### Join Shopware Kubernetes TaskForce!
+
 ```
                                      ,/(((((((*.
                              ,((/(/(/(/(/(/(/(/(/(/(/((
@@ -62,12 +77,3 @@ See the [Contribution Guide](CONTRIBUTING.md) for more information.
                |_|\_\___/|___/   |_|\__,_|___/_|\_\_|  \___/|_|  \___\___|
 
 ```
-
-# Submitting Bug Reports
-
-If you find a bug related to one of these Helm charts, please submit a bug report to the appropriate repository:
-
-* [Shopware Operator](https://github.com/shopware-redstone/shopware-operator/issues)
-* [Shopware](https://github.com/shopware-redstone/helm-charts/issues)
-
-Learn more about submitting bugs, new feature ideas, and improvements in the [Contribution Guide](CONTRIBUTING.md).
