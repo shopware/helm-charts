@@ -1,0 +1,43 @@
+name: Feature Request
+description: Make a feature request.
+title: "[Feat]: "
+labels: ["feature", "triage"]
+projects: ["shopware-redstone/1"]
+assignees:
+  - Traysercassa
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this feature request!
+  - type: textarea
+    id: improvement
+    attributes:
+      label: Improvement
+      description: Tell us, how we can improve our Project?
+      value: "Currently it is not possible to use arm"
+    validations:
+      required: false
+  - type: textarea
+    id: reason
+    attributes:
+      label: Reason
+      description: Tell us, what is your reason behind this feature request?
+      value: "We have a mixed infrastructure cluster setup"
+    validations:
+      required: false
+  - type: textarea
+    id: information
+    attributes:
+      label: Information
+      description: Tell us, what additional information could be useful
+    validations:
+      required: false
+  - type: textarea
+    id: dod
+    attributes:
+      label: Definition of Done
+      description: Make a checklist when the improvement is done
+      value: "docker manifest inspect return also arm64 architecture"
+    validations:
+      required: false
