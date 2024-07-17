@@ -167,6 +167,11 @@ minio:
   # For non-Istio installations, the client image can be minio/mc.
   clientImage: ghcr.io/shopware-redstone/k8s-tooling-image:latest
 
+  # This configuration sets the username and password for MinIO login.
+  # If the password is not specified, it will be automatically generated.
+  #rootUser: admin
+  #rootPassword: <random-id>
+
   # You need to set the correct ingressClassName for this to work properly. If you follow
   # the Readme and use kind, you can use nginx as ingress class and everything should run
   # out of the box.
