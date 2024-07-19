@@ -3,8 +3,6 @@ description: File a bug report.
 title: "[Bug]: "
 labels: ["bug", "triage"]
 projects: ["shopware-redstone/1"]
-assignees:
-  - Traysercassa
 body:
   - type: markdown
     attributes:
@@ -15,7 +13,6 @@ body:
     attributes:
       label: Steps to reproduce
       description: Tell us, how we can reproduce the issue?
-      value: "- Pull version x.x.x\n- execute `make run`"
     validations:
       required: false
   - type: textarea
@@ -23,7 +20,6 @@ body:
     attributes:
       label: What should happened?
       description: Tell us, what did you expect to happen?
-      value: "My shop gets created"
     validations:
       required: true
   - type: textarea
@@ -31,7 +27,6 @@ body:
     attributes:
       label: What actually happened?
       description: Tell us, what actually happen?
-      value: "The Operator does nothing"
     validations:
       required: true
   - type: textarea

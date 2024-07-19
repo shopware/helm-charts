@@ -3,8 +3,6 @@ description: Make a feature request.
 title: "[Feat]: "
 labels: ["feature", "triage"]
 projects: ["shopware-redstone/1"]
-assignees:
-  - Traysercassa
 body:
   - type: markdown
     attributes:
@@ -15,7 +13,6 @@ body:
     attributes:
       label: Improvement
       description: Tell us, how we can improve our Project?
-      value: "Currently it is not possible to use arm"
     validations:
       required: false
   - type: textarea
@@ -23,7 +20,6 @@ body:
     attributes:
       label: Reason
       description: Tell us, what is your reason behind this feature request?
-      value: "We have a mixed infrastructure cluster setup"
     validations:
       required: false
   - type: textarea
@@ -38,6 +34,5 @@ body:
     attributes:
       label: Definition of Done
       description: Make a checklist when the improvement is done
-      value: "docker manifest inspect return also arm64 architecture"
     validations:
       required: false
