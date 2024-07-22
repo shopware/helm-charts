@@ -271,6 +271,7 @@ shopware-operator:
   enabled: true
 
 grafana:
+  enabled: false
   datasources:
     datasources.yaml:
       apiVersion: 1
@@ -284,5 +285,6 @@ grafana:
           url: http://loki-gateway.loki.svc.cluster.local
 
 prometheus:
+  enabled: false
   prometheus-node-exporter:
     enabled: false
