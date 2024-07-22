@@ -286,15 +286,3 @@ grafana:
 prometheus:
   prometheus-node-exporter:
     enabled: false
-
-promtail:
-  daemonset:
-    enabled: false
-  deployment:
-    enabled: true
-  config:
-    clients:
-      - url: http://loki-gateway.loki.svc.cluster.local/loki/api/v1/push
-  server:
-    remoteWrite:
-      - url: http://mimir-nginx.mimir.svc:80/api/v1/push
