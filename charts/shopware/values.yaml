@@ -6,7 +6,7 @@ percona:
   # You can disable Percona and use your own database. Just modify the storage database
   # part in this file.
   # TODO: Not tested yet, database part is not variable
-  enabled: true
+  enabled: false
 
   # The version for Percona to use. This is also the image version for the percona-xtradb-cluster
   version: 1.14.0
@@ -271,7 +271,7 @@ shopware-operator:
   enabled: true
 
 grafana:
-  enabled: false
+  enabled: true
   datasources:
     datasources.yaml:
       apiVersion: 1
@@ -280,11 +280,31 @@ grafana:
           type: prometheus
           uid: prometheus
           url: http://{{ .Release.Name }}-prometheus-server.{{ .Release.Namespace }}.svc.cluster.local
-        - name: Loki
-          type: loki
-          url: http://loki-gateway.loki.svc.cluster.local
 
 prometheus:
-  enabled: false
+  enabled: true
+  server:
+    persistentVolume:
+      enabled: false
+  serverFiles:
+    prometheus.yml:
+      scrape_configs:
+        - job_name: prometheus
+          static_configs:
+            - targets:
+                - localhost:9090
+        - job_name: federate
+          honor_labels: true
+          scrape_interval: 15s
+          metrics_path: '/federate'
+          static_configs:
+            - targets:
+                - kube-prometheus-stack-prometheus.kube-prometheus-stack.svc.cluster.local:9090
+  alertmanager:
+    enabled: false
+  kube-state-metrics:
+    enabled: false
   prometheus-node-exporter:
     enabled: false
+  prometheus-pushgateway:
+    enabled: true
