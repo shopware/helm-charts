@@ -6,7 +6,7 @@ percona:
   # You can disable Percona and use your own database. Just modify the storage database
   # part in this file.
   # TODO: Not tested yet, database part is not variable
-  enabled: false
+  enabled: true
 
   # The version for Percona to use. This is also the image version for the percona-xtradb-cluster
   version: 1.14.0
