@@ -53,8 +53,8 @@ dependencies:
     repository: oci://registry-1.docker.io/bitnamicharts
     condition: redisqueue.enabled
 
-  - name: kube-prometheus-stack
-    version: 61.3.2
+  - name: prometheus
+    version: 25.24.1
     repository: https://prometheus-community.github.io/helm-charts
-    condition: kube-prometheus-stack.enabled
+    condition: prometheus.enabled
 
