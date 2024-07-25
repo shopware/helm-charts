@@ -270,41 +270,25 @@ shopware-operator:
   # Disabling makes sense if you want to test the Operator itself
   enabled: true
 
-grafana:
+kube-prometheus-stack:
   enabled: true
-  datasources:
-    datasources.yaml:
-      apiVersion: 1
-      datasources:
-        - name: Prometheus
-          type: prometheus
-          uid: prometheus
-          url: http://{{ .Release.Name }}-prometheus-server.{{ .Release.Namespace }}.svc.cluster.local
-
-prometheus:
-  enabled: true
-  server:
-    persistentVolume:
-      enabled: false
-  serverFiles:
-    prometheus.yml:
-      scrape_configs:
-        - job_name: prometheus
-          static_configs:
-            - targets:
-                - localhost:9090
-        - job_name: federate
-          honor_labels: true
-          scrape_interval: 15s
-          metrics_path: '/federate'
-          static_configs:
-            - targets:
-                - kube-prometheus-stack-prometheus.kube-prometheus-stack.svc.cluster.local:9090
+  grafana:
+    datasources:
+      datasources.yaml:
+        apiVersion: 1
+        datasources:
+          - name: Prometheus
+            type: prometheus
+            uid: prometheus
+            url: http://{{ .Release.Name }}-prometheus-server.{{ .Release.Namespace }}.svc.cluster.local
+  prometheus:
+    prometheusSpec:
+      logLevel: debug
+      logFormat: json
+      scrapeConfigNamespaceSelector:
+        matchLabels:
+          name: shopware-test-monitoring
+  nodeExporter:
+    enabled: false
   alertmanager:
     enabled: false
-  kube-state-metrics:
-    enabled: false
-  prometheus-node-exporter:
-    enabled: false
-  prometheus-pushgateway:
-    enabled: true
