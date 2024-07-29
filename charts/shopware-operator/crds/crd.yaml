@@ -43,6 +43,18 @@ spec:
             type: object
           spec:
             properties:
+              adminCredentials:
+                default:
+                  password: shopware-k8s
+                  username: admin
+                properties:
+                  password:
+                    type: string
+                  username:
+                    type: string
+                required:
+                - username
+                type: object
               appCache:
                 default:
                   adapter: builtin
@@ -5478,6 +5490,7 @@ spec:
                 - before
                 type: object
             required:
+            - adminCredentials
             - appCache
             - cdnURL
             - container
