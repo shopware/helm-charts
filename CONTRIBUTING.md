@@ -30,14 +30,14 @@ Feel free to contact the maintainers if that's a concern.
 ## Report bugs using GitHub's issues pages
 
 We use GitHub issues to track bugs.
-Report a bug by [opening a new issue](https://github.com/shopware-redstone/helm-charts/issues)
+Report a bug by [opening a new issue](https://github.com/shopware/helm-charts/issues)
 Make sure to fill the template as good as you can.
 With more details it is easier to understand the issue.
 
 ## Report improvements using GitHub's issues pages
 
 We use GitHub issues to discuss improvements.
-Report an improvement by [opening a new issue](https://github.com/shopware-redstone/helm-charts/issues)
+Report an improvement by [opening a new issue](https://github.com/shopware/helm-charts/issues)
 Make sure to fill the template as good as you can.
 With more details it is easier to understand the improvement.
 

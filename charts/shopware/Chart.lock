@@ -3,7 +3,7 @@ dependencies:
   repository: https://percona.github.io/percona-helm-charts/
   version: 1.14.0
 - name: operator
-  repository: oci://ghcr.io/shopware-redstone
+  repository: oci://ghcr.io/shopware
   version: 1.0.14
 - name: redis
   repository: oci://registry-1.docker.io/bitnamicharts

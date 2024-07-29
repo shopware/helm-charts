@@ -13,7 +13,7 @@ This repository contains Helm charts for the following components.
 
 Useful links:
 
-* [About Shopware Operator](https://github.com/shopware-redstone/shopware-operator)
+* [About Shopware Operator](https://github.com/shopware/shopware-operator)
 
 # Disclaimer
 
@@ -50,8 +50,8 @@ See the [Contribution Guide](CONTRIBUTING.md) for more information.
 
 If you find a bug related to one of these Helm charts, please submit a bug report to the appropriate repository:
 
-* [Shopware Operator](https://github.com/shopware-redstone/shopware-operator/issues)
-* [Shopware](https://github.com/shopware-redstone/helm-charts/issues)
+* [Shopware](https://github.com/shopware/helm-charts/issues)
+* [Shopware Operator](https://github.com/shopware/shopware-operator/issues)
 
 Learn more about submitting bugs, new feature ideas, and improvements in the [Contribution Guide](CONTRIBUTING.md).
 

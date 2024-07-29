@@ -32,7 +32,7 @@ dependencies:
   - name: operator
     alias: shopware-operator
     version: 1.0.14
-    repository: oci://ghcr.io/shopware-redstone
+    repository: oci://ghcr.io/shopware
     condition: shopware-operator.enabled
 
   - name: redis

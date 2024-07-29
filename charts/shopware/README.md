@@ -149,7 +149,7 @@ To verify this, try opening the `all.css` file directly in your browser. You can
 
 ### Naming Conventions
 Each customer namespace contains only one store and is identified by a unique name.
-It uses the format `<organization-name>-<project-name>-<application-name>`, e.g., `shopware-redstone-staging`.
+It uses the format `<organization-name>-<project-name>-<application-name>`, e.g., `shopware-staging`.
 
 ### Operator
 A Shopware operator is installed for each namespace by default.

@@ -93,7 +93,6 @@ store:
   container:
     # This image is used for the setup job and the deployment. If you want to migrate to a new
     # version just update this and the operator makes sure to handle the migrations.
-    # TODO: link to Shopware operator
     image: ghcr.io/shopware-redstone/customer:76f31d75df7e18b090856fff8ef0a646c4197cc6
     # imagePullPolicy: IfNotPresent
     # restartPolicy: Always
