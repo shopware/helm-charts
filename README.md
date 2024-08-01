@@ -57,6 +57,7 @@ Learn more about submitting bugs, new feature ideas, and improvements in the [Co
 
 ### Join Shopware Kubernetes TaskForce!
 
+[Slack](https://shopwarecommunity.slack.com/archives/C025GQEQFMY)
 ```
                                      ,/(((((((*.
                              ,((/(/(/(/(/(/(/(/(/(/(/((

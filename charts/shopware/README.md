@@ -99,6 +99,14 @@ kubectl create secret docker-registry regcred --docker-server=ghcr.io --docker-u
   --docker-password=<your-package-read-token> --docker-email=<your-email> --namespace <your-namespace>
 ```
 
+To use image pull secrets, update the values in this Helm chart as follows:
+```
+store:
+  container:
+    imagePullSecrets:
+      - name: <secret-name>
+```
+
 #### Load local Images into your cluster
 
 You can use this process to load a local image into your cluster, a common practice for this test environment.
