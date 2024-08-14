@@ -1,3 +1,4 @@
+{{- if hasKey .Values.store "sidecarLogging" }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -15,3 +16,4 @@ data:
         Time_Format %Y-%m-%dT%H:%M:%S.%L
   fluent-bit.conf:  |
     {{- include "fluentBitConfigmap" . | nindent 4 }}
+{{- end }}

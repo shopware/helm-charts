@@ -115,6 +115,8 @@ secretAccessKeyRef:
 {{- end -}}
 
 {{ define "fluentBitConfigmap" -}}
+{{- if hasKey .Values.store "sidecarLogging" }}
+{{- $fluentBitInputPath := printf "Path %s/%s"  (.Values.store.sidecarLogging.logFolder | default "/var/log") (.Values.store.sidecarLogging.logFile | default "shopware.log") -}}
 [SERVICE]
     Daemon Off
     Flush 1
@@ -128,7 +130,7 @@ secretAccessKeyRef:
 
 [INPUT]
     Name tail
-    Path /var/log/shopware.log
+    {{ $fluentBitInputPath }}
     multiline.parser docker, cri
     Tag shopware
     Mem_Buf_Limit 5MB
@@ -137,10 +139,11 @@ secretAccessKeyRef:
 [OUTPUT]
     Name         loki
     Match        *
-    Host         loki-gateway.loki.svc.cluster.local
+    Host         {{ .Values.store.sidecarLogging.lokiHost | default "loki-gateway.loki.svc.cluster.local" }}
     Port         80
     Tls          off
     Labels       job=fluentbit,service=shopware
     auto_kubernetes_labels on
     tenant_id    {{ .Release.Namespace }}
+{{- end }}
 {{- end }}
