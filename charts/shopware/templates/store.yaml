@@ -115,6 +115,8 @@ spec:
         name: {{ template "getMonologConfigName" . }}
         subPath: monolog.yaml
       {{- end}}
+      - mountPath: /var/log/
+        name: logs
 
     imagePullSecrets:
       {{- with .Values.store.container.imagePullSecrets }}
@@ -140,7 +142,48 @@ spec:
       {{- with .Values.store.container.extraContainers }}
           {{- toYaml . | nindent 8 }}
       {{- end }}
-
+      - name: logging
+        image: cr.fluentbit.io/fluent/fluent-bit:3.1.4
+        imagePullPolicy: IfNotPresent
+        command:
+          - /fluent-bit/bin/fluent-bit
+        args:
+          - '--workdir=/fluent-bit/etc'
+          - '--config=/fluent-bit/etc/conf/fluent-bit.conf'
+        ports:
+          - name: http
+            containerPort: 2020
+            protocol: TCP
+          - name: metrics
+            containerPort: 2021
+            protocol: TCP
+        resources: {}
+        volumeMounts:
+          - name: fluent-bit-config
+            mountPath: /fluent-bit/etc/conf
+          - name: logs
+            mountPath: /var/log
+            readOnly: true
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+            scheme: HTTP
+          timeoutSeconds: 1
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /api/v1/health
+            port: http
+            scheme: HTTP
+          timeoutSeconds: 1
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
       {{- if hasKey .Values.store "fpm" }}
       {{- if ne .Values.store.fpm.processManagement "dynamic" }}
       - name: php-fpm-exporter
@@ -183,3 +226,9 @@ spec:
           name: {{ template "getMonologConfigName" . }}
         name: {{ template "getMonologConfigName" . }}
       {{- end}}
+      - name: logs
+        emptyDir: {}
+      - name: fluent-bit-config
+        configMap:
+          name: fluent-bit
+          defaultMode: 420
