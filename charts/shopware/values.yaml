@@ -93,6 +93,37 @@ store:
   #   enabled: false
   #   exporterEndpoint: http://opentelemetry-collector.opentelemetry-collector.svc.cluster.local:4317
 
+  # You can define a Monolog configuration here.
+  # Please refer to the official Monolog documentation for details.
+  # This configuration will be mounted in the deployment as a ConfigMap.
+  # The configuration file is located at /var/www/html/config/packages/monolog.yaml
+  # monolog:
+  #   handlers:
+  #     main:
+  #       type: fingers_crossed
+  #       action_level: info
+  #       handler: nested
+  #       excluded_http_codes: [404, 405]
+  #       buffer_size: 50
+  #     nested:
+  #       type: group
+  #       members: [stderr, file_log]
+  #     stderr:
+  #       type: stream
+  #       path: php://stderr
+  #       level: info
+  #     file_log:
+  #       type: stream
+  #       path: "/var/log/shopware.log"
+  #       level: info
+  #       formatter: 'monolog.formatter.json'
+  #     console:
+  #       type: console
+  #       process_psr_3_messages: false
+  #       channels: ["!event", "!doctrine"]
+  #     business_event_handler_buffer:
+  #       level: info
+
   container:
     # This image is used for the setup job and the deployment. If you want to migrate to a new
     # version just update this and the operator makes sure to handle the migrations.

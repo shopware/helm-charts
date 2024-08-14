@@ -104,6 +104,11 @@ spec:
     volumeMounts:
       - mountPath: /etc/caddy
         name: {{ template "getCaddyConfigName" . }}
+      {{- if hasKey .Values.store "monolog" }}
+      - mountPath: /var/www/html/config/packages/monolog.yaml
+        name: {{ template "getMonologConfigName" . }}
+        subPath: monolog.yaml
+      {{- end}}
 
     imagePullSecrets:
       {{- with .Values.store.container.imagePullSecrets }}
@@ -166,3 +171,9 @@ spec:
           defaultMode: 420
           name: {{ template "getCaddyConfigName" . }}
         name: {{ template "getCaddyConfigName" . }}
+      {{- if hasKey .Values.store "monolog" }}
+      - configMap:
+          defaultMode: 420
+          name: {{ template "getMonologConfigName" . }}
+        name: {{ template "getMonologConfigName" . }}
+      {{- end}}

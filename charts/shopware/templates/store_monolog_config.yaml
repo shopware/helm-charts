@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "getMonologConfigName" . }}
+data:
+  monolog.yaml: |
+    monolog:
+      {{- with .Values.store.monolog }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
