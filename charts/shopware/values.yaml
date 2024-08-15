@@ -77,10 +77,14 @@ store:
   # This will make sure that your sales-channel is set up correctly and the ingress is using the host address.
   host: localhost.traefik.me
 
-  # TODO: Document
+  # This configuration is used to disable S3 and database checks prior to setup and shop creation.
+  # Note: This is a known issue in the operator and will be addressed in a future update.
+  # For more details, see: https://github.com/shopware/shopware-operator/issues/20
   disableChecks: true
 
-  # TODO: document admin password and username
+  # adminCredentials:
+  #   username: admin
+  #   password: <if empty it will be generated>
 
   # blackfire:
   #   enabled: false

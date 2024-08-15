@@ -76,6 +76,12 @@ spec:
       {{- toYaml . | nindent 4 }}
     {{- end }}
 
+  {{- if hasKey .Values.store "adminCredentials" }}
+  adminCredentials:
+    username: {{ .Values.store.adminCredentials.username | default "admin" }}
+    password: {{ .Values.store.adminCredentials.password | default "" }}
+  {{- end }}
+
   database:
     host: {{ template "getDBService" . }}
     version: '8'
