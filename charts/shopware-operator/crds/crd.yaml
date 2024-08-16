@@ -45,7 +45,7 @@ spec:
             properties:
               adminCredentials:
                 default:
-                  password: shopware-k8s
+                  password: ""
                   username: admin
                 properties:
                   password:
@@ -5489,6 +5489,26 @@ spec:
                 - after
                 - before
                 type: object
+              worker:
+                default:
+                  adapter: builtin
+                properties:
+                  adapter:
+                    enum:
+                    - builtin
+                    - redis
+                    type: string
+                  redisDatabase:
+                    default: 0
+                    type: integer
+                  redisHost:
+                    type: string
+                  redisPort:
+                    default: 6379
+                    type: integer
+                required:
+                - adapter
+                type: object
             required:
             - adminCredentials
             - appCache
@@ -5497,6 +5517,7 @@ spec:
             - database
             - secretName
             - sessionCache
+            - worker
             type: object
           status:
             properties:
