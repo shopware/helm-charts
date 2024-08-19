@@ -53,6 +53,45 @@ entries:
     version: 0.0.1
   shopware-chart:
   - apiVersion: v2
+    appVersion: 0.0.2
+    created: "2024-08-19T07:23:52.92242987Z"
+    dependencies:
+    - condition: percona.enabled
+      name: pxc-operator
+      repository: https://percona.github.io/percona-helm-charts/
+      version: 1.14.0
+    - alias: shopware-operator
+      condition: shopware-operator.enabled
+      name: operator
+      repository: oci://ghcr.io/shopware/shopware-chart
+      version: 0.0.6
+    - alias: redisapp
+      condition: redisapp.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 19.1.2
+    - alias: redissession
+      condition: redissession.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 19.1.2
+    - alias: redisqueue
+      condition: redisqueue.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 19.1.2
+    - condition: prometheus.enabled
+      name: prometheus
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 25.24.1
+    description: A Helm chart for Kubernetes
+    digest: 0c28f6fa6d80bf2e913f911c3f17d3afdc89d0fa20493faba7d6613bcf342830
+    name: shopware-chart
+    type: application
+    urls:
+    - https://github.com/shopware/helm-charts/releases/download/shopware-chart-0.0.2/shopware-chart-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v2
     appVersion: 0.0.1
     created: "2024-08-01T12:12:06.895712901Z"
     dependencies:
@@ -82,4 +121,4 @@ entries:
     urls:
     - https://github.com/shopware/helm-charts/releases/download/shopware-chart-0.0.1/shopware-chart-0.0.1.tgz
     version: 0.0.1
-generated: "2024-08-16T15:45:04.46166098Z"
+generated: "2024-08-19T07:23:52.922452723Z"
