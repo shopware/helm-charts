@@ -8,8 +8,8 @@
 
 This repository contains Helm charts for the following components.
 
-* [Shopware Operator](charts/shopware-operator/)
-* [Shopware](charts/shopware/)
+* [Shopware](/charts/shopware/README.md)
+* [Shopware Operator](/charts/shopware-operator/README.md)
 
 Useful links:
 
@@ -17,16 +17,16 @@ Useful links:
 
 # Disclaimer
 
-This Shopware Helm chart is currently in an experimental phase and is not ready for
+All Shopware Helm charts are currently in an experimental phase and are not ready for
 production use. The services, configurations, and individual steps described in this
 repository are still under active development and are not in a final state.
 As such, they are subject to change at any time and may contain bugs,
 incomplete implementations, or other issues that could affect the stability and performance
 of your Shopware installation.
 
-Please be aware that using this Helm chart in a live environment could lead to
+Please be aware that using Helm charts in a live environment could lead to
 unexpected behavior, data loss, or other critical problems. We strongly recommend using
-this Helm chart for testing and development purposes only.
+these Helm charts for testing and development purposes only.
 
 By using this software, you acknowledge that you understand these risks and agree not
 to hold the developers or maintainers of this repository liable for any damage or

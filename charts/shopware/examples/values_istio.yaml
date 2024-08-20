@@ -124,7 +124,7 @@ store:
   container:
     # This image is used for the setup job and the deployment. If you want to migrate to a new
     # version just update this and the operator makes sure to handle the migrations.
-    image: ghcr.io/shopware-redstone/customer:76f31d75df7e18b090856fff8ef0a646c4197cc6
+    image: ghcr.io/shopware/shopware-kubernetes:latest
     # imagePullPolicy: IfNotPresent
     # restartPolicy: Always
     replicas: 2
@@ -287,7 +287,6 @@ pxc-operator:
     kubernetes.io/arch: amd64
 
 # This controls the Shopware operator helm chart which can be found here:
-# TODO: Helm chart link
 shopware-operator:
   # Disabling makes sense if you want to test the Operator itself
   enabled: false
