@@ -172,6 +172,9 @@ helm install my-shop shopware/shopware --namespace shopware --create-namespace -
 > The s3 tenant setup may take a few seconds.
 > So Shopware is running before the assets are public.
 
+Once the setup job in your cluster is complete and your store is in the ready state, you can access the shop at https://localhost.traefik.me/
+If needed, you can modify the domain by updating the values.yaml file.
+
 ### Create Docker image
 
 To create a new Shopware project, execute the following command:
