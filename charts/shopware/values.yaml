@@ -1,5 +1,5 @@
 # This is for more production and enterprise solution. To see a full
-# example see `examples/values_istio.yaml`
+# example see `examples/values_istio.yaml`.
 #useIstio: false
 
 percona:
@@ -131,7 +131,7 @@ store:
   container:
     # This image is used for the setup job and the deployment. If you want to migrate to a new
     # version just update this and the operator makes sure to handle the migrations.
-    image: ghcr.io/shopware-redstone/customer:b8bdf650-4e46-11ef-9d8a-5a6aabbdaa93
+    image: ghcr.io/shopware/shopware-kubernetes:latest
     # imagePullPolicy: IfNotPresent
     # restartPolicy: Always
     # replicas: 2
@@ -305,7 +305,6 @@ pxc-operator:
     kubernetes.io/arch: amd64
 
 # This controls the Shopware operator helm chart which can be found here:
-# TODO: Helm chart link
 shopware-operator:
   # Disabling makes sense if you want to test the Operator itself
   enabled: true
@@ -333,5 +332,8 @@ prometheus:
     enabled: false
   # This configuration excludes Prometheus from scraping the Kubernetes API.
   # To collect additional metrics beyond those provided by Shopware, either uncomment this section or apply a different configuration.
+  rbac:
+    create: false
   server:
     configMapOverrideName: "prometheus-config"
+    releaseNamespace: true

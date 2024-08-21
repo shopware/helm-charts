@@ -6,8 +6,6 @@
 {{- randAlphaNum 18 | nospace | b64enc -}}
 {{- end -}}
 
-# TODO: This should be set hard coded and if not set it can maybe be generated.
-# It's probably not required to set the applicationName projectName and org by this helm chart.
 {{ define "generateHost" -}}
 {{- if hasKey .Values.store "host" }}
 {{- .Values.store.host }}
