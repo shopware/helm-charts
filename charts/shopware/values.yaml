@@ -321,6 +321,7 @@ shopware-operator:
   enabled: true
 
 grafana:
+  enabled: true
   datasources:
     datasources.yaml:
       apiVersion: 1
@@ -328,7 +329,7 @@ grafana:
         - name: Prometheus
           type: prometheus
           uid: prometheus
-          url: http://shopware-prometheus-server.shopware-redstone-staging.svc.cluster.local
+          url: http://{{ .Release.Namespace }}-prometheus-server.{{ .Release.Namespace }}.svc.cluster.local
         - name: Loki
           type: loki
           url: http://loki-gateway.loki.svc.cluster.local

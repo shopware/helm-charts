@@ -53,7 +53,14 @@ dependencies:
     repository: oci://registry-1.docker.io/bitnamicharts
     condition: redisqueue.enabled
 
+  - name: grafana
+    alias: grafana
+    version: 8.5.0
+    repository: https://grafana.github.io/helm-charts
+    condition: grafana.enabled
+
   - name: prometheus
+    alias: prometheus
     version: 25.24.1
     repository: https://prometheus-community.github.io/helm-charts
     condition: prometheus.enabled
