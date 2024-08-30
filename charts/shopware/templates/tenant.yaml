@@ -40,7 +40,7 @@ spec:
         metadata:
           name: data
         spec:
-          storageClassName: {{ .Values.minio.storageClassName | default "standard" }}
+          storageClassName: {{ .Values.minio.storageClassName | default "" }}
           accessModes:
             - ReadWriteOnce
           resources:

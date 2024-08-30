@@ -31,7 +31,7 @@ percona:
     # annotations:
     # affinity:
     # serviceAnnotations:
-    # storageClassName: standard
+    # storageClassName:
     # storageSize: 8Gi
 
     # We overwrite the topologySpreadConstraints for this to schedule only one database
@@ -62,7 +62,7 @@ percona:
     # affinity:
     # annotations:
     # serviceAnnotations:
-    # storageClassName: standard
+    # storageClassName:
     # storageSize: 10Gi
 
     # Currently Percona only supports amd64, so we set a node selector. This could also be
@@ -75,7 +75,7 @@ store:
   # We use traefik.me to resolve to 127.0.0.1
   # Enter your DNS name for the shop.
   # This will make sure that your sales-channel is set up correctly and the ingress is using the host address.
-  host: localhost.traefik.me
+  host: p.derks.shopware.systems
 
   # This configuration is used to disable S3 and database checks prior to setup and shop creation.
   # Note: This is a known issue in the operator and will be addressed in a future update.
@@ -220,7 +220,7 @@ minio:
   # for Shopware to work properly. But you can disable it. This will trigger a job in Kubernetes.
   publishPublicBucket: true
   tenantVersion: quay.io/minio/minio:RELEASE.2024-04-06T05-26-02Z
-  # storageClassName: standard
+  # storageClassName:
   # storageSize: 10Gi
   # This image is used to add permissions for the public bucket.
   # When using Istio, the image must include curl; hence, we use minio/mc.
