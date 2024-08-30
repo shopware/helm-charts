@@ -4,7 +4,7 @@ dependencies:
   version: 1.14.0
 - name: operator
   repository: https://shopware.github.io/helm-charts/
-  version: 0.0.10
+  version: 0.0.11
 - name: redis
   repository: oci://registry-1.docker.io/bitnamicharts
   version: 19.1.2
@@ -17,5 +17,5 @@ dependencies:
 - name: prometheus
   repository: https://prometheus-community.github.io/helm-charts
   version: 25.24.1
-digest: sha256:3e12fa7193f89226626069bf362dc065e1c3f6ec3198cf51fe6e961a44e684bb
-generated: "2024-08-21T20:35:22.515007818+02:00"
+digest: sha256:616f199cd771f1fa17166624d1a2d2113922395bb5f75574156ad0fa5e43cc90
+generated: "2024-08-30T13:27:12.414669384+02:00"

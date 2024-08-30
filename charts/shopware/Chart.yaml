@@ -31,7 +31,7 @@ dependencies:
 
   - name: operator
     alias: shopware-operator
-    version: 0.0.10
+    version: 0.0.11
     repository: https://shopware.github.io/helm-charts/
     condition: shopware-operator.enabled
 
