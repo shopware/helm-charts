@@ -95,7 +95,7 @@ spec:
     host: {{ template "generateHost" . }}
     {{- if hasKey .Values.store "network" }}
     enabledIngress: {{ .Values.store.network.enabled | default false }}
-    ingressClassName: {{ .Values.store.network.ingressClassName | default "standard" }}
+    ingressClassName: {{ .Values.store.network.ingressClassName | default "" }}
     annotations:
       {{- with .Values.store.network.annotations }}
         {{- toYaml . | nindent 6 }}
