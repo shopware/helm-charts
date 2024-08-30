@@ -200,6 +200,30 @@ Finally, load the image into your container registry for the cluster. If you're 
 kind load docker-image test
 ```
 
+### TLS with Nginx controller
+If you want to enable TLS termination with Traefik and do not require custom certificates,
+you can use the following snippet to utilize the public certificates from Traefik for proper TLS termination:
+```
+# Create a directory to store the certificates
+mkdir -p certs
+
+# Download the public certificates from traefik.me
+wget -O certs/privkey.pem https://traefik.me/privkey.pem
+wget -O certs/fullchain.pem https://traefik.me/fullchain.pem
+
+# Create a Kubernetes secret to store the certificates
+kubectl create secret tls traefik-me-cert \
+  --cert=certs/fullchain.pem --key=certs/privkey.pem \
+  --namespace=ingress-nginx --dry-run=client -o yaml | kubectl apply -f -
+
+# Verify if the default SSL certificate is already set; if not, patch the deployment
+kubectl get deployment ingress-nginx-controller -n ingress-nginx -o jsonpath='{.spec.template.spec.containers[0].args}' | grep -q -- '--default-ssl-certificate=ingress-nginx/traefik-me-cert' && echo "Certificate already added" || kubectl patch deployment ingress-nginx-controller -n ingress-nginx --type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--default-ssl-certificate=ingress-nginx/traefik-me-cert"}]'
+```
+This configuration will download the required certificates, create a Kubernetes secret to store them, and ensure that the Ingress controller uses the correct certificate for TLS termination.
+
+> [!WARNING]
+> This configuration is not recommended for use in a production environment, as it does not provide secure traffic for your shop.
+
 ## Installation With Istio
 For a more complex setup with additional prerequisites, you can install this Helm chart with Istio support:
 
@@ -214,10 +238,6 @@ helm install my-shop shopware/shopware --namespace shopware --values examples/va
 > It assumes that Istio is already set up and configured in your environment.
 
 # Information
-### TLS and Certificates on Kind
-If the shop is unable to load styles from MinIO, you may need to accept the certificate in your browser.
-To verify this, try opening the `all.css` file directly in your browser. You can locate the URL in your browser's network debugging tab.
-
 ### Operator
 A Shopware operator is installed for each namespace by default.
 You can disable this in the [values.yaml](values.yaml) file if you prefer to use it cluster-wide.
