@@ -31,7 +31,7 @@ percona:
     # annotations:
     # affinity:
     # serviceAnnotations:
-    storageClassName:
+    # storageClassName:
     # storageSize: 8Gi
 
     # We overwrite the topologySpreadConstraints for this to schedule only one database
@@ -75,7 +75,7 @@ store:
   # We use traefik.me to resolve to 127.0.0.1
   # Enter your DNS name for the shop.
   # This will make sure that your sales-channel is set up correctly and the ingress is using the host address.
-  host: localhost.traefik.me
+  # host: localhost.traefik.me
 
   # This configuration is used to disable S3 and database checks prior to setup and shop creation.
   # Note: This is a known issue in the operator and will be addressed in a future update.
@@ -127,17 +127,6 @@ store:
   #       channels: ["!event", "!doctrine"]
   #     business_event_handler_buffer:
   #       level: info
-
-  # You can define a sidecar logging configuration here.
-  # Requires monolog to be enabled and configured to log into a file.
-  sidecarLogging:
-    image:
-      repository:
-      tag:
-      pullPolicy:
-    #logFfolder: /var/log
-    #logFile: shopware.log
-    #lokiHost: loki-gateway.loki.svc.cluster.local
 
   container:
     # This image is used for the setup job and the deployment. If you want to migrate to a new
