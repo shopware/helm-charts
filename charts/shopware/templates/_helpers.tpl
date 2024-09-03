@@ -113,3 +113,37 @@ secretAccessKeyRef:
 {{ define "getStoreDeploymentName" -}}
 {{ printf "%s-store" .Release.Name }}
 {{- end -}}
+
+{{ define "fluentBitConfigmap" -}}
+{{- if hasKey .Values.store "sidecarLogging" }}
+{{- $fluentBitInputPath := printf "Path %s/%s"  (.Values.store.sidecarLogging.logFolder | default "/var/log") (.Values.store.sidecarLogging.logFile | default "shopware.log") -}}
+[SERVICE]
+    Daemon Off
+    Flush 1
+    Log_Level info
+    Parsers_File /fluent-bit/etc/parsers.conf
+    Parsers_File /fluent-bit/etc/conf/custom_parsers.conf
+    HTTP_Server On
+    HTTP_Listen 0.0.0.0
+    HTTP_Port 2020
+    Health_Check On
+
+[INPUT]
+    Name tail
+    {{ $fluentBitInputPath }}
+    multiline.parser docker, cri
+    Tag shopware
+    Mem_Buf_Limit 5MB
+    Skip_Long_Lines On
+
+[OUTPUT]
+    Name         loki
+    Match        *
+    Host         {{ .Values.store.sidecarLogging.lokiHost | default "loki-gateway.loki.svc.cluster.local" }}
+    Port         80
+    Tls          off
+    Labels       job=fluentbit,service=shopware
+    auto_kubernetes_labels on
+    tenant_id    tenant-{{ .Release.Namespace }}
+{{- end }}
+{{- end }}
