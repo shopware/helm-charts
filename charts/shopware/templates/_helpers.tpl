@@ -144,6 +144,6 @@ secretAccessKeyRef:
     Tls          off
     Labels       job=fluentbit,service=shopware
     auto_kubernetes_labels on
-    tenant_id    {{ .Release.Namespace }}
+    tenant_id    tenant-{{ .Release.Namespace }}
 {{- end }}
 {{- end }}
