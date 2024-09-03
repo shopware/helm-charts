@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Namespace }}-fluent-bit
+  name: {{ .Release.Name }}-fluent-bit
   namespace: {{ .Release.Namespace }}
   labels:
     app: fluent-bit
