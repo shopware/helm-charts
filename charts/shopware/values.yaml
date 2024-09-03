@@ -75,7 +75,7 @@ store:
   # We use traefik.me to resolve to 127.0.0.1
   # Enter your DNS name for the shop.
   # This will make sure that your sales-channel is set up correctly and the ingress is using the host address.
-  # host: localhost.traefik.me
+  host: localhost.traefik.me
 
   # This configuration is used to disable S3 and database checks prior to setup and shop creation.
   # Note: This is a known issue in the operator and will be addressed in a future update.
