@@ -86,7 +86,7 @@ secretAccessKeyRef:
 {{- end -}}
 
 {{ define "getFluentBitName" -}}
-{{ printf "%s-fluent-bit-config" .Release.Name }}
+{{ printf "%s-fluent-bit" .Release.Name }}
 {{- end -}}
 
 {{ define "getMonologConfigName" -}}
