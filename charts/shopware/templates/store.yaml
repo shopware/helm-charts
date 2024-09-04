@@ -235,6 +235,6 @@ spec:
         emptyDir: {}
       - name: {{ template "getFluentBitName" . }}
         configMap:
-          name: fluent-bit
+          name: {{ template "getFluentBitName" . }}
           defaultMode: 420
       {{- end}}
