@@ -162,7 +162,7 @@ spec:
             protocol: TCP
         resources: {}
         volumeMounts:
-          - name: fluent-bit-config
+          - name: {{ template "getFluentBitName" . }}
             mountPath: /fluent-bit/etc/conf
           - name: logs
             mountPath: {{ .Values.store.sidecarLogging.logFolder | default "/var/log" }}
@@ -233,7 +233,7 @@ spec:
       {{- if hasKey .Values.store "sidecarLogging" }}
       - name: logs
         emptyDir: {}
-      - name: fluent-bit-config
+      - name: {{ template "getFluentBitName" . }}
         configMap:
           name: fluent-bit
           defaultMode: 420

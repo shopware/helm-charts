@@ -85,6 +85,10 @@ secretAccessKeyRef:
 {{ printf "%s-caddy-config" .Release.Name }}
 {{- end -}}
 
+{{ define "getFluentBitName" -}}
+{{ printf "%s-fluent-bit-config" .Release.Name }}
+{{- end -}}
+
 {{ define "getMonologConfigName" -}}
 {{ printf "%s-monolog-config" .Release.Name }}
 {{- end -}}
