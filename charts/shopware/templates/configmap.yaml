@@ -1,0 +1,19 @@
+{{- if hasKey .Values.store "sidecarLogging" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-fluent-bit
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: fluent-bit
+data:
+  custom_parsers.conf: |
+    [PARSER]
+        Name docker_no_time
+        Format json
+        Time_Keep Off
+        Time_Key time
+        Time_Format %Y-%m-%dT%H:%M:%S.%L
+  fluent-bit.conf:  |
+    {{- include "fluentBitConfigmap" . | nindent 4 }}
+{{- end }}
