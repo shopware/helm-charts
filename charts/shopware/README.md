@@ -49,7 +49,7 @@ However, you can modify the configuration to your needs.
 ### Prerequisites
 - Kubernetes v1.28.0+
 - [Helm v3](https://helm.sh/docs/intro/install/)
-- S3
+- S3 based api ([More Details](https://developer.shopware.com/docs/guides/hosting/infrastructure/filesystem.html#amazon-s3))
 
 If you have an existing cluster make sure the prerequisites are installed and go directly to [Usage](#usage).
 
