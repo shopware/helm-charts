@@ -79,11 +79,7 @@ spec:
       {{- with .Values.percona.proxy.resources }}
         {{- toYaml . | nindent 6 }}
       {{- end }}
-    nodeSelector:
-      {{- with .Values.percona.nodeSelector }}
-          {{- toYaml . | nindent 6 }}
-      {{- end }}
-
+    
     volumeSpec:
       persistentVolumeClaim:
         storageClassName: {{ .Values.percona.proxy.storageClassName | default "" | quote}}
