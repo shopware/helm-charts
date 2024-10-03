@@ -8,6 +8,18 @@ dependencies:
 - name: valkey
   repository: oci://registry-1.docker.io/bitnamicharts
   version: 1.0.1
+- name: valkey
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 1.0.1
+- name: valkey
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 1.0.1
+- name: redis
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 19.1.2
+- name: redis
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: 19.1.2
 - name: redis
   repository: oci://registry-1.docker.io/bitnamicharts
   version: 19.1.2
@@ -17,5 +29,5 @@ dependencies:
 - name: prometheus
   repository: https://prometheus-community.github.io/helm-charts
   version: 25.24.1
-digest: sha256:65f40babc850033b47c251ec048e6091e2068a6b32c64932c198e5561bf0bbf7
-generated: "2024-10-01T16:13:07.498728+02:00"
+digest: sha256:42803a87395b604500df7eff5c91a2733539a3049cb61fb61fe1bdd7f1a2b64c
+generated: "2024-10-03T10:24:00.488359+02:00"
