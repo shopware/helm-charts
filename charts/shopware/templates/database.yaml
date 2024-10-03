@@ -39,7 +39,7 @@ spec:
       {{- end }}
     volumeSpec:
       persistentVolumeClaim:
-        storageClassName: {{ .Values.percona.database.storageClassName | default "" | quote }}
+        storageClassName: {{ .Values.percona.database.storageClassName | quote }}
         resources:
           requests:
             storage: {{ .Values.percona.database.storageSize | default "30G" | quote }}

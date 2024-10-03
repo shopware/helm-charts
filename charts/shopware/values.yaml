@@ -31,8 +31,8 @@ percona:
     # annotations:
     # affinity:
     # serviceAnnotations:
-    # storageClassName:
-    # storageSize: 8Gi
+    # storageClassName: standard
+    storageSize: 8Gi
 
     # We overwrite the topologySpreadConstraints for this to schedule only one database
     topologySpreadConstraints:
@@ -243,9 +243,11 @@ minio:
 opensearch:
   enabled: false
 
-redissession:
-  enabled: false
+valkeyapp:
+  enabled: true
   architecture: standalone
+  replica:
+    replicaCount: 1
   master:
     resources:
       requests:
@@ -254,12 +256,46 @@ redissession:
       limits:
         memory: 1Gi
         cpu: 1000m
+  auth:
+    enabled: false
+
+valkeysession:
+  enabled: true
+  architecture: standalone
+  replica:
+    replicaCount: 1
+  master:
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 1000m
+      limits:
+        memory: 1Gi
+        cpu: 1000m
+  auth:
+    enabled: false
+
+valkeyworker:
+  enabled: false
+  architecture: standalone
+  replica:
+    replicaCount: 1
+  master:
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 1000m
+      limits:
+        memory: 1Gi
+        cpu: 2000m
   auth:
     enabled: false
 
 redisapp:
-  enabled: true
+  enabled: false
   architecture: standalone
+  replica:
+    replicaCount: 1
   master:
     resources:
       requests:
@@ -271,9 +307,27 @@ redisapp:
   auth:
     enabled: false
 
-redisqueue:
+redissession:
   enabled: false
   architecture: standalone
+  replica:
+    replicaCount: 1
+  master:
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 1000m
+      limits:
+        memory: 1Gi
+        cpu: 1000m
+  auth:
+    enabled: false
+
+redisworker:
+  enabled: false
+  architecture: standalone
+  replica:
+    replicaCount: 1
   master:
     resources:
       requests:

@@ -65,6 +65,18 @@ secretAccessKeyRef:
 {{- end}}
 {{- end -}}
 
+{{ define "getValkeyAppMasterService" -}}
+{{ printf "%s-valkeyapp-master" .Release.Name }}
+{{- end -}}
+
+{{ define "getValkeySessionMasterService" -}}
+{{ printf "%s-valkeysession-master" .Release.Name }}
+{{- end -}}
+
+{{ define "getValkeyWorkerService" -}}
+{{ printf "%s-valkeyworker-master" .Release.Name }}
+{{- end -}}
+
 {{ define "getRedisAppMasterService" -}}
 {{ printf "%s-redisapp-master" .Release.Name }}
 {{- end -}}
@@ -73,8 +85,8 @@ secretAccessKeyRef:
 {{ printf "%s-redissession-master" .Release.Name }}
 {{- end -}}
 
-{{ define "getRedisReplicasService" -}}
-{{ printf "%s-redis-replicas" .Release.Name }}
+{{ define "getRedisWorkerService" -}}
+{{ printf "%s-redisworker-master" .Release.Name }}
 {{- end -}}
 
 {{ define "getOpenSearchClusterName" -}}

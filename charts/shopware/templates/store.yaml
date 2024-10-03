@@ -29,19 +29,38 @@ spec:
   {{- end }}
 
   sessionCache:
-    {{- if .Values.redissession.enabled }}
+    {{- if .Values.valkeysession.enabled }}
+    adapter: redis
+    redisHost: {{ template "getValkeySessionMasterService" . }}
+    {{- else if .Values.redissession.enabled }}
     adapter: redis
     redisHost: {{ template "getRedisSessionMasterService" . }}
     {{- else }}
     adapter: builtin
     {{- end }}
+
   appCache:
-    {{- if .Values.redisapp.enabled }}
+    {{- if .Values.valkeyapp.enabled }}
+    adapter: redis
+    redisHost: {{ template "getValkeyAppMasterService" . }}
+    {{- else if .Values.redisapp.enabled }}
     adapter: redis
     redisHost: {{ template "getRedisAppMasterService" . }}
     {{- else }}
     adapter: builtin
     {{- end }}
+
+  worker:
+    {{- if .Values.valkeyworker.enabled }}
+    adapter: redis
+    redisHost: {{ template "getValkeyWorkerService" . }}
+    {{- else if .Values.redisworker.enabled }}
+    adapter: redis
+    redisHost: {{ template "getRedisWorkerMasterService" . }}
+    {{- else }}
+    adapter: builtin
+    {{- end }}
+
 
   {{- if hasKey .Values.store "otel" }}
   {{- if hasKey .Values.store.otel "exporterEndpoint" }}

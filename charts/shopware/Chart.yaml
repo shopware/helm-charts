@@ -35,6 +35,24 @@ dependencies:
     repository: https://shopware.github.io/helm-charts/
     condition: shopware-operator.enabled
 
+  - name: valkey
+    alias: valkeyapp
+    version: 1.0.1
+    repository: oci://registry-1.docker.io/bitnamicharts
+    condition: valkeyapp.enabled
+
+  - name: valkey
+    alias: valkeysession
+    version: 1.0.1
+    repository: oci://registry-1.docker.io/bitnamicharts
+    condition: valkeysession.enabled
+
+  - name: valkey
+    alias: valkeyworker
+    version: 1.0.1
+    repository: oci://registry-1.docker.io/bitnamicharts
+    condition: valkeyworker.enabled
+
   - name: redis
     alias: redisapp
     version: 19.1.2
@@ -48,10 +66,10 @@ dependencies:
     condition: redissession.enabled
 
   - name: redis
-    alias: redisqueue
+    alias: redisworker
     version: 19.1.2
     repository: oci://registry-1.docker.io/bitnamicharts
-    condition: redisqueue.enabled
+    condition: redisworker.enabled
 
   - name: grafana
     alias: grafana

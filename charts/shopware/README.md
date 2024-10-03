@@ -1,12 +1,13 @@
 # Shopware Helm Chart
 
 ## Table of Contents
-- [Disclaimer](#Disclaimer)
-- [Cluster Installation](#Cluster-Installation)
-- [Usage](#Usage)
-- [Information](#Information)
 
-# Disclaimer
+- [Disclaimer](#disclaimer)
+- [Cluster Installation](#cluster-installation)
+- [Usage](#usage)
+- [Information](#information)
+
+## Disclaimer
 
 This Shopware Helm chart is currently in an experimental phase and is not ready for
 production use. The services, configurations, and individual steps described in this
@@ -26,8 +27,7 @@ loss that may occur.
 If you encounter any issues or have suggestions for improvements, please feel free to
 open an issue or contribute to the project.
 
-
-# Cluster Installation
+## Cluster Installation
 
 This Helm chart can be installed locally or within an existing Kubernetes cluster, using tools like ArgoCD.
 This guide focuses on a simple local installation to help you get started.
@@ -46,7 +46,9 @@ However, you can modify the configuration to your needs.
 > in our development roadmap.
 
 ## Existing Cluster
+
 ### Prerequisites
+
 - Kubernetes v1.28.0+
 - [Helm v3](https://helm.sh/docs/intro/install/)
 - S3 based api ([More Details](https://developer.shopware.com/docs/guides/hosting/infrastructure/filesystem.html#amazon-s3))
@@ -54,7 +56,9 @@ However, you can modify the configuration to your needs.
 If you have an existing cluster make sure the prerequisites are installed and go directly to [Usage](#usage).
 
 ## Local Test Cluster
+
 ### Prerequisites
+
 - [Kind 0.23.0+](https://kind.sigs.k8s.io/docs/user/quick-start)
 - [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 - [Helm v3](https://helm.sh/docs/intro/install/)
@@ -67,7 +71,8 @@ It was primarily designed for testing Kubernetes itself but is also useful for l
 For more information, visit the [Kind documentation](https://kind.sigs.k8s.io/).
 
 To properly set up the network configuration, we provide a baseline [config](kind-config.yaml) file for Kind. To create the cluster, execute:
-```
+
+```sh
 kind create cluster --config kind-config.yaml
 ```
 
@@ -89,7 +94,8 @@ To disable MinIO, set `minio.enabled` to `false` in the [values.yaml](values.yam
 > With Istio, this is not an issue as mTLS is handled by Istio.
 
 To install the MinIO Operator in your cluster, execute:
-```
+
+```sh
 kubectl apply -k "github.com/minio/operator?ref=v5.0.15"
 ```
 
@@ -97,13 +103,15 @@ kubectl apply -k "github.com/minio/operator?ref=v5.0.15"
 
 Ingress is a Kubernetes resource that manages external access to services in a cluster, providing load balancing, SSL termination, and name-based virtual hosting.
 To enable this, deploy an ingress resource such as NGINX:
-```
+
+```sh
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
 ```
 
 > [!NOTE]
 > This setup may take a few seconds. You can either grab a coffee or check the pod ready status with:
-> ```
+>
+> ```sh
 > kubectl wait --namespace ingress-nginx \
 >  --for=condition=ready pod \
 >  --selector=app.kubernetes.io/component=controller \
@@ -119,13 +127,15 @@ Alternatively, you can avoid this step by pulling your image into your local Doc
 For instructions on loading images into the Kind cluster, see [Loading an Image into Your Cluster](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster).
 
 To create the secret for GitHub, use:
-```
+
+```sh
 kubectl create secret docker-registry regcred --docker-server=ghcr.io --docker-username=<your-username> \
   --docker-password=<your-package-read-token> --docker-email=<your-email> --namespace <your-namespace>
 ```
 
 To use image pull secrets, update the values in this Helm chart as follows:
-```
+
+```sh
 store:
   container:
     imagePullSecrets:
@@ -138,9 +148,11 @@ You can use this process to load a local image into your cluster, a common pract
 For a complete guide, refer to [Loading an Image into Your Cluster](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster).
 
 You can build a local shopware image and load the image into the Kind cluster:
-```
+
+```sh
 kind load docker-image <your-image>
 ```
+
 If you need guidance on creating a Docker image, please refer to the [Creating a Docker Image](#create-docker-image) section.
 
 > [!NOTE]
@@ -152,14 +164,17 @@ Once you have a running cluster with S3 and ingress support, you can install thi
 Customize the installation using the [values.yaml](values.yaml) file.
 
 ## Minimal Installation
+
 For a minimal installation, run:
-```
+
+```sh
 helm repo add shopware https://shopware.github.io/helm-charts/
 helm install my-shop shopware/shopware --namespace shopware --create-namespace
 ```
 
 If you want to use your own image use:
-```
+
+```sh
 helm repo add shopware https://shopware.github.io/helm-charts/
 helm install my-shop shopware/shopware --namespace shopware --create-namespace --set store.container.image=<image-name>
 ```
@@ -172,37 +187,44 @@ helm install my-shop shopware/shopware --namespace shopware --create-namespace -
 > The s3 tenant setup may take a few seconds.
 > So Shopware is running before the assets are public.
 
-Once the setup job in your cluster is complete and your store is in the ready state, you can access the shop at https://localhost.traefik.me/
+Once the setup job in your cluster is complete and your store is in the ready state, you can access the shop at <https://localhost.traefik.me/>
 If needed, you can modify the domain by updating the values.yaml file.
 
 ### Create Docker image
 
 To create a new Shopware project, execute the following command:
-```
+
+```sh
 composer create-project shopware/production test
 ```
+
 Including the Docker configuration at this stage is optional; it will be added in the next step.
 
 Next, navigate to your project directory and configure Shopware to use the appropriate environment variables
 by installing the necessary Shopware packages:
-```
+
+```sh
 cd test
 composer require shopware/k8s-meta shopware/docker
 ```
 
 After completing the configuration, build the Docker image:
-```
+
+```sh
 docker build -t test -f docker/Dockerfile .
 ```
 
 Finally, load the image into your container registry for the cluster. If you're using Kind, use the following command:
-```
+
+```sh
 kind load docker-image test
 ```
 
 ### TLS with Nginx controller
+
 If you want to enable TLS termination with Traefik and do not require custom certificates,
 you can use the following snippet to utilize the public certificates from Traefik for proper TLS termination:
+
 ```
 # Create a directory to store the certificates
 mkdir -p certs
@@ -219,15 +241,17 @@ kubectl create secret tls traefik-me-cert \
 # Verify if the default SSL certificate is already set; if not, patch the deployment
 kubectl get deployment ingress-nginx-controller -n ingress-nginx -o jsonpath='{.spec.template.spec.containers[0].args}' | grep -q -- '--default-ssl-certificate=ingress-nginx/traefik-me-cert' && echo "Certificate already added" || kubectl patch deployment ingress-nginx-controller -n ingress-nginx --type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--default-ssl-certificate=ingress-nginx/traefik-me-cert"}]'
 ```
+
 This configuration will download the required certificates, create a Kubernetes secret to store them, and ensure that the Ingress controller uses the correct certificate for TLS termination.
 
 > [!WARNING]
 > This configuration is not recommended for use in a production environment, as it does not provide secure traffic for your shop.
 
 ## Installation With Istio
+
 For a more complex setup with additional prerequisites, you can install this Helm chart with Istio support:
 
-```
+```sh
 kubectl create namespace shopware
 kubectl label namespace shopware istio-injection=enabled
 helm install my-shop shopware/shopware --namespace shopware --values examples/values_istio.yaml
@@ -238,11 +262,14 @@ helm install my-shop shopware/shopware --namespace shopware --values examples/va
 > It assumes that Istio is already set up and configured in your environment.
 
 # Information
+
 ### Operator
+
 A Shopware operator is installed for each namespace by default.
 You can disable this in the [values.yaml](values.yaml) file if you prefer to use it cluster-wide.
 As the operator is still in beta, we advise against using it at the cluster level.
 
 ### Shopware Image
+
 While a default image is provided with this Helm chart, it is recommended that you do not use it. Instead, create your own custom
 Docker images and override the default image in the Helm chart using a values file.
