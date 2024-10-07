@@ -42,7 +42,7 @@ spec:
         storageClassName: {{ .Values.percona.database.storageClassName | quote }}
         resources:
           requests:
-            storage: {{ .Values.percona.database.storageSize | default "30G" | quote }}
+            storage: {{ .Values.percona.database.storageSize | default "8Gi" | quote }}
     gracePeriod: 600
 
     # https://developer.shopware.com/docs/guides/hosting/performance/performance-tweaks.html

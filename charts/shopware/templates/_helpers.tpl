@@ -73,7 +73,7 @@ secretAccessKeyRef:
 {{ printf "%s-valkeysession-master" .Release.Name }}
 {{- end -}}
 
-{{ define "getValkeyWorkerService" -}}
+{{ define "getValkeyWorkerMasterService" -}}
 {{ printf "%s-valkeyworker-master" .Release.Name }}
 {{- end -}}
 
@@ -85,7 +85,7 @@ secretAccessKeyRef:
 {{ printf "%s-redissession-master" .Release.Name }}
 {{- end -}}
 
-{{ define "getRedisWorkerService" -}}
+{{ define "getRedisWorkerMasterService" -}}
 {{ printf "%s-redisworker-master" .Release.Name }}
 {{- end -}}
 

@@ -27,7 +27,7 @@ loss that may occur.
 If you encounter any issues or have suggestions for improvements, please feel free to
 open an issue or contribute to the project.
 
-## Cluster Installation
+# Cluster Installation
 
 This Helm chart can be installed locally or within an existing Kubernetes cluster, using tools like ArgoCD.
 This guide focuses on a simple local installation to help you get started.
