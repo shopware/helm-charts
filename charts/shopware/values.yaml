@@ -243,23 +243,11 @@ minio:
 opensearch:
   enabled: false
 
-redissession:
-  enabled: false
-  architecture: standalone
-  master:
-    resources:
-      requests:
-        memory: 500Mi
-        cpu: 1000m
-      limits:
-        memory: 1Gi
-        cpu: 1000m
-  auth:
-    enabled: false
-
-redisapp:
+valkeyapp:
   enabled: true
   architecture: standalone
+  replica:
+    replicaCount: 1
   master:
     resources:
       requests:
@@ -271,9 +259,27 @@ redisapp:
   auth:
     enabled: false
 
-redisqueue:
-  enabled: false
+valkeysession:
+  enabled: true
   architecture: standalone
+  replica:
+    replicaCount: 1
+  master:
+    resources:
+      requests:
+        memory: 500Mi
+        cpu: 1000m
+      limits:
+        memory: 1Gi
+        cpu: 1000m
+  auth:
+    enabled: false
+
+valkeyworker:
+  enabled: true
+  architecture: standalone
+  replica:
+    replicaCount: 1
   master:
     resources:
       requests:
@@ -284,6 +290,54 @@ redisqueue:
         cpu: 2000m
   auth:
     enabled: false
+
+redisapp:
+  enabled: false
+  # architecture: standalone
+  # replica:
+  #   replicaCount: 1
+  # master:
+  #   resources:
+  #     requests:
+  #       memory: 500Mi
+  #       cpu: 1000m
+  #     limits:
+  #       memory: 1Gi
+  #       cpu: 1000m
+  # auth:
+  #   enabled: false
+
+redissession:
+  enabled: false
+  # architecture: standalone
+  # replica:
+  #   replicaCount: 1
+  # master:
+  #   resources:
+  #     requests:
+  #       memory: 500Mi
+  #       cpu: 1000m
+  #     limits:
+  #       memory: 1Gi
+  #       cpu: 1000m
+  # auth:
+  #   enabled: false
+
+redisworker:
+  enabled: false
+  # architecture: standalone
+  # replica:
+  #   replicaCount: 1
+  # master:
+  #   resources:
+  #     requests:
+  #       memory: 500Mi
+  #       cpu: 1000m
+  #     limits:
+  #       memory: 1Gi
+  #       cpu: 2000m
+  # auth:
+  #   enabled: false
 
 # blackfire:
   # serverID: <your id>

@@ -39,10 +39,10 @@ spec:
       {{- end }}
     volumeSpec:
       persistentVolumeClaim:
-        storageClassName: {{ .Values.percona.database.storageClassName | default "" | quote }}
+        storageClassName: {{ .Values.percona.database.storageClassName | default "" }}
         resources:
           requests:
-            storage: {{ .Values.percona.database.storageSize | default "30G" | quote }}
+            storage: {{ .Values.percona.database.storageSize | default "8Gi" | quote }}
     gracePeriod: 600
 
     # https://developer.shopware.com/docs/guides/hosting/performance/performance-tweaks.html
