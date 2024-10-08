@@ -190,10 +190,20 @@ store:
     # annotations:
 
   # You can run commands before and after the /setup is executed.
-  # The commands will be chained like this: <before> && /setup && <after>
+  # The commands will be chained like this: <before> /setup <after>
+  # So make sure to add a `;` for execute always or `&&` for chaining and exit if error
+  # occurs.
   # setupHook:
-  #   before: echo This is a command before setup will executed
-  #   after: echo This is a command after setup is executed
+  #   before: |
+  #     echo This is a command before setup will executed;
+  #   after: |
+  #     ; echo This is a command after setup is executed;
+  #     ps -ef | grep 'fluent-bit' | grep -v kill | grep -v grep | awk '{print $2}' | xargs -r kill -15
+  #     true;
+
+  # migrationHook:
+  #   before: echo This is a command before migration will executed;
+  #   after: echo This is a command after migration is executed;
 
   # Dynamic is the default here. If you are more experience user then change these values as you like.
   # fpm:
