@@ -29,34 +29,25 @@ spec:
   {{- end }}
 
   sessionCache:
-    {{- if .Values.valkeysession.enabled }}
+    {{- if or .Values.valkeysession.enabled .Values.redissession.enabled}}
     adapter: redis
-    redisHost: {{ template "getValkeySessionMasterService" . }}
-    {{- else if .Values.redissession.enabled }}
-    adapter: redis
-    redisHost: {{ template "getRedisSessionMasterService" . }}
+    redisHost: {{ template "getSessionCacheMasterService" . }}
     {{- else }}
     adapter: builtin
     {{- end }}
 
   appCache:
-    {{- if .Values.valkeyapp.enabled }}
+    {{- if or .Values.valkeyapp.enabled .Values.redisapp.enabled }}
     adapter: redis
-    redisHost: {{ template "getValkeyAppMasterService" . }}
-    {{- else if .Values.redisapp.enabled }}
-    adapter: redis
-    redisHost: {{ template "getRedisAppMasterService" . }}
+    redisHost: {{ template "getAppCacheMasterService" . }}
     {{- else }}
     adapter: builtin
     {{- end }}
 
   worker:
-    {{- if .Values.valkeyworker.enabled }}
+    {{- if or .Values.valkeyworker.enabled .Values.redisworker.enabled}}
     adapter: redis
-    redisHost: {{ template "getValkeyWorkerMasterService" . }}
-    {{- else if .Values.redisworker.enabled }}
-    adapter: redis
-    redisHost: {{ template "getRedisWorkerMasterService" . }}
+    redisHost: {{ template "getWorkerMasterService" . }}
     {{- else }}
     adapter: builtin
     {{- end }}
