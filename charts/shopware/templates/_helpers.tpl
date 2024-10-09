@@ -40,30 +40,37 @@
 {{- end }}
 {{- end -}}
 
-{{ define "getStoreS3" -}}
+{{- define "getStoreS3" -}}
 {{- if .Values.minio.enabled }}
+# MinIO configuration
 privateBucketName: "shopware-private"
 publicBucketName: "shopware-public"
 accessKeyRef:
-  name:  {{ template "getTenantUserSecretName" . }}
+  name: {{ template "getTenantUserSecretName" . }}
   key: "CONSOLE_ACCESS_KEY"
 secretAccessKeyRef:
   name: {{ template "getTenantUserSecretName" . }}
   key: "CONSOLE_SECRET_KEY"
 
 {{- if hasKey .Values.store "s3Storage" }}
-{{- fail "If you use MinIO the s3Storage variables will get overwritten! Please remove them" }}
+{{- fail "If you use MinIO, the s3Storage variables will be overwritten! Please remove them." }}
 {{- end }}
 
-{{- else }}
-privateBucketName: {{ .Values.store.s3Storage.privateBucketName | default "shopware-private" }}
-publicBucketName: {{ .Values.store.s3Storage.publicBucketName | default "shopware-public" }}
+{{- else if .Values.s3.enabled }}
+# AWS S3 configuration
+privateBucketName: {{ .Values.s3.privateBucketName }}
+publicBucketName: {{ .Values.s3.publicBucketName }}
 accessKeyRef:
-  {{ toYaml .Values.store.s3Storage.accessKeyRef  | indent 6 }}
+  name: aws-s3-credentials
+  key: "AWS_ACCESS_KEY"
 secretAccessKeyRef:
-  {{ toYaml .Values.store.s3Storage.secretAccessKeyRef | indent 6 }}
-{{- end}}
-{{- end -}}
+  name: aws-s3-credentials
+  key: "AWS_SECRET_KEY"
+
+{{- else }}
+{{- fail "Neither MinIO nor S3 are enabled. Please enable one." }}
+{{- end }}
+{{- end }}
 
 {{ define "getSessionCacheMasterService" -}}
 {{- if .Values.valkeysession.enabled }}

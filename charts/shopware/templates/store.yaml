@@ -4,11 +4,13 @@ metadata:
   name: '{{ .Release.Name }}'
 spec:
   disableChecks: {{ .Values.store.disableChecks | default false }}
-  {{- if .Values.minio.enabled }}
+  {{- if .Values.s3.enabled }}
+  cdnURL: 'https://{{ .Values.s3.publicBucketName }}.s3.amazonaws.com'
+  s3Storage:
+    endpointURL: "{{ .Values.s3.endpointURL }}"
+    {{- include "getStoreS3" . | nindent 4 -}}
+  {{- else if .Values.minio.enabled }}
   cdnURL: 'https://{{ template "generateS3URLApi" . }}/shopware-public'
-  {{- else }}
-  cdnURL: 'https://{{ template "generateS3URLApi" . }}/{{ .Values.store.s3Storage.publicBucketName }}'
-  {{- end }}
   s3Storage:
     {{- if .Values.minio.useTLS }}
     endpointURL: "https://minio.{{ .Release.Namespace }}.svc.cluster.local"
@@ -16,6 +18,7 @@ spec:
     endpointURL: "http://minio.{{ .Release.Namespace }}.svc.cluster.local"
     {{- end }}
     {{- include "getStoreS3" . | nindent 4 -}}
+  {{- end }}
 
   {{- if hasKey .Values "blackfire" }}
   {{- if hasKey .Values.blackfire "serverID" }}
