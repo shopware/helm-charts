@@ -16,7 +16,7 @@
 
 {{ define "generateS3URLConsole" -}}
 {{- if hasKey .Values.store "host" }}
-{{- printf "s3-console.%s" .Values.store.host }}
+{{- printf "s3-console-%s" .Values.store.host }}
 {{- else }}
 {{- printf "s3-console.localhost.traefik.me" }}
 {{- end }}
@@ -24,7 +24,7 @@
 
 {{ define "generateS3URLApi" -}}
 {{- if hasKey .Values.store "host" }}
-{{- printf "s3-api.%s" .Values.store.host }}
+{{- printf "s3-api-%s" .Values.store.host }}
 {{- else }}
 {{- printf "s3-api.localhost.traefik.me" }}
 {{- end }}

@@ -249,6 +249,7 @@ minio:
     enabled: true
     className: nginx
     # annotations:
+    tls: {}
 
 opensearch:
   enabled: false
