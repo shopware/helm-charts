@@ -60,12 +60,14 @@ secretAccessKeyRef:
 # AWS S3 configuration
 privateBucketName: {{ .Values.s3.privateBucketName }}
 publicBucketName: {{ .Values.s3.publicBucketName }}
+{{- if not .Values.s3.useServiceAccount }}
 accessKeyRef:
   name: aws-s3-credentials
   key: "AWS_ACCESS_KEY"
 secretAccessKeyRef:
   name: aws-s3-credentials
   key: "AWS_SECRET_KEY"
+{{- end }}
 
 {{- else }}
 {{- fail "Neither MinIO nor S3 are enabled. Please enable one." }}
