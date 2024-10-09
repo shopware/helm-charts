@@ -33,10 +33,10 @@ spec:
                   {{- else }}
                   name: http-minio
                   {{- end }}
+{{- if .Values.minio.ingress.tls }}
   tls:
-  - hosts:
-    - {{ template "generateS3URLApi" .  }}
-    secretName: minio-api-tls
+  {{- .Values.minio.ingress.tls | toYaml | nindent 4 }}
+{{- end }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -69,10 +69,10 @@ spec:
                   {{- else }}
                   name: http-console
                   {{- end }}
+{{- if .Values.minio.ingress.tls }}
   tls:
-  - hosts:
-    - {{ template "generateS3URLConsole" .  }}
-    secretName: minio-console-tls
+  {{- .Values.minio.ingress.tls | toYaml | nindent 4 }}
+{{- end }}
 {{ end }}
 {{ end }}
 {{ end }}
