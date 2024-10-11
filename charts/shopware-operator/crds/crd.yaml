@@ -5387,6 +5387,9 @@ spec:
                     default: 8000
                     format: int32
                     type: integer
+                  tlsSecretName:
+                    default: store-tls
+                    type: string
                 required:
                 - enabledIngress
                 - host
