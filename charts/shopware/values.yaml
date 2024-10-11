@@ -189,21 +189,25 @@ store:
     ingressClassName: nginx
     # annotations:
 
-  # You can run commands before and after the /setup is executed.
-  # The commands will be chained like this: <before> /setup <after>
-  # So make sure to add a `;` for execute always or `&&` for chaining and exit if error
-  # occurs.
-  # setupHook:
-  #   before: |
-  #     echo This is a command before setup will executed;
-  #   after: |
-  #     ; echo This is a command after setup is executed;
-  #     ps -ef | grep 'fluent-bit' | grep -v kill | grep -v grep | awk '{print $2}' | xargs -r kill -15
-  #     true;
+  # You have the option to run commands both before and after the /setup command is executed.
+  # If you wish to run the default setup script included in the official Shopware Docker image,
+  # ensure that the /setup command is invoked.
+  # In case the /setup command fails, it is crucial to exit the process with an appropriate
+  # error code. Failing to provide an error code will result in the job being marked as
+  # successful, even though the store may be in a non-functional state.
+  # setupScript: |
+  #   echo "Execute setup script from paas backend"
+  #   /setup
+  #   if [ $? -eq 0 ]; then
+  #       echo "Setup Finished"
+  #   else
+  #       echo "Setup Failed: exit with 20"
+  #       exit 20
+  #   fi
 
-  # migrationHook:
-  #   before: echo This is a command before migration will executed;
-  #   after: echo This is a command after migration is executed;
+  # You can also change the migration script in the same format as the setup script
+  # The default is /setup
+  # migrationScript: /setup
 
   # Dynamic is the default here. If you are more experience user then change these values as you like.
   # fpm:

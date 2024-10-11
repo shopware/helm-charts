@@ -80,10 +80,12 @@ spec:
       {{- toYaml . | nindent 4 }}
     {{- end }}
 
-  setupHook:
-    {{- with .Values.store.setupHook }}
-      {{- toYaml . | nindent 4 }}
-    {{- end }}
+  {{- if hasKey .Values.store "setupScript" }}
+  setupScript: {{ .Values.store.setupScript | toYaml | indent 2 }}
+  {{- end }}
+  {{- if hasKey .Values.store "migrationScript" }}
+  migrationScript: {{ .Values.store.migrationScript | toYaml | indent 2 }}
+  {{- end }}
 
   {{- if hasKey .Values.store "adminCredentials" }}
   adminCredentials:
