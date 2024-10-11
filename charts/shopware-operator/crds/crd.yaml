@@ -5361,9 +5361,6 @@ spec:
                     type: string
                   before:
                     type: string
-                required:
-                - after
-                - before
                 type: object
               network:
                 properties:
@@ -5488,9 +5485,6 @@ spec:
                     type: string
                   before:
                     type: string
-                required:
-                - after
-                - before
                 type: object
               worker:
                 default:
