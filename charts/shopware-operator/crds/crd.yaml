@@ -5362,6 +5362,9 @@ spec:
                   before:
                     type: string
                 type: object
+              migrationScript:
+                default: /setup
+                type: string
               network:
                 properties:
                   annotations:
@@ -5486,6 +5489,9 @@ spec:
                   before:
                     type: string
                 type: object
+              setupScript:
+                default: /setup
+                type: string
               worker:
                 default:
                   adapter: builtin
