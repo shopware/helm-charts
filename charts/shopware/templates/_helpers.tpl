@@ -58,10 +58,15 @@ secretAccessKeyRef:
 {{- else }}
 privateBucketName: {{ .Values.store.s3Storage.privateBucketName | default "shopware-private" }}
 publicBucketName: {{ .Values.store.s3Storage.publicBucketName | default "shopware-public" }}
+region: {{ .Values.store.s3Storage.region | default "eu-central-1" }}
+{{- if .Values.store.s3Storage.accessKeyRef }}
 accessKeyRef:
   {{ toYaml .Values.store.s3Storage.accessKeyRef  | indent 6 }}
+{{- end }}
+{{- if .Values.store.s3Storage.secretAccessKeyRef }}
 secretAccessKeyRef:
   {{ toYaml .Values.store.s3Storage.secretAccessKeyRef | indent 6 }}
+{{- end }}
 {{- end}}
 {{- end -}}
 
