@@ -1,0 +1,57 @@
+name: CI (Pull Request)
+on:
+  pull_request:
+
+jobs:
+  Diff:
+    runs-on: ubuntu-latest
+    container: alpine/helm
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/setup-helm@v4.2.0
+
+      - name: Add repos for shopware
+        run: |
+          helm repo add percona https://percona.github.io/percona-helm-charts
+          helm repo add grafana https://grafana.github.io/helm-charts
+          helm repo add prometheus https://prometheus-community.github.io/helm-charts
+          helm repo add shopware https://shopware.github.io/helm-charts
+          helm dependency update charts/shopware
+          git config --global --add safe.directory /__w/helm-charts/helm-charts
+
+      - name: Make pr yaml
+        run: "helm template --namespace ci pipeline charts/shopware > pr.yaml"
+
+      - name: Make main yaml
+        run:  |
+          git checkout main
+          helm template --namespace ci pipeline charts/shopware > main.yaml
+
+      - name: Diff Main and PR
+        id: diff
+        run: "diff -C 3 main.yaml pr.yaml >> $GITHUB_OUTPUT"
+
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '${{join(steps.diff.outputs.*, '\n')}}'
+            })
+
+  commit-lint:
+    runs-on: ubuntu-latest
+    name: Validate all commits
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Conventional Commits Checker
+        uses: netodevel/convetional-commits-checker@v1.0.1
+        id: commits-check
+        with:
+          target-branch: ${{ github.event.pull_request.base.ref }}
+          current-branch: ${{ github.event.pull_request.head.ref }}
+          pattern: '^\s*(feat|fix|ci|chore|docs|test|style|refactor)(\(.{1,}\))?!?: .{1,}$'
