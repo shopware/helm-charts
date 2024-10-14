@@ -96,7 +96,7 @@ To disable MinIO, set `minio.enabled` to `false` in the [values.yaml](values.yam
 To install the MinIO Operator in your cluster, execute:
 
 ```sh
-kubectl apply -k "github.com/minio/operator?ref=v5.0.15"
+kubectl apply -k "github.com/minio/operator?ref=v6.0.3"
 ```
 
 ### Install Ingress in Kind

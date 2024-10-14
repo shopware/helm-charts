@@ -43,6 +43,9 @@ spec:
             type: object
           spec:
             properties:
+              serviceAccountName:
+                description: The name of the ServiceAccount to use for the store.
+                type: string
               adminCredentials:
                 default:
                   password: ""
@@ -5418,10 +5421,8 @@ spec:
                   accessKeyRef:
                     properties:
                       key:
-                        minLength: 1
                         type: string
                       name:
-                        minLength: 1
                         type: string
                     required:
                     - key
@@ -5441,10 +5442,8 @@ spec:
                   secretAccessKeyRef:
                     properties:
                       key:
-                        minLength: 1
                         type: string
                       name:
-                        minLength: 1
                         type: string
                     required:
                     - key

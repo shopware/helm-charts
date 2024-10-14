@@ -71,6 +71,8 @@ percona:
     nodeSelector:
       kubernetes.io/arch: amd64
 
+serviceAccountAnnotations: {}
+
 store:
   # We use traefik.me to resolve to 127.0.0.1
   # Enter your DNS name for the shop.
@@ -81,6 +83,25 @@ store:
   # Note: This is a known issue in the operator and will be addressed in a future update.
   # For more details, see: https://github.com/shopware/shopware-operator/issues/20
   disableChecks: true
+
+  # The name of the service account to use for the store deployments.
+  # remove this if you do not want to use a service account
+  serviceAccountName: store-sa
+
+  # s3 storage configuration
+  # s3Storage:
+  #   privateBucket: <s3-private-bucket>
+  #   publicBucket: <s3-public-bucket>
+  #   region: <s3-region>
+  #   endpointURL: <s3-endpoint-url>
+  #   # Specify the credentials for the S3 storage. These are used to connect to the S3 storage.
+  #   # Otherwise annotate the service account with a role
+  #   accessKeyRef: 
+  #     name: s3-credentials
+  #     key: AWS_ACCESS_KEY
+  #   secretAccessKeyRef:
+  #     name: s3-credentials
+  #     key: AWS_SECRET_KEY
 
   # adminCredentials:
   #   username: admin
