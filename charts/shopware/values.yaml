@@ -196,7 +196,7 @@ store:
   # error code. Failing to provide an error code will result in the job being marked as
   # successful, even though the store may be in a non-functional state.
   # setupScript: |
-  #   echo "Execute setup script from paas backend"
+  #   echo "Execute setup script"
   #   /setup
   #   if [ $? -eq 0 ]; then
   #       echo "Setup Finished"
