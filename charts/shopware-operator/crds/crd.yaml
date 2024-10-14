@@ -5451,14 +5451,14 @@ spec:
                     - name
                     type: object
                 required:
-                - accessKeyRef
                 - endpointURL
                 - privateBucketName
                 - publicBucketName
-                - secretAccessKeyRef
                 type: object
               secretName:
                 default: store-secret
+                type: string
+              serviceAccountName:
                 type: string
               sessionCache:
                 default:
