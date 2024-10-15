@@ -152,8 +152,7 @@ secretAccessKeyRef:
 [INPUT]
     Name tail
     {{ $fluentBitInputPath }}
-    multiline.parser docker, cri
-    Tag shopware
+    Parser shopware
     Mem_Buf_Limit 5MB
     Skip_Long_Lines On
 

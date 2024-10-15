@@ -9,11 +9,10 @@ metadata:
 data:
   custom_parsers.conf: |
     [PARSER]
-        Name docker_no_time
+        Name shopware
         Format json
-        Time_Keep Off
-        Time_Key time
-        Time_Format %Y-%m-%dT%H:%M:%S.%L
+        Time_Key ts
+        Time_Format %s
   fluent-bit.conf:  |
     {{- include "fluentBitConfigmap" . | nindent 4 }}
 {{- end }}
