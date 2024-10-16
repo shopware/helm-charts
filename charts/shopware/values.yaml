@@ -399,6 +399,110 @@ shopware-operator:
   # Disabling makes sense if you want to test the Operator itself
   enabled: true
 
+otel-collector:
+  enabled: false
+  image:
+    repository: "otel/opentelemetry-collector-contrib"
+    tag: "0.111.0"
+  mode: deployment
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "64m"
+    limits:
+      memory: "512Mi"
+  config:
+    exporters:
+      debug: {}
+      otlp:
+        headers:
+          x-scope-orgid: "tenant-{{ .Release.Namespace }}"
+        endpoint: tempo.tempo.svc.cluster.local:4317
+        tls:
+          insecure: true
+    extensions:
+      health_check:
+        endpoint: ${env:MY_POD_IP}:13133
+    processors:
+      batch:
+        timeout: 5s
+        send_batch_size: 1048
+      filter/ottl:
+        error_mode: ignore
+        traces:
+          span:
+            - 'attributes["http.target"] == "/api/_info/health-check"'
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: ${env:MY_POD_IP}:4317
+          http:
+            endpoint: ${env:MY_POD_IP}:4318
+      prometheus:
+        config:
+          scrape_configs:
+            - job_name: opentelemetry-collector
+              scrape_interval: 10s
+              static_configs:
+                - targets:
+                    - ${env:MY_POD_IP}:8888
+    service:
+      telemetry:
+        metrics:
+          address: ${env:MY_POD_IP}:8888
+      extensions:
+        - health_check
+      pipelines:
+        logs:
+          exporters:
+            - debug
+            - otlp
+          processors:
+            - batch
+            - filter/ottl
+          receivers:
+            - otlp
+        metrics:
+          exporters:
+            - debug
+          processors:
+            - batch
+          receivers:
+            - otlp
+            - prometheus
+        traces:
+          exporters:
+            - debug
+            - otlp
+          processors:
+            - batch
+            - filter/ottl
+          receivers:
+            - otlp
+  ports:
+    otlp:
+      enabled: true
+      containerPort: 4317
+      servicePort: 4317
+      hostPort: 4317
+      protocol: TCP
+      # nodePort: 30317
+      appProtocol: grpc
+    otlp-http:
+      enabled: true
+      containerPort: 4318
+      servicePort: 4318
+      hostPort: 4318
+      protocol: TCP
+    metrics:
+      # The metrics port is disabled by default. However you need to enable the port
+      # in order to use the ServiceMonitor (serviceMonitor.enabled) or PodMonitor (podMonitor.enabled).
+      enabled: true
+      containerPort: 8888
+      servicePort: 8888
+      protocol: TCP
+
 grafana:
   enabled: false
   datasources:
@@ -412,6 +516,13 @@ grafana:
         - name: Loki
           type: loki
           url: http://loki-gateway.loki.svc.cluster.local
+          jsonData:
+            httpHeaderName1: 'X-Scope-OrgID'
+          secureJsonData:
+            httpHeaderValue1: tenant-{{ .Release.Namespace }}
+        - name: Tempo
+          type: tempo
+          url: http://tempo.tempo.svc.cluster.local
           jsonData:
             httpHeaderName1: 'X-Scope-OrgID'
           secureJsonData:
