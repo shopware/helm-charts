@@ -170,6 +170,11 @@ secretAccessKeyRef:
     Mem_Buf_Limit 5MB
     Skip_Long_Lines On
 
+[FILTER]
+    Name grep
+    Match caddy
+    Exclude  $request['uri'] /api/_info/health-check
+
 [OUTPUT]
     Name         loki
     Match        *
