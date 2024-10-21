@@ -5,8 +5,21 @@ metadata:
 data:
   Caddyfile: |
     :8000
-    log
+{{- if hasKey .Values.store "sidecarLogging" }}
+    log {
+      output stdout
+      format json
 
+      output file {{ include "caddyLogPath" . }} {
+        format json
+        roll_size 10MB
+        roll_keep 5
+        roll_keep_for 24h
+      }
+    }
+{{ else }}
+    log
+{{- end }}
     route {
       tracing {
         span caddy
