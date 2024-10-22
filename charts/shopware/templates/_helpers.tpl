@@ -135,9 +135,14 @@ secretAccessKeyRef:
 {{ printf "%s-store" .Release.Name }}
 {{- end -}}
 
+{{ define "caddyLogPath" -}}
+{{- $fluentBitCaddyInputPath := printf "%s/%s"  (.Values.store.sidecarLogging.logFolderCaddy | default "/var/log") (.Values.store.sidecarLogging.logFileCaddy | default "caddy.log") -}}
+{{ $fluentBitCaddyInputPath }}
+{{- end -}}
+
 {{ define "fluentBitConfigmap" -}}
 {{- if hasKey .Values.store "sidecarLogging" }}
-{{- $fluentBitInputPath := printf "Path %s/%s"  (.Values.store.sidecarLogging.logFolder | default "/var/log") (.Values.store.sidecarLogging.logFile | default "shopware.log") -}}
+{{- $fluentBitShopwareInputPath := printf "Path %s/%s"  (.Values.store.sidecarLogging.logFolder | default "/var/log") (.Values.store.sidecarLogging.logFile | default "shopware.log") -}}
 [SERVICE]
     Daemon Off
     Flush 1
@@ -151,10 +156,24 @@ secretAccessKeyRef:
 
 [INPUT]
     Name tail
-    {{ $fluentBitInputPath }}
+    {{ $fluentBitShopwareInputPath }}
     Parser shopware
+    Tag shopware
     Mem_Buf_Limit 5MB
     Skip_Long_Lines On
+
+[INPUT]
+    Name tail
+    Path {{ include "caddyLogPath" . }}
+    Parser shopware
+    Tag caddy
+    Mem_Buf_Limit 5MB
+    Skip_Long_Lines On
+
+[FILTER]
+    Name grep
+    Match caddy
+    Exclude  $request['uri'] /api/_info/health-check
 
 [OUTPUT]
     Name         loki
@@ -163,6 +182,18 @@ secretAccessKeyRef:
     Port         80
     Tls          off
     Labels       job=fluentbit,service=shopware
+    Match        shopware
+    auto_kubernetes_labels on
+    tenant_id    tenant-{{ .Release.Namespace }}
+
+[OUTPUT]
+    Name         loki
+    Match        *
+    Host         {{ .Values.store.sidecarLogging.lokiHost | default "loki-gateway.loki.svc.cluster.local" }}
+    Port         80
+    Tls          off
+    Labels       job=fluentbit,service=caddy
+    Match        caddy
     auto_kubernetes_labels on
     tenant_id    tenant-{{ .Release.Namespace }}
 {{- end }}
