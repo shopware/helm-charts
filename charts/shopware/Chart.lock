@@ -4,7 +4,7 @@ dependencies:
   version: 1.14.0
 - name: operator
   repository: https://shopware.github.io/helm-charts/
-  version: 0.0.23
+  version: 0.0.24
 - name: valkey
   repository: oci://registry-1.docker.io/bitnamicharts
   version: 1.0.1
@@ -32,5 +32,5 @@ dependencies:
 - name: opentelemetry-collector
   repository: https://open-telemetry.github.io/opentelemetry-helm-charts
   version: 0.108.0
-digest: sha256:9b8b301e7152acd0488202cc55ba499b186a42c5798eb685de60f0840edcb959
-generated: "2024-10-22T13:10:44.43819399+02:00"
+digest: sha256:f41705eb999a688b1e62875dbaa721975c616220306d094821eeac33359ce26e
+generated: "2024-10-22T12:18:04.910286+01:00"
