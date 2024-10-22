@@ -35,4 +35,5 @@ data:
       }
       encode gzip
       file_server
+      header @trace X-Trace-ID "{http.vars.trace_id}"
     }
