@@ -21,6 +21,9 @@ data:
     log
 {{- end }}
     route {
+      header {
+        X-Request-Id {http.request.header.x-request-id}
+      }
       tracing {
         span caddy
       }
