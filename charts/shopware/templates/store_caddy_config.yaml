@@ -21,12 +21,13 @@ data:
     log
 {{- end }}
     route {
-      header {
-        X-Request-Id {http.request.header.x-request-id}
-      }
       tracing {
         span caddy
       }
+      header {
+       X-Trace-Id {http.vars.trace_id}
+      }
+      request_header X-Trace-Id {http.vars.trace_id}
       @default {
         not path /theme/* /media/* /thumbnail/* /bundles/* /sitemap/*
       }
