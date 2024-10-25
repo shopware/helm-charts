@@ -88,6 +88,8 @@ store:
   # remove this if you do not want to use a service account
   serviceAccountName: store-sa
 
+  cdnURL: "example.com"
+
   # s3 storage configuration
   # s3Storage:
   #   privateBucket: <s3-private-bucket>
