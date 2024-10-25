@@ -4722,6 +4722,8 @@ spec:
               disableChecks:
                 default: false
                 type: boolean
+              disableJobDeletion:
+                type: boolean
               fpm:
                 properties:
                   listen:
