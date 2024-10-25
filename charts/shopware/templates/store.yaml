@@ -12,6 +12,10 @@ spec:
   s3Storage:
     {{- include "getStoreS3" . | nindent 4 -}}
 
+  {{- if .Values.store.serviceAccountName }}
+  serviceAccountName: {{ .Values.store.serviceAccountName }}
+  {{- end }}
+
   {{- if hasKey .Values "blackfire" }}
   {{- if hasKey .Values.blackfire "serverID" }}
   {{- if hasKey .Values.blackfire "serverToken" }}
