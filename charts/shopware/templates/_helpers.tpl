@@ -42,6 +42,11 @@
 
 {{ define "getStoreS3" -}}
 {{- if .Values.minio.enabled }}
+{{- if .Values.minio.useTLS }}
+endpointURL: "https://minio.{{ .Release.Namespace }}.svc.cluster.local"
+{{- else }}
+endpointURL: "http://minio.{{ .Release.Namespace }}.svc.cluster.local"
+{{- end }}
 privateBucketName: "shopware-private"
 publicBucketName: "shopware-public"
 accessKeyRef:
@@ -56,6 +61,7 @@ secretAccessKeyRef:
 {{- end }}
 
 {{- else }}
+endpointURL: {{ .Values.store.s3Storage.endpointURL | default "https://s3.eu-central-1.amazonaws.com" }}
 privateBucketName: {{ .Values.store.s3Storage.privateBucketName | default "shopware-private" }}
 publicBucketName: {{ .Values.store.s3Storage.publicBucketName | default "shopware-public" }}
 region: {{ .Values.store.s3Storage.region | default "eu-central-1" }}

@@ -10,11 +10,6 @@ spec:
   cdnURL: 'https://{{ template "generateS3URLApi" . }}/{{ .Values.store.s3Storage.publicBucketName }}'
   {{- end }}
   s3Storage:
-    {{- if .Values.minio.useTLS }}
-    endpointURL: "https://minio.{{ .Release.Namespace }}.svc.cluster.local"
-    {{- else }}
-    endpointURL: "http://minio.{{ .Release.Namespace }}.svc.cluster.local"
-    {{- end }}
     {{- include "getStoreS3" . | nindent 4 -}}
 
   {{- if hasKey .Values "blackfire" }}
