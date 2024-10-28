@@ -3,6 +3,7 @@ kind: Store
 metadata:
   name: '{{ .Release.Name }}'
 spec:
+  disableJobDeletion: {{ .Values.store.disableJobDeletion | default false }}
   disableChecks: {{ .Values.store.disableChecks | default false }}
   {{- if .Values.minio.enabled }}
   cdnURL: 'https://{{ template "generateS3URLApi" . }}/shopware-public'
@@ -93,14 +94,33 @@ spec:
   {{- end }}
 
   database:
-    host: {{ template "getDBService" . }}
-    version: '8'
-    port: 3306
-    user: 'root'
-    name: 'shopware'
+    {{- if .Values.percona.enabled }}
+    host: {{ template "getPerconaDBHost" . }}
     passwordSecretRef:
       name: {{ template "getPerconaSecrets" . }}
       key: root
+    {{- else if hasKey .Values.store.database "host" }}
+    host: {{ .Values.store.database.host }}
+    passwordSecretRef:
+      {{- with .Values.store.database.passwordSecretRef }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+    {{- else if hasKey .Values.store.database "hostRef" }}
+    hostRef:
+      {{- with .Values.store.database.hostRef }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+    passwordSecretRef:
+      {{- with .Values.store.database.passwordSecretRef }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+    {{- else }}
+    {{- fail "value for .Values.store.database must have host or hostRef when percona is disabled" }}
+    {{- end }}
+    user: {{ .Values.store.database.user }}
+    version: {{ .Values.store.database.version | default "8" | quote }}
+    port: {{ .Values.store.database.port | default 3306 }}
+    name: {{ .Values.store.database.name | default "shopware" }}
   network:
     host: {{ template "generateHost" . }}
     {{- if hasKey .Values.store "network" }}
@@ -248,4 +268,4 @@ spec:
           name: {{ template "getFluentBitName" . }}
           defaultMode: 420
       {{- end}}
-      
+

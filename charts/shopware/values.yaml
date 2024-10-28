@@ -98,7 +98,7 @@ store:
   #   endpointURL: <s3-endpoint-url>
   #   # Specify the credentials for the S3 storage. These are used to connect to the S3 storage.
   #   # Otherwise annotate the service account with a role
-  #   accessKeyRef: 
+  #   accessKeyRef:
   #     name: s3-credentials
   #     key: AWS_ACCESS_KEY
   #   secretAccessKeyRef:
@@ -119,6 +119,24 @@ store:
   # otel:
   #   enabled: false
   #   exporterEndpoint: http://opentelemetry-collector.opentelemetry-collector.svc.cluster.local:4317
+
+  database:
+    user: 'root'
+    # version: '8'
+    # port: 3306
+    # name: 'shopware'
+
+    # You need to set a host or a hostRef for the database to work. Otherwise the shopware Operator will
+    # return an error. Default is the host of percona if percona is enabled.
+    # If you don't want to use percona you need to specify the host or hostRef and the passwordSecretRef.
+    # This will be set automatically if you use percona.
+    #host: ""
+    # hostRef:
+    #   name: some-secret-name
+    #   key: host-key
+    # passwordSecretRef:
+    #   name: percona-secrets
+    #   key: root
 
   # You can define a Monolog configuration here.
   # Please refer to the official Monolog documentation for details.
