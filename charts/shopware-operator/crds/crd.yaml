@@ -4683,8 +4683,19 @@ spec:
               database:
                 properties:
                   host:
-                    minLength: 1
                     type: string
+                  hostRef:
+                    properties:
+                      key:
+                        minLength: 1
+                        type: string
+                      name:
+                        minLength: 1
+                        type: string
+                    required:
+                    - key
+                    - name
+                    type: object
                   name:
                     default: shopware
                     minLength: 1
@@ -4712,7 +4723,6 @@ spec:
                     minLength: 1
                     type: string
                 required:
-                - host
                 - name
                 - passwordSecretRef
                 - port
@@ -4721,6 +4731,8 @@ spec:
                 type: object
               disableChecks:
                 default: false
+                type: boolean
+              disableJobDeletion:
                 type: boolean
               fpm:
                 properties:
