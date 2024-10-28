@@ -30,7 +30,7 @@
 {{- end }}
 {{- end -}}
 
-{{ define "getDBService" -}}
+{{ define "getPerconaDBHost" -}}
 {{- if hasKey .Values.percona "proxy" }}
 {{- if .Values.percona.proxy.enabled }}
 {{- printf "%s-proxysql" .Release.Name }}
