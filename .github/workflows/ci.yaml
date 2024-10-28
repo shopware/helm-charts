@@ -1,0 +1,63 @@
+name: Check pull request
+
+on:
+  pull_request:
+
+permissions:
+  # Optional: allow read access to pull request. Use with `only-new-issues` option.
+  pull-requests: read
+  # Optional: allow write access to checks to allow the action to annotate code in the PR.
+  checks: write
+
+
+jobs:
+  CheckVersionUpdate:
+    runs-on: ubuntu-latest
+    container: "ghcr.io/shopware-redstone/k8s-tooling-image:latest"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: |
+          git config --global --add safe.directory '*'
+          git branch --track main origin/main
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            chart:
+              - 'charts/shopware/**/*.yaml'
+              - 'charts/shopware/**/*.yml'
+              - 'charts/shopware/**/*.tpl'
+              - 'charts/shopware/Chart.lock'
+      - name: Check if version is updated with each pr
+        if: steps.filter.outputs.chart == 'true'
+        run: |
+          oldAppVersion=$(git show main:charts/shopware/Chart.yaml | yq ".appVersion")
+          oldVersion=$(git show main:charts/shopware/Chart.yaml | yq ".version")
+          currentAppVersion=$(cat charts/shopware/Chart.yaml | yq ".appVersion")
+          currentVersion=$(cat charts/shopware/Chart.yaml | yq ".version")
+          if [ "$oldAppVersion" == "$currentAppVersion" ]; then
+            echo "::error::Failing, reason: AppVersion is not updated. Current $currentAppVersion, old $oldAppVersion"
+            exit 10
+          fi
+          if [ "$oldVersion" == "$currentVersion" ]; then
+            echo "::error::Failing, reason: Version is not updated. Current $currentVersion, old $oldVersion"
+            exit 11
+          fi
+
+  # Not working because of lookups
+  # lint-chart:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+  #     - name: Setup Helm
+  #       uses: azure/setup-helm@v4
+  #       with:
+  #         version: v3.15.3
+  #     - name: Lint Helm chart
+  #       run: helm lint charts/shopware
