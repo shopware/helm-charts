@@ -7,7 +7,7 @@ spec:
   {{- if .Values.minio.enabled }}
   cdnURL: 'https://{{ template "generateS3URLApi" . }}/shopware-public'
   {{- else }}
-  cdnURL: 'https://{{ template "generateS3URLApi" . }}/{{ .Values.store.s3Storage.publicBucketName }}'
+  cdnURL: {{ .Values.store.cdnURL }}
   {{- end }}
   s3Storage:
     {{- include "getStoreS3" . | nindent 4 -}}
