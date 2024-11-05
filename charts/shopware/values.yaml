@@ -561,7 +561,8 @@ prometheus:
   # This configuration excludes Prometheus from scraping the Kubernetes API.
   # To collect additional metrics beyond those provided by Shopware, either uncomment this section or apply a different configuration.
   rbac:
-    create: false
+    create: true
   server:
     configMapOverrideName: "prometheus-config"
+    clusterRoleNameOverride: "{{ .Release.Name }}-prometheus-{{ .Release.Namespace }}"
     releaseNamespace: true
