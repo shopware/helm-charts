@@ -7,6 +7,17 @@ spec:
   mtls:
     mode: STRICT
 ---
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: disable-mtls-prometheus
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: prometheus
+  mtls:
+    mode: DISABLE
+---
 # https://github.com/kubernetes/ingress-nginx/issues/3171
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService

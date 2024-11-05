@@ -525,6 +525,8 @@ otel-collector:
 
 grafana:
   enabled: false
+  podAnnotations:
+    sidecar.istio.io/inject: 'false'
   datasources:
     datasources.yaml:
       apiVersion: 1
