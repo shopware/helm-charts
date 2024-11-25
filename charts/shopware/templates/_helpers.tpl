@@ -67,11 +67,11 @@ publicBucketName: {{ .Values.store.s3Storage.publicBucketName | default "shopwar
 region: {{ .Values.store.s3Storage.region | default "eu-central-1" }}
 {{- if .Values.store.s3Storage.accessKeyRef }}
 accessKeyRef:
-  {{ toYaml .Values.store.s3Storage.accessKeyRef  | indent 6 }}
+  {{ toYaml .Values.store.s3Storage.accessKeyRef  | nindent 2 }}
 {{- end }}
 {{- if .Values.store.s3Storage.secretAccessKeyRef }}
 secretAccessKeyRef:
-  {{ toYaml .Values.store.s3Storage.secretAccessKeyRef | indent 6 }}
+  {{ toYaml .Values.store.s3Storage.secretAccessKeyRef | nindent 2 }}
 {{- end }}
 {{- end}}
 {{- end -}}
