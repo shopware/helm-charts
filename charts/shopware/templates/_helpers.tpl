@@ -178,7 +178,7 @@ secretAccessKeyRef:
 
 [FILTER]
     Name grep
-    Match caddy
+    Match *
     Exclude $context['route'] api.info.health.check
 
 [FILTER]
