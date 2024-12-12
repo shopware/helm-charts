@@ -451,7 +451,7 @@ otel-collector:
         error_mode: ignore
         traces:
           span:
-            - 'attributes["http.target"] == "/api/_info/health-check"'
+            - 'name == "GET /api/_info/health-check"'
     receivers:
       otlp:
         protocols:
