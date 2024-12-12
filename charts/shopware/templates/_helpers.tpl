@@ -179,7 +179,12 @@ secretAccessKeyRef:
 [FILTER]
     Name grep
     Match caddy
-    Exclude  $request['uri'] /api/_info/health-check
+    Exclude $context['route'] api.info.health.check
+
+[FILTER]
+    Name grep
+    Match caddy
+    Exclude $request['uri'] api/_info/health-check
 
 [OUTPUT]
     Name         loki
