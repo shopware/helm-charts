@@ -264,6 +264,28 @@ store:
   #   minReplicas: 1
   #   maxReplicas: 10
 
+  # You can overwrite the default store.container values for each deployment and job. This is useful if you want to
+  # add labels or other values to the containers.
+  # adminDeploymentContainer:
+  #   labels:
+  #     test: 'adminContainer'
+  #
+  # workerDeploymentContainer:
+  #   labels:
+  #     test: 'workerContainer'
+  #
+  # storefrontDeploymentContainer:
+  #   labels:
+  #     test: 'storefrontContainer'
+  #
+  # setupJobContainer:
+  #   labels:
+  #     test: 'setupContainer'
+  #
+  # migrationJobContainer:
+  #   labels:
+  #     test: 'migrationContainer'
+
 minio:
   # This enabled the s3 MinIO and creates a tenant. This requires the MinIO operator
   # to work properly. You can use aws s3 also, but then need to overwrite the values

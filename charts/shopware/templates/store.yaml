@@ -279,3 +279,24 @@ spec:
           defaultMode: 420
       {{- end}}
 
+  {{- with .Values.store.adminDeploymentContainer }}
+  adminDeploymentContainer:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.store.workerDeploymentContainer }}
+  workerDeploymentContainer:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.store.storefrontDeploymentContainer }}
+  storefrontDeploymentContainer:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  {{- with .Values.store.setupJobContainer }}
+  setupJobContainer:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.store.migrationJobContainer }}
+  migrationJobContainer:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
