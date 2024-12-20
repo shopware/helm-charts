@@ -170,6 +170,16 @@ spec:
           {{- toYaml . | nindent 8 }}
       {{- end }}
 
+    labels:
+      {{- with .Values.store.container.labels }}
+          {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+    annotations:
+      {{- with .Values.store.container.annotations }}
+          {{- toYaml . | nindent 8 }}
+      {{- end }}
+
     extraContainers:
       {{- with .Values.store.container.extraContainers }}
           {{- toYaml . | nindent 8 }}

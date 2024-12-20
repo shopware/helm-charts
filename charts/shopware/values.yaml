@@ -181,6 +181,7 @@ store:
     # affinity:
     # nodeSelector:
     # annotations:
+    # labels:
     # imagePullSecrets:
     #   - name: regcred
     # resources:
