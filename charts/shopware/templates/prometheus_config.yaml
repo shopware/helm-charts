@@ -5,6 +5,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-prometheus-config
+  namespace: {{ .Release.Namespace }}
 data:
   prometheus.yml: |-
     scrape_configs:
