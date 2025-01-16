@@ -121,7 +121,7 @@ store:
   #   exporterEndpoint: http://opentelemetry-collector.opentelemetry-collector.svc.cluster.local:4317
 
   database:
-    user: 'root'
+    user: "root"
     # version: '8'
     # port: 3306
     # name: 'shopware'
@@ -304,6 +304,13 @@ minio:
   # When using Istio, the image must include curl; hence, we use minio/mc.
   # For non-Istio installations, the client image can be minio/mc.
   # clientImage: minio/mc
+  # resources:
+  #   requests:
+  #     memory: 2Gi
+  #     cpu: 1000m
+  #   limits:
+  #     memory: 2Gi
+  #     cpu: 1000m
 
   # This configuration sets the username and password for MinIO login.
   # If the password is not specified, it will be automatically generated.
@@ -419,17 +426,17 @@ redisworker:
   #   enabled: false
 
 # blackfire:
-  # serverID: <your id>
-  # serverToken: <your token>
-  # image: blackfire/blackfire:2
-  # port: 8307
-  # resources:
-  #   requests:
-  #     memory: 100Mi
-  #     cpu: 100m
-  #   limits:
-  #     memory: 100Mi
-  #     cpu: 100m
+# serverID: <your id>
+# serverToken: <your token>
+# image: blackfire/blackfire:2
+# port: 8307
+# resources:
+#   requests:
+#     memory: 100Mi
+#     cpu: 100m
+#   limits:
+#     memory: 100Mi
+#     cpu: 100m
 
 # Percona has currently only AMD images, so we make sure with a mixed cluster that we
 # use the AMD clusters.
@@ -549,7 +556,7 @@ otel-collector:
 grafana:
   enabled: false
   podAnnotations:
-    sidecar.istio.io/inject: 'false'
+    sidecar.istio.io/inject: "false"
   datasources:
     datasources.yaml:
       apiVersion: 1
@@ -562,14 +569,14 @@ grafana:
           type: loki
           url: http://loki-gateway.loki.svc.cluster.local
           jsonData:
-            httpHeaderName1: 'X-Scope-OrgID'
+            httpHeaderName1: "X-Scope-OrgID"
           secureJsonData:
             httpHeaderValue1: tenant-{{ .Release.Namespace }}
         - name: Tempo
           type: tempo
           url: http://tempo.tempo.svc.cluster.local
           jsonData:
-            httpHeaderName1: 'X-Scope-OrgID'
+            httpHeaderName1: "X-Scope-OrgID"
           secureJsonData:
             httpHeaderValue1: tenant-{{ .Release.Namespace }}
 
