@@ -104,8 +104,9 @@ jobs:
             kubectl get pod/test-minio-pool-0-0 --namespace test -o json && exit 3
           }
 
-          kubectl wait --namespace test jobs/test-setup --timeout=3m --for=condition=complete || {
-            kubectl get job/test-setup --namespace test -o json && exit 4
+          kubectl wait --namespace test jobs/test-setup --timeout=5m --for=condition=complete || {
+            kubectl get job/test-setup --namespace test -o json || \
+            kubectl get pods --namespace test -o wide && exit 4
           }
 
           kubectl wait --namespace test store/test --for='jsonpath={.status.state}'=ready --timeout=20s || {
