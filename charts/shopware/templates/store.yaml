@@ -170,6 +170,16 @@ spec:
           {{- toYaml . | nindent 8 }}
       {{- end }}
 
+    labels:
+      {{- with .Values.store.container.labels }}
+          {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+    annotations:
+      {{- with .Values.store.container.annotations }}
+          {{- toYaml . | nindent 8 }}
+      {{- end }}
+
     extraContainers:
       {{- with .Values.store.container.extraContainers }}
           {{- toYaml . | nindent 8 }}
@@ -269,3 +279,24 @@ spec:
           defaultMode: 420
       {{- end}}
 
+  {{- with .Values.store.adminDeploymentContainer }}
+  adminDeploymentContainer:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.store.workerDeploymentContainer }}
+  workerDeploymentContainer:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.store.storefrontDeploymentContainer }}
+  storefrontDeploymentContainer:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  {{- with .Values.store.setupJobContainer }}
+  setupJobContainer:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.store.migrationJobContainer }}
+  migrationJobContainer:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
