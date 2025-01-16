@@ -29,6 +29,12 @@ spec:
     - servers: 4
       name: pool-0
       volumesPerServer: 2
+      {{- if hasKey .Values.minio "resources" }}
+      resources:
+        {{- with .Values.minio.resources }}
+            {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- else }}
       resources:
         limits:
           cpu: 1000m
@@ -36,6 +42,7 @@ spec:
         requests:
           cpu: 1000m
           memory: 2Gi
+      {{- end }}
       volumeClaimTemplate:
         metadata:
           name: data

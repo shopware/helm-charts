@@ -9,10 +9,9 @@ permissions:
   # Optional: allow write access to checks to allow the action to annotate code in the PR.
   checks: write
 
-
 jobs:
   CheckVersionUpdate:
-    runs-on: ubuntu-latest
+    runs-on: runs-on=${{ github.run_id }}/runner=sw-amd64/cpu=1
     container: "ghcr.io/shopware-redstone/k8s-tooling-image:latest"
     steps:
       - name: Checkout
@@ -47,17 +46,70 @@ jobs:
             exit 11
           fi
 
-  # Not working because of lookups
-  # lint-chart:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 0
-  #     - name: Setup Helm
-  #       uses: azure/setup-helm@v4
-  #       with:
-  #         version: v3.15.3
-  #     - name: Lint Helm chart
-  #       run: helm lint charts/shopware
+  helm-lint:
+    name: helm lint
+    runs-on: runs-on=${{ github.run_id }}/runner=sw-amd64/cpu=1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - name: Set up Helm
+        uses: azure/setup-helm@v4.2.0
+        with:
+          version: v3.16.4
+      - name: helm lint
+        run: |
+          helm lint charts/shopware
+
+  test-on-cluster:
+    name: Cluster E2E Test
+    runs-on: runs-on=${{ github.run_id }}/runner=sw-amd64/cpu=4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4.2.0
+        with:
+          version: v3.16.4
+
+      - name: Create k8s Kind Cluster
+        uses: helm/kind-action@v1
+
+      - name: Run chart-testing (install)
+        run: |
+          kubectl apply -k "github.com/minio/operator?ref=v5.0.15"
+          kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/baremetal/deploy.yaml
+          kubectl create namespace test
+          kubectl rollout status --namespace ingress-nginx deployment/ingress-nginx-controller --timeout=60s
+
+          helm repo add percona https://percona.github.io/percona-helm-charts
+          helm repo add grafana https://grafana.github.io/helm-charts
+          helm repo add prometheus https://prometheus-community.github.io/helm-charts
+          helm repo add shopware https://shopware.github.io/helm-charts
+          helm repo add opentelemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+          helm dependency build charts/shopware
+
+          helm install test --namespace test charts/shopware --set minio.storageSize=100Mi --set minio.resources.requests.cpu=100m
+
+          kubectl wait --namespace test --for=condition=Available --timeout=60s deployment/shopware-operator || {
+            kubectl get deployment/shopware-operator --namespace test -o json && exit 2
+          }
+          kubectl wait --namespace test store/test --for='jsonpath={.status.state}'=setup --timeout=1m
+
+          kubectl wait --namespace test tenant/test-minio --for='jsonpath={.status.currentState}'=Initialized --timeout=1m || {
+            kubectl get tenant/test-minio --namespace test -o json; \
+            kubectl get pod/test-minio-pool-0-0 --namespace test -o json && exit 3
+          }
+
+          kubectl wait --namespace test jobs/test-setup --timeout=3m --for=condition=complete || {
+            kubectl get job/test-setup --namespace test -o json && exit 4
+          }
+
+          kubectl wait --namespace test store/test --for='jsonpath={.status.state}'=ready --timeout=20s || {
+            kubectl get store/test --namespace test -o json && exit 5
+          }
+
+          kubectl get pods --namespace test -o wide
