@@ -8,12 +8,59 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: serviceaccount
     app.kubernetes.io/part-of: shopware-operator
-  name: controller-manager
+  name: '{{ .Release.Name }}-shopware-operator'
+  namespace: '{{ .Release.Namespace }}'
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: manager-role
+  labels:
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: shopware-operator
+    app.kubernetes.io/instance: leader-election-role
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: role
+    app.kubernetes.io/part-of: shopware-operator
+  name: '{{ .Release.Name }}-le-shopware-operator'
+  namespace: '{{ .Release.Namespace }}'
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: '{{ .Release.Name }}-shopware-operator'
+  namespace: '{{ .Release.Namespace }}'
 rules:
 - apiGroups:
   - ""
@@ -27,15 +74,6 @@ rules:
   - ""
   resources:
   - secrets
-  verbs:
-  - create
-  - get
-  - list
-  - patch
-  - watch
-- apiGroups:
-  - ""
-  resources:
   - services
   verbs:
   - create
@@ -76,73 +114,45 @@ rules:
 - apiGroups:
   - shop.shopware.com
   resources:
+  - storeexecs
+  - storesnapshots
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - shop.shopware.com
+  resources:
+  - storeexecs/finalizers
+  - stores/finalizers
+  - storesnapshots/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - shop.shopware.com
+  resources:
+  - storeexecs/status
+  - stores/status
+  - storesnapshots/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - shop.shopware.com
+  resources:
   - stores
   verbs:
   - create
-  - delete
   - get
   - list
   - patch
   - update
   - watch
-- apiGroups:
-  - shop.shopware.com
-  resources:
-  - stores/finalizers
-  verbs:
-  - update
-- apiGroups:
-  - shop.shopware.com
-  resources:
-  - stores/status
-  verbs:
-  - get
-  - patch
-  - update
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  labels:
-    app.kubernetes.io/component: rbac
-    app.kubernetes.io/created-by: shopware-operator
-    app.kubernetes.io/instance: leader-election-role
-    app.kubernetes.io/managed-by: kustomize
-    app.kubernetes.io/name: role
-    app.kubernetes.io/part-of: shopware-operator
-  name: leader-election-role
-rules:
-- apiGroups:
-  - ""
-  resources:
-  - configmaps
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - update
-  - patch
-  - delete
-- apiGroups:
-  - coordination.k8s.io
-  resources:
-  - leases
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - update
-  - patch
-  - delete
-- apiGroups:
-  - ""
-  resources:
-  - events
-  verbs:
-  - create
-  - patch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -154,14 +164,16 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: rolebinding
     app.kubernetes.io/part-of: shopware-operator
-  name: leader-election-rolebinding
+  name: '{{ .Release.Name }}-le-shopware-operator'
+  namespace: '{{ .Release.Namespace }}'
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: leader-election-role
+  name: '{{ .Release.Name }}-le-shopware-operator'
 subjects:
 - kind: ServiceAccount
-  name: controller-manager
+  name: '{{ .Release.Name }}-shopware-operator'
+  namespace: '{{ .Release.Namespace }}'
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -173,11 +185,13 @@ metadata:
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/name: clusterrolebinding
     app.kubernetes.io/part-of: shopware-operator
-  name: manager-rolebinding
+  name: '{{ .Release.Name }}-shopware-operator'
+  namespace: '{{ .Release.Namespace }}'
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: manager-role
+  name: '{{ .Release.Name }}-shopware-operator'
 subjects:
 - kind: ServiceAccount
-  name: controller-manager
+  name: '{{ .Release.Name }}-shopware-operator'
+  namespace: '{{ .Release.Namespace }}'
