@@ -2,6 +2,7 @@ apiVersion: shop.shopware.com/v1
 kind: Store
 metadata:
   name: '{{ .Release.Name }}'
+  namespace: '{{ .Release.Namespace }}'
 spec:
   disableJobDeletion: {{ .Values.store.disableJobDeletion | default false }}
   disableChecks: {{ .Values.store.disableChecks | default false }}

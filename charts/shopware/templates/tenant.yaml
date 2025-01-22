@@ -6,6 +6,7 @@ apiVersion: minio.min.io/v2
 kind: Tenant
 metadata:
   name: '{{ .Release.Name }}-minio'
+  namespace: '{{ .Release.Namespace }}'
   labels:
     app: minio
   annotations:

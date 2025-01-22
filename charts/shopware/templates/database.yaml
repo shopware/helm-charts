@@ -4,6 +4,7 @@ apiVersion: pxc.percona.com/v1
 kind: PerconaXtraDBCluster
 metadata:
   name: {{ .Release.Name | quote }}
+  namespace: '{{ .Release.Namespace }}'
 spec:
   secretsName: {{ template "getPerconaSecrets" . }}
   crVersion: {{ .Values.percona.version | quote }}

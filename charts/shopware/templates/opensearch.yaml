@@ -3,6 +3,7 @@ apiVersion: opensearch.opster.io/v1
 kind: OpenSearchCluster
 metadata:
   name: {{ template "getOpenSearchClusterName" . }}
+  namespace: '{{ .Release.Namespace }}'
 spec:
   general:
     httpPort: 9200

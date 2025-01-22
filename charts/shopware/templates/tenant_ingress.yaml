@@ -6,6 +6,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: 'minio-s3-api'
+  namespace: '{{ .Release.Namespace }}'
   annotations:
     {{- if .Values.minio.useTLS }}
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
@@ -42,6 +43,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: 'minio-console'
+  namespace: '{{ .Release.Namespace }}'
   annotations:
     {{- if .Values.minio.useTLS }}
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
