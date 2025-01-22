@@ -163,6 +163,7 @@ secretAccessKeyRef:
 [INPUT]
     Name tail
     {{ $fluentBitShopwareInputPath }}
+    Refresh_Interval 5
     Parser shopware
     Tag shopware
     Mem_Buf_Limit 5MB
@@ -171,6 +172,7 @@ secretAccessKeyRef:
 [INPUT]
     Name tail
     Path {{ include "caddyLogPath" . }}
+    Refresh_Interval 5
     Parser shopware
     Tag caddy
     Mem_Buf_Limit 5MB
