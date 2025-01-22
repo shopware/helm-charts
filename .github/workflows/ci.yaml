@@ -92,7 +92,12 @@ jobs:
           helm repo add opentelemetry https://open-telemetry.github.io/opentelemetry-helm-charts
           helm dependency build charts/shopware
 
-          helm install test --namespace test charts/shopware --set minio.storageSize=100Mi --set minio.resources.requests.cpu=100m
+          helm install test --namespace test charts/shopware \
+            --set minio.storageSize=100Mi \
+            --set minio.resources.requests.cpu=100m \
+            --set valkeyapp.master.resources.requests.cpu=200m \
+            --set valkeysession.master.resources.requests.cpu=200m \
+            --set valkeyworker.master.resources.requests.cpu=200m
 
           kubectl wait --namespace test --for=condition=Available --timeout=60s deployment/shopware-operator || {
             kubectl get deployment/shopware-operator --namespace test -o json && exit 2
@@ -105,8 +110,11 @@ jobs:
           }
 
           kubectl wait --namespace test jobs/test-setup --timeout=8m --for=condition=complete || {
-            kubectl get job/test-setup --namespace test -o json || \
-            kubectl get pods --namespace test -o wide && exit 4
+            kubectl get job/test-setup --namespace test -o json; \
+            kubectl get job --namespace test -o wide; \
+            kubectl get pods --namespace test -o wide; \
+            LATEST_POD=$(kubectl get pods --sort-by=.metadata.creationTimestamp -n test -o jsonpath='{.items[-1].metadata.name}')
+            kubectl logs $LATEST_POD -n test && exit 4
           }
 
           kubectl wait --namespace test store/test --for='jsonpath={.status.state}'=ready --timeout=1m || {
