@@ -10,6 +10,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: minio-cli-change-policy
+  namespace: '{{ .Release.Namespace }}'
 spec:
     template:
       spec:

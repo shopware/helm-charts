@@ -8,6 +8,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: shopware-blackfire
+  namespace: '{{ .Release.Namespace }}'
   labels:
     app: blackfire
 spec:
@@ -40,6 +41,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ template "getBlackfireServiceName" . }}
+  namespace: '{{ .Release.Namespace }}'
   annotations:
     sidecar.istio.io/inject: "false"
 spec:
