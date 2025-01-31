@@ -188,6 +188,7 @@ store:
     # affinity:
     # nodeSelector:
     # annotations:
+    # terminationGracePeriodSeconds: 30
     # labels:
     # imagePullSecrets:
     #   - name: regcred
