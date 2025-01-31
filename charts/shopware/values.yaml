@@ -90,6 +90,13 @@ store:
 
   cdnURL: "example.com"
 
+  # Shop settings can be configured at any time using the deployment helper.
+  # For more information, refer to the documentation:
+  # https://developer.shopware.com/docs/guides/hosting/installation-updates/deployments/deployment-helper.html
+  # shopConfiguration:
+  #   currency: EUR
+  #   locale: en-GB
+
   # s3 storage configuration
   # s3Storage:
   #   privateBucket: <s3-private-bucket>

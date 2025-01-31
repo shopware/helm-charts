@@ -61,6 +61,12 @@ spec:
   {{- end }}
   {{- end }}
 
+  {{- if hasKey .Values.store "shopConfiguration" }}
+  shopConfiguration:
+    currency: {{ .Values.store.shopConfiguration.currency | default "EUR" }}
+    locale: {{ .Values.store.shopConfiguration.locale | default "en-GB" }}
+  {{- end }}
+
   fpm:
     {{- if hasKey .Values.store "fpm" }}
     processManagement: {{ .Values.store.fpm.processManagement | default "dynamic" }}
