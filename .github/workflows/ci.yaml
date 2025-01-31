@@ -92,6 +92,7 @@ jobs:
           helm repo add opentelemetry https://open-telemetry.github.io/opentelemetry-helm-charts
           helm dependency build charts/shopware
 
+          helm install op --namespace test charts/shopware-operator
           helm install test --namespace test charts/shopware \
             --set minio.storageSize=100Mi \
             --set minio.resources.requests.cpu=100m \
@@ -99,7 +100,7 @@ jobs:
             --set valkeysession.master.resources.requests.cpu=200m \
             --set valkeyworker.master.resources.requests.cpu=200m
 
-          kubectl wait --namespace test --for=condition=Available --timeout=60s deployment/shopware-operator || {
+          kubectl wait --namespace test --for=condition=Available --timeout=60s deployment/op-shopware-operator || {
             kubectl get deployment/shopware-operator --namespace test -o json && exit 2
           }
           kubectl wait --namespace test store/test --for='jsonpath={.status.state}'=setup --timeout=1m
