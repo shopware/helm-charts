@@ -231,6 +231,14 @@ store:
     #   - name: FPM_PM
     #     value: static
 
+  # Each deployment and job from the operator can be overridden using the default container specifications defined
+  # in the store's container specification.
+  # migrationJobContainer:
+  # setupJobContainer:
+  # adminDeploymentContainer:
+  # storefrontDeploymentContainer:
+  # workerDeploymentContainer:
+
   # You need to set the correct ingressClassName for this to work properly. If you follow
   # the Readme and use kind, you can use nginx as ingress class and everything should run
   # out of the box.
