@@ -464,6 +464,8 @@ pxc-operator:
 shopware-operator:
   # Disabling makes sense if you want to test the Operator itself
   enabled: true
+  crds:
+    install: true
 
 otel-collector:
   enabled: false
