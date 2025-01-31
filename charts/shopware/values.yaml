@@ -80,9 +80,9 @@ store:
   host: localhost.traefik.me
 
   # This configuration is used to disable S3 and database checks prior to setup and shop creation.
-  # Note: This is a known issue in the operator and will be addressed in a future update.
-  # For more details, see: https://github.com/shopware/shopware-operator/issues/20
-  disableChecks: true
+  disableChecks: false
+  disableDatabaseCheck: false
+  disableS3Check: false
 
   # The name of the service account to use for the store deployments.
   # remove this if you do not want to use a service account
