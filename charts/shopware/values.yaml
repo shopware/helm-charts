@@ -461,11 +461,12 @@ pxc-operator:
     kubernetes.io/arch: amd64
 
 # This controls the Shopware operator helm chart which can be found here:
-shopware-operator:
-  # Disabling makes sense if you want to test the Operator itself
-  enabled: true
-  crds:
-    install: true
+# DEPRECATED: This has moved because the seperated crd installation.
+# shopware-operator:
+#   # Disabling makes sense if you want to test the Operator itself
+#   enabled: true
+#   crds:
+#     install: true
 
 otel-collector:
   enabled: false
