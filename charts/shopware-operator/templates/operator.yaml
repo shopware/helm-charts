@@ -4,10 +4,10 @@ metadata:
   labels:
     app.kubernetes.io/component: rbac
     app.kubernetes.io/created-by: shopware-operator
-    app.kubernetes.io/instance: controller-manager-sa
-    app.kubernetes.io/managed-by: kustomize
-    app.kubernetes.io/name: serviceaccount
+    app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: shopware-operator
+    app.kubernetes.io/release-name: '{{ .Release.Name }}'
+    app.kubernetes.io/release-namespace: '{{ .Release.Namespace }}'
   name: '{{ .Release.Name }}-shopware-operator'
   namespace: '{{ .Release.Namespace }}'
 ---
@@ -17,10 +17,10 @@ metadata:
   labels:
     app.kubernetes.io/component: rbac
     app.kubernetes.io/created-by: shopware-operator
-    app.kubernetes.io/instance: leader-election-role
-    app.kubernetes.io/managed-by: kustomize
-    app.kubernetes.io/name: role
+    app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: shopware-operator
+    app.kubernetes.io/release-name: '{{ .Release.Name }}'
+    app.kubernetes.io/release-namespace: '{{ .Release.Namespace }}'
   name: '{{ .Release.Name }}-le-shopware-operator'
   namespace: '{{ .Release.Namespace }}'
 rules:
@@ -59,6 +59,13 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
+  labels:
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: shopware-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: shopware-operator
+    app.kubernetes.io/release-name: '{{ .Release.Name }}'
+    app.kubernetes.io/release-namespace: '{{ .Release.Namespace }}'
   name: '{{ .Release.Name }}-shopware-operator'
   namespace: '{{ .Release.Namespace }}'
 rules:
@@ -170,10 +177,10 @@ metadata:
   labels:
     app.kubernetes.io/component: rbac
     app.kubernetes.io/created-by: shopware-operator
-    app.kubernetes.io/instance: leader-election-rolebinding
-    app.kubernetes.io/managed-by: kustomize
-    app.kubernetes.io/name: rolebinding
+    app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: shopware-operator
+    app.kubernetes.io/release-name: '{{ .Release.Name }}'
+    app.kubernetes.io/release-namespace: '{{ .Release.Namespace }}'
   name: '{{ .Release.Name }}-le-shopware-operator'
   namespace: '{{ .Release.Namespace }}'
 roleRef:
@@ -191,10 +198,10 @@ metadata:
   labels:
     app.kubernetes.io/component: rbac
     app.kubernetes.io/created-by: shopware-operator
-    app.kubernetes.io/instance: manager-rolebinding
-    app.kubernetes.io/managed-by: kustomize
-    app.kubernetes.io/name: clusterrolebinding
+    app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: shopware-operator
+    app.kubernetes.io/release-name: '{{ .Release.Name }}'
+    app.kubernetes.io/release-namespace: '{{ .Release.Namespace }}'
   name: '{{ .Release.Name }}-shopware-operator'
   namespace: '{{ .Release.Namespace }}'
 roleRef:
