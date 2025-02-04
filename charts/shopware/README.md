@@ -169,14 +169,16 @@ For a minimal installation, run:
 
 ```sh
 helm repo add shopware https://shopware.github.io/helm-charts/
-helm install my-shop shopware/shopware --namespace shopware --create-namespace
+helm install op shopware/shopware-operator --namespace shopware --create-namespace
+helm install my-shop shopware/shopware --namespace shopware
 ```
 
 If you want to use your own image use:
 
 ```sh
 helm repo add shopware https://shopware.github.io/helm-charts/
-helm install my-shop shopware/shopware --namespace shopware --create-namespace --set store.container.image=<image-name>
+helm install op shopware/shopware-operator --namespace shopware --create-namespace
+helm install my-shop shopware/shopware --namespace shopware --set store.container.image=<image-name>
 ```
 
 > [!WARNING]
@@ -254,6 +256,7 @@ For a more complex setup with additional prerequisites, you can install this Hel
 ```sh
 kubectl create namespace shopware
 kubectl label namespace shopware istio-injection=enabled
+helm install op shopware/shopware-operator --namespace shopware --create-namespace
 helm install my-shop shopware/shopware --namespace shopware --values examples/values_istio.yaml
 ```
 
@@ -265,8 +268,6 @@ helm install my-shop shopware/shopware --namespace shopware --values examples/va
 
 ### Operator
 
-A Shopware operator is installed for each namespace by default.
-You can disable this in the [values.yaml](values.yaml) file if you prefer to use it cluster-wide.
 As the operator is still in beta, we advise against using it at the cluster level.
 
 ### Shopware Image
