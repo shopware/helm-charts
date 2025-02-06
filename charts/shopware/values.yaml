@@ -80,15 +80,22 @@ store:
   host: localhost.traefik.me
 
   # This configuration is used to disable S3 and database checks prior to setup and shop creation.
-  # Note: This is a known issue in the operator and will be addressed in a future update.
-  # For more details, see: https://github.com/shopware/shopware-operator/issues/20
-  disableChecks: true
+  disableChecks: false
+  disableDatabaseCheck: false
+  disableS3Check: false
 
   # The name of the service account to use for the store deployments.
   # remove this if you do not want to use a service account
   serviceAccountName: store-sa
 
   cdnURL: "example.com"
+
+  # Shop settings can be configured at any time using the deployment helper.
+  # For more information, refer to the documentation:
+  # https://developer.shopware.com/docs/guides/hosting/installation-updates/deployments/deployment-helper.html
+  # shopConfiguration:
+  #   currency: EUR
+  #   locale: en-GB
 
   # s3 storage configuration
   # s3Storage:
@@ -181,6 +188,7 @@ store:
     # affinity:
     # nodeSelector:
     # annotations:
+    # terminationGracePeriodSeconds: 30
     # labels:
     # imagePullSecrets:
     #   - name: regcred
@@ -222,6 +230,14 @@ store:
     #     value: SomeStringValue
     #   - name: FPM_PM
     #     value: static
+
+  # Each deployment and job from the operator can be overridden using the default container specifications defined
+  # in the store's container specification.
+  # migrationJobContainer:
+  # setupJobContainer:
+  # adminDeploymentContainer:
+  # storefrontDeploymentContainer:
+  # workerDeploymentContainer:
 
   # You need to set the correct ingressClassName for this to work properly. If you follow
   # the Readme and use kind, you can use nginx as ingress class and everything should run
@@ -445,9 +461,12 @@ pxc-operator:
     kubernetes.io/arch: amd64
 
 # This controls the Shopware operator helm chart which can be found here:
-shopware-operator:
-  # Disabling makes sense if you want to test the Operator itself
-  enabled: true
+# DEPRECATED: This has moved because the seperated crd installation.
+# shopware-operator:
+#   # Disabling makes sense if you want to test the Operator itself
+#   enabled: true
+#   crds:
+#     install: true
 
 otel-collector:
   enabled: false

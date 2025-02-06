@@ -15,26 +15,19 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 0.0.33
-
+version: 0.0.34
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
-appVersion: "0.0.33"
+appVersion: "0.0.34"
 
 dependencies:
   - name: pxc-operator
     condition: percona.enabled
     version: 1.14.0
     repository: https://percona.github.io/percona-helm-charts/
-
-  - name: operator
-    alias: shopware-operator
-    version: 0.0.26
-    repository: https://shopware.github.io/helm-charts/
-    condition: shopware-operator.enabled
 
   - name: valkey
     alias: valkeyapp

@@ -61,6 +61,12 @@ spec:
   {{- end }}
   {{- end }}
 
+  {{- if hasKey .Values.store "shopConfiguration" }}
+  shopConfiguration:
+    currency: {{ .Values.store.shopConfiguration.currency | default "EUR" }}
+    locale: {{ .Values.store.shopConfiguration.locale | default "en-GB" }}
+  {{- end }}
+
   fpm:
     {{- if hasKey .Values.store "fpm" }}
     processManagement: {{ .Values.store.fpm.processManagement | default "dynamic" }}
@@ -138,6 +144,7 @@ spec:
     progressDeadlineSeconds: {{ .Values.store.container.progressDeadlineSeconds | default 30 }}
     imagePullPolicy: {{ .Values.store.container.imagePullPolicy | default "IfNotPresent" }}
     restartPolicy: {{ .Values.store.container.imagePullPolicy | default "Always" }}
+    terminationGracePeriodSeconds: {{ .Values.store.container.terminationGracePeriodSeconds | default 30 }}
     volumeMounts:
       - mountPath: /etc/caddy
         name: {{ template "getCaddyConfigName" . }}
