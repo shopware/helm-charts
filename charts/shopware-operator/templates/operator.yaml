@@ -1,3 +1,4 @@
+{{- if not .Values.crds.installOnly }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -212,3 +213,4 @@ subjects:
 - kind: ServiceAccount
   name: '{{ .Release.Name }}-shopware-operator'
   namespace: '{{ .Release.Namespace }}'
+{{- end }}
