@@ -74,6 +74,9 @@ percona:
 serviceAccountAnnotations: {}
 
 store:
+  # Label annotations for the store crd
+  # labels:
+  # annotations:
   # We use traefik.me to resolve to 127.0.0.1
   # Enter your DNS name for the shop.
   # This will make sure that your sales-channel is set up correctly and the ingress is using the host address.
