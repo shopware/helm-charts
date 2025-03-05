@@ -1,0 +1,2468 @@
+---
+# Source: shopware/charts/valkeyapp/templates/networkpolicy.yaml
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: renaud-shop-valkeyapp
+  namespace: "renaud-shop"
+  labels:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkeyapp
+    app.kubernetes.io/version: 8.0.0
+    helm.sh/chart: valkeyapp-1.0.1
+    app.kubernetes.io/part-of: valkey
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: renaud-shop
+      app.kubernetes.io/name: valkeyapp
+  policyTypes:
+    - Ingress
+    - Egress
+  egress:
+    - {}
+  ingress:
+    # Allow inbound connections
+    - ports:
+        - port: 6379
+---
+# Source: shopware/charts/valkeysession/templates/networkpolicy.yaml
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: renaud-shop-valkeysession
+  namespace: "renaud-shop"
+  labels:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkeysession
+    app.kubernetes.io/version: 8.0.0
+    helm.sh/chart: valkeysession-1.0.1
+    app.kubernetes.io/part-of: valkey
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: renaud-shop
+      app.kubernetes.io/name: valkeysession
+  policyTypes:
+    - Ingress
+    - Egress
+  egress:
+    - {}
+  ingress:
+    # Allow inbound connections
+    - ports:
+        - port: 6379
+---
+# Source: shopware/charts/valkeyworker/templates/networkpolicy.yaml
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: renaud-shop-valkeyworker
+  namespace: "renaud-shop"
+  labels:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkeyworker
+    app.kubernetes.io/version: 8.0.0
+    helm.sh/chart: valkeyworker-1.0.1
+    app.kubernetes.io/part-of: valkey
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/instance: renaud-shop
+      app.kubernetes.io/name: valkeyworker
+  policyTypes:
+    - Ingress
+    - Egress
+  egress:
+    - {}
+  ingress:
+    # Allow inbound connections
+    - ports:
+        - port: 6379
+---
+# Source: shopware/charts/operator/templates/rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: shopware-operator
+    app.kubernetes.io/instance: controller-manager-sa
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: serviceaccount
+    app.kubernetes.io/part-of: shopware-operator
+  name: controller-manager
+---
+# Source: shopware/charts/pxc-operator/templates/role-binding.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: renaud-shop-pxc-operator
+  namespace: renaud-shop
+---
+# Source: shopware/charts/valkeyapp/templates/master/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+automountServiceAccountToken: false
+metadata:
+  name: renaud-shop-valkeyapp-master
+  namespace: "renaud-shop"
+  labels:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkeyapp
+    app.kubernetes.io/version: 8.0.0
+    helm.sh/chart: valkeyapp-1.0.1
+    app.kubernetes.io/part-of: valkey
+---
+# Source: shopware/charts/valkeysession/templates/master/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+automountServiceAccountToken: false
+metadata:
+  name: renaud-shop-valkeysession-master
+  namespace: "renaud-shop"
+  labels:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkeysession
+    app.kubernetes.io/version: 8.0.0
+    helm.sh/chart: valkeysession-1.0.1
+    app.kubernetes.io/part-of: valkey
+---
+# Source: shopware/charts/valkeyworker/templates/master/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+automountServiceAccountToken: false
+metadata:
+  name: renaud-shop-valkeyworker-master
+  namespace: "renaud-shop"
+  labels:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkeyworker
+    app.kubernetes.io/version: 8.0.0
+    helm.sh/chart: valkeyworker-1.0.1
+    app.kubernetes.io/part-of: valkey
+---
+# Source: shopware/templates/service_account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: store-sa
+  namespace: 'renaud-shop'
+---
+# Source: shopware/templates/tenant_secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: minio-configuration
+type: Opaque
+stringData:
+  config.env: |-
+    export MINIO_ROOT_USER="admin"
+    export MINIO_ROOT_PASSWORD="g1vloxGM33pJZmV4cd"
+---
+# Source: shopware/templates/tenant_user.yaml
+kind: Secret
+apiVersion: v1
+metadata:
+  name: store-s3-shopware
+type: Opaque
+stringData:
+  CONSOLE_ACCESS_KEY: iVQFUj9Vy0EqP5pGSI
+  CONSOLE_SECRET_KEY: rIfDdO920yef8Rawfh
+---
+# Source: shopware/charts/valkeyapp/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: renaud-shop-valkeyapp-configuration
+  namespace: "renaud-shop"
+  labels:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkeyapp
+    app.kubernetes.io/version: 8.0.0
+    helm.sh/chart: valkeyapp-1.0.1
+    app.kubernetes.io/part-of: valkey
+data:
+  valkey.conf: |-
+    # User-supplied common configuration:
+    # Enable AOF https://valkey.io/docs/topics/persistence.html
+    appendonly yes
+    # Disable RDB persistence, AOF persistence already enabled.
+    save ""
+    # End of common configuration
+  master.conf: |-
+    dir /data
+    # User-supplied master configuration:
+    rename-command FLUSHDB ""
+    rename-command FLUSHALL ""
+    # End of master configuration
+  replica.conf: |-
+    dir /data
+    # User-supplied replica configuration:
+    rename-command FLUSHDB ""
+    rename-command FLUSHALL ""
+    # End of replica configuration
+---
+# Source: shopware/charts/valkeyapp/templates/health-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: renaud-shop-valkeyapp-health
+  namespace: "renaud-shop"
+  labels:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkeyapp
+    app.kubernetes.io/version: 8.0.0
+    helm.sh/chart: valkeyapp-1.0.1
+data:
+  ping_readiness_local.sh: |-
+    #!/bin/bash
+
+    [[ -f $VALKEY_PASSWORD_FILE ]] && export VALKEY_PASSWORD="$(< "${VALKEY_PASSWORD_FILE}")"
+    [[ -n "$VALKEY_PASSWORD" ]] && export REDISCLI_AUTH="$VALKEY_PASSWORD"
+    response=$(
+      timeout -s 15 $1 \
+      valkey-cli \
+        -h localhost \
+        -p $VALKEY_PORT \
+        ping
+    )
+    if [ "$?" -eq "124" ]; then
+      echo "Timed out"
+      exit 1
+    fi
+    if [ "$response" != "PONG" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_liveness_local.sh: |-
+    #!/bin/bash
+
+    [[ -f $VALKEY_PASSWORD_FILE ]] && export VALKEY_PASSWORD="$(< "${VALKEY_PASSWORD_FILE}")"
+    [[ -n "$VALKEY_PASSWORD" ]] && export REDISCLI_AUTH="$VALKEY_PASSWORD"
+    response=$(
+      timeout -s 15 $1 \
+      valkey-cli \
+        -h localhost \
+        -p $VALKEY_PORT \
+        ping
+    )
+    if [ "$?" -eq "124" ]; then
+      echo "Timed out"
+      exit 1
+    fi
+    responseFirstWord=$(echo $response | head -n1 | awk '{print $1;}')
+    if [ "$response" != "PONG" ] && [ "$responseFirstWord" != "LOADING" ] && [ "$responseFirstWord" != "MASTERDOWN" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_readiness_master.sh: |-
+    #!/bin/bash
+
+    [[ -f $VALKEY_MASTER_PASSWORD_FILE ]] && export VALKEY_MASTER_PASSWORD="$(< "${VALKEY_MASTER_PASSWORD_FILE}")"
+    [[ -n "$VALKEY_MASTER_PASSWORD" ]] && export REDISCLI_AUTH="$VALKEY_MASTER_PASSWORD"
+    response=$(
+      timeout -s 15 $1 \
+      valkey-cli \
+        -h $VALKEY_MASTER_HOST \
+        -p $VALKEY_MASTER_PORT_NUMBER \
+        ping
+    )
+    if [ "$?" -eq "124" ]; then
+      echo "Timed out"
+      exit 1
+    fi
+    if [ "$response" != "PONG" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_liveness_master.sh: |-
+    #!/bin/bash
+
+    [[ -f $VALKEY_MASTER_PASSWORD_FILE ]] && export VALKEY_MASTER_PASSWORD="$(< "${VALKEY_MASTER_PASSWORD_FILE}")"
+    [[ -n "$VALKEY_MASTER_PASSWORD" ]] && export REDISCLI_AUTH="$VALKEY_MASTER_PASSWORD"
+    response=$(
+      timeout -s 15 $1 \
+      valkey-cli \
+        -h $VALKEY_MASTER_HOST \
+        -p $VALKEY_MASTER_PORT_NUMBER \
+        ping
+    )
+    if [ "$?" -eq "124" ]; then
+      echo "Timed out"
+      exit 1
+    fi
+    responseFirstWord=$(echo $response | head -n1 | awk '{print $1;}')
+    if [ "$response" != "PONG" ] && [ "$responseFirstWord" != "LOADING" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_readiness_local_and_master.sh: |-
+    script_dir="$(dirname "$0")"
+    exit_status=0
+    "$script_dir/ping_readiness_local.sh" $1 || exit_status=$?
+    "$script_dir/ping_readiness_master.sh" $1 || exit_status=$?
+    exit $exit_status
+  ping_liveness_local_and_master.sh: |-
+    script_dir="$(dirname "$0")"
+    exit_status=0
+    "$script_dir/ping_liveness_local.sh" $1 || exit_status=$?
+    "$script_dir/ping_liveness_master.sh" $1 || exit_status=$?
+    exit $exit_status
+---
+# Source: shopware/charts/valkeyapp/templates/scripts-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: renaud-shop-valkeyapp-scripts
+  namespace: "renaud-shop"
+  labels:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkeyapp
+    app.kubernetes.io/version: 8.0.0
+    helm.sh/chart: valkeyapp-1.0.1
+    app.kubernetes.io/part-of: valkey
+data:
+  start-master.sh: |
+    #!/bin/bash
+
+    [[ -f $VALKEY_PASSWORD_FILE ]] && export VALKEY_PASSWORD="$(< "${VALKEY_PASSWORD_FILE}")"
+    if [[ -f /opt/bitnami/valkey/mounted-etc/master.conf ]];then
+        cp /opt/bitnami/valkey/mounted-etc/master.conf /opt/bitnami/valkey/etc/master.conf
+    fi
+    if [[ -f /opt/bitnami/valkey/mounted-etc/valkey.conf ]];then
+        cp /opt/bitnami/valkey/mounted-etc/valkey.conf /opt/bitnami/valkey/etc/valkey.conf
+    fi
+    ARGS=("--port" "${VALKEY_PORT}")
+    ARGS+=("--protected-mode" "no")
+    ARGS+=("--include" "/opt/bitnami/valkey/etc/valkey.conf")
+    ARGS+=("--include" "/opt/bitnami/valkey/etc/master.conf")
+    exec valkey-server "${ARGS[@]}"
+---
+# Source: shopware/charts/valkeysession/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: renaud-shop-valkeysession-configuration
+  namespace: "renaud-shop"
+  labels:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkeysession
+    app.kubernetes.io/version: 8.0.0
+    helm.sh/chart: valkeysession-1.0.1
+    app.kubernetes.io/part-of: valkey
+data:
+  valkey.conf: |-
+    # User-supplied common configuration:
+    # Enable AOF https://valkey.io/docs/topics/persistence.html
+    appendonly yes
+    # Disable RDB persistence, AOF persistence already enabled.
+    save ""
+    # End of common configuration
+  master.conf: |-
+    dir /data
+    # User-supplied master configuration:
+    rename-command FLUSHDB ""
+    rename-command FLUSHALL ""
+    # End of master configuration
+  replica.conf: |-
+    dir /data
+    # User-supplied replica configuration:
+    rename-command FLUSHDB ""
+    rename-command FLUSHALL ""
+    # End of replica configuration
+---
+# Source: shopware/charts/valkeysession/templates/health-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: renaud-shop-valkeysession-health
+  namespace: "renaud-shop"
+  labels:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkeysession
+    app.kubernetes.io/version: 8.0.0
+    helm.sh/chart: valkeysession-1.0.1
+data:
+  ping_readiness_local.sh: |-
+    #!/bin/bash
+
+    [[ -f $VALKEY_PASSWORD_FILE ]] && export VALKEY_PASSWORD="$(< "${VALKEY_PASSWORD_FILE}")"
+    [[ -n "$VALKEY_PASSWORD" ]] && export REDISCLI_AUTH="$VALKEY_PASSWORD"
+    response=$(
+      timeout -s 15 $1 \
+      valkey-cli \
+        -h localhost \
+        -p $VALKEY_PORT \
+        ping
+    )
+    if [ "$?" -eq "124" ]; then
+      echo "Timed out"
+      exit 1
+    fi
+    if [ "$response" != "PONG" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_liveness_local.sh: |-
+    #!/bin/bash
+
+    [[ -f $VALKEY_PASSWORD_FILE ]] && export VALKEY_PASSWORD="$(< "${VALKEY_PASSWORD_FILE}")"
+    [[ -n "$VALKEY_PASSWORD" ]] && export REDISCLI_AUTH="$VALKEY_PASSWORD"
+    response=$(
+      timeout -s 15 $1 \
+      valkey-cli \
+        -h localhost \
+        -p $VALKEY_PORT \
+        ping
+    )
+    if [ "$?" -eq "124" ]; then
+      echo "Timed out"
+      exit 1
+    fi
+    responseFirstWord=$(echo $response | head -n1 | awk '{print $1;}')
+    if [ "$response" != "PONG" ] && [ "$responseFirstWord" != "LOADING" ] && [ "$responseFirstWord" != "MASTERDOWN" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_readiness_master.sh: |-
+    #!/bin/bash
+
+    [[ -f $VALKEY_MASTER_PASSWORD_FILE ]] && export VALKEY_MASTER_PASSWORD="$(< "${VALKEY_MASTER_PASSWORD_FILE}")"
+    [[ -n "$VALKEY_MASTER_PASSWORD" ]] && export REDISCLI_AUTH="$VALKEY_MASTER_PASSWORD"
+    response=$(
+      timeout -s 15 $1 \
+      valkey-cli \
+        -h $VALKEY_MASTER_HOST \
+        -p $VALKEY_MASTER_PORT_NUMBER \
+        ping
+    )
+    if [ "$?" -eq "124" ]; then
+      echo "Timed out"
+      exit 1
+    fi
+    if [ "$response" != "PONG" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_liveness_master.sh: |-
+    #!/bin/bash
+
+    [[ -f $VALKEY_MASTER_PASSWORD_FILE ]] && export VALKEY_MASTER_PASSWORD="$(< "${VALKEY_MASTER_PASSWORD_FILE}")"
+    [[ -n "$VALKEY_MASTER_PASSWORD" ]] && export REDISCLI_AUTH="$VALKEY_MASTER_PASSWORD"
+    response=$(
+      timeout -s 15 $1 \
+      valkey-cli \
+        -h $VALKEY_MASTER_HOST \
+        -p $VALKEY_MASTER_PORT_NUMBER \
+        ping
+    )
+    if [ "$?" -eq "124" ]; then
+      echo "Timed out"
+      exit 1
+    fi
+    responseFirstWord=$(echo $response | head -n1 | awk '{print $1;}')
+    if [ "$response" != "PONG" ] && [ "$responseFirstWord" != "LOADING" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_readiness_local_and_master.sh: |-
+    script_dir="$(dirname "$0")"
+    exit_status=0
+    "$script_dir/ping_readiness_local.sh" $1 || exit_status=$?
+    "$script_dir/ping_readiness_master.sh" $1 || exit_status=$?
+    exit $exit_status
+  ping_liveness_local_and_master.sh: |-
+    script_dir="$(dirname "$0")"
+    exit_status=0
+    "$script_dir/ping_liveness_local.sh" $1 || exit_status=$?
+    "$script_dir/ping_liveness_master.sh" $1 || exit_status=$?
+    exit $exit_status
+---
+# Source: shopware/charts/valkeysession/templates/scripts-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: renaud-shop-valkeysession-scripts
+  namespace: "renaud-shop"
+  labels:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkeysession
+    app.kubernetes.io/version: 8.0.0
+    helm.sh/chart: valkeysession-1.0.1
+    app.kubernetes.io/part-of: valkey
+data:
+  start-master.sh: |
+    #!/bin/bash
+
+    [[ -f $VALKEY_PASSWORD_FILE ]] && export VALKEY_PASSWORD="$(< "${VALKEY_PASSWORD_FILE}")"
+    if [[ -f /opt/bitnami/valkey/mounted-etc/master.conf ]];then
+        cp /opt/bitnami/valkey/mounted-etc/master.conf /opt/bitnami/valkey/etc/master.conf
+    fi
+    if [[ -f /opt/bitnami/valkey/mounted-etc/valkey.conf ]];then
+        cp /opt/bitnami/valkey/mounted-etc/valkey.conf /opt/bitnami/valkey/etc/valkey.conf
+    fi
+    ARGS=("--port" "${VALKEY_PORT}")
+    ARGS+=("--protected-mode" "no")
+    ARGS+=("--include" "/opt/bitnami/valkey/etc/valkey.conf")
+    ARGS+=("--include" "/opt/bitnami/valkey/etc/master.conf")
+    exec valkey-server "${ARGS[@]}"
+---
+# Source: shopware/charts/valkeyworker/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: renaud-shop-valkeyworker-configuration
+  namespace: "renaud-shop"
+  labels:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkeyworker
+    app.kubernetes.io/version: 8.0.0
+    helm.sh/chart: valkeyworker-1.0.1
+    app.kubernetes.io/part-of: valkey
+data:
+  valkey.conf: |-
+    # User-supplied common configuration:
+    # Enable AOF https://valkey.io/docs/topics/persistence.html
+    appendonly yes
+    # Disable RDB persistence, AOF persistence already enabled.
+    save ""
+    # End of common configuration
+  master.conf: |-
+    dir /data
+    # User-supplied master configuration:
+    rename-command FLUSHDB ""
+    rename-command FLUSHALL ""
+    # End of master configuration
+  replica.conf: |-
+    dir /data
+    # User-supplied replica configuration:
+    rename-command FLUSHDB ""
+    rename-command FLUSHALL ""
+    # End of replica configuration
+---
+# Source: shopware/charts/valkeyworker/templates/health-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: renaud-shop-valkeyworker-health
+  namespace: "renaud-shop"
+  labels:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkeyworker
+    app.kubernetes.io/version: 8.0.0
+    helm.sh/chart: valkeyworker-1.0.1
+data:
+  ping_readiness_local.sh: |-
+    #!/bin/bash
+
+    [[ -f $VALKEY_PASSWORD_FILE ]] && export VALKEY_PASSWORD="$(< "${VALKEY_PASSWORD_FILE}")"
+    [[ -n "$VALKEY_PASSWORD" ]] && export REDISCLI_AUTH="$VALKEY_PASSWORD"
+    response=$(
+      timeout -s 15 $1 \
+      valkey-cli \
+        -h localhost \
+        -p $VALKEY_PORT \
+        ping
+    )
+    if [ "$?" -eq "124" ]; then
+      echo "Timed out"
+      exit 1
+    fi
+    if [ "$response" != "PONG" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_liveness_local.sh: |-
+    #!/bin/bash
+
+    [[ -f $VALKEY_PASSWORD_FILE ]] && export VALKEY_PASSWORD="$(< "${VALKEY_PASSWORD_FILE}")"
+    [[ -n "$VALKEY_PASSWORD" ]] && export REDISCLI_AUTH="$VALKEY_PASSWORD"
+    response=$(
+      timeout -s 15 $1 \
+      valkey-cli \
+        -h localhost \
+        -p $VALKEY_PORT \
+        ping
+    )
+    if [ "$?" -eq "124" ]; then
+      echo "Timed out"
+      exit 1
+    fi
+    responseFirstWord=$(echo $response | head -n1 | awk '{print $1;}')
+    if [ "$response" != "PONG" ] && [ "$responseFirstWord" != "LOADING" ] && [ "$responseFirstWord" != "MASTERDOWN" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_readiness_master.sh: |-
+    #!/bin/bash
+
+    [[ -f $VALKEY_MASTER_PASSWORD_FILE ]] && export VALKEY_MASTER_PASSWORD="$(< "${VALKEY_MASTER_PASSWORD_FILE}")"
+    [[ -n "$VALKEY_MASTER_PASSWORD" ]] && export REDISCLI_AUTH="$VALKEY_MASTER_PASSWORD"
+    response=$(
+      timeout -s 15 $1 \
+      valkey-cli \
+        -h $VALKEY_MASTER_HOST \
+        -p $VALKEY_MASTER_PORT_NUMBER \
+        ping
+    )
+    if [ "$?" -eq "124" ]; then
+      echo "Timed out"
+      exit 1
+    fi
+    if [ "$response" != "PONG" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_liveness_master.sh: |-
+    #!/bin/bash
+
+    [[ -f $VALKEY_MASTER_PASSWORD_FILE ]] && export VALKEY_MASTER_PASSWORD="$(< "${VALKEY_MASTER_PASSWORD_FILE}")"
+    [[ -n "$VALKEY_MASTER_PASSWORD" ]] && export REDISCLI_AUTH="$VALKEY_MASTER_PASSWORD"
+    response=$(
+      timeout -s 15 $1 \
+      valkey-cli \
+        -h $VALKEY_MASTER_HOST \
+        -p $VALKEY_MASTER_PORT_NUMBER \
+        ping
+    )
+    if [ "$?" -eq "124" ]; then
+      echo "Timed out"
+      exit 1
+    fi
+    responseFirstWord=$(echo $response | head -n1 | awk '{print $1;}')
+    if [ "$response" != "PONG" ] && [ "$responseFirstWord" != "LOADING" ]; then
+      echo "$response"
+      exit 1
+    fi
+  ping_readiness_local_and_master.sh: |-
+    script_dir="$(dirname "$0")"
+    exit_status=0
+    "$script_dir/ping_readiness_local.sh" $1 || exit_status=$?
+    "$script_dir/ping_readiness_master.sh" $1 || exit_status=$?
+    exit $exit_status
+  ping_liveness_local_and_master.sh: |-
+    script_dir="$(dirname "$0")"
+    exit_status=0
+    "$script_dir/ping_liveness_local.sh" $1 || exit_status=$?
+    "$script_dir/ping_liveness_master.sh" $1 || exit_status=$?
+    exit $exit_status
+---
+# Source: shopware/charts/valkeyworker/templates/scripts-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: renaud-shop-valkeyworker-scripts
+  namespace: "renaud-shop"
+  labels:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkeyworker
+    app.kubernetes.io/version: 8.0.0
+    helm.sh/chart: valkeyworker-1.0.1
+    app.kubernetes.io/part-of: valkey
+data:
+  start-master.sh: |
+    #!/bin/bash
+
+    [[ -f $VALKEY_PASSWORD_FILE ]] && export VALKEY_PASSWORD="$(< "${VALKEY_PASSWORD_FILE}")"
+    if [[ -f /opt/bitnami/valkey/mounted-etc/master.conf ]];then
+        cp /opt/bitnami/valkey/mounted-etc/master.conf /opt/bitnami/valkey/etc/master.conf
+    fi
+    if [[ -f /opt/bitnami/valkey/mounted-etc/valkey.conf ]];then
+        cp /opt/bitnami/valkey/mounted-etc/valkey.conf /opt/bitnami/valkey/etc/valkey.conf
+    fi
+    ARGS=("--port" "${VALKEY_PORT}")
+    ARGS+=("--protected-mode" "no")
+    ARGS+=("--include" "/opt/bitnami/valkey/etc/valkey.conf")
+    ARGS+=("--include" "/opt/bitnami/valkey/etc/master.conf")
+    exec valkey-server "${ARGS[@]}"
+---
+# Source: shopware/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: renaud-shop-fluent-bit
+  namespace: renaud-shop
+  labels:
+    app: fluent-bit
+data:
+  custom_parsers.conf: |
+    [PARSER]
+        Name shopware
+        Format json
+        Time_Key ts
+        Time_Format %s
+  fluent-bit.conf:  |
+    [SERVICE]
+        Daemon Off
+        Flush 1
+        Log_Level info
+        Parsers_File /fluent-bit/etc/parsers.conf
+        Parsers_File /fluent-bit/etc/conf/custom_parsers.conf
+        HTTP_Server On
+        HTTP_Listen 0.0.0.0
+        HTTP_Port 2020
+        Health_Check On
+    
+    [INPUT]
+        Name tail
+        Path /var/log/shopware.log
+        Parser shopware
+        Tag shopware
+        Mem_Buf_Limit 5MB
+        Skip_Long_Lines On
+    
+    [INPUT]
+        Name tail
+        Path /var/log/caddy.log
+        Parser shopware
+        Tag caddy
+        Mem_Buf_Limit 5MB
+        Skip_Long_Lines On
+    
+    [FILTER]
+        Name grep
+        Match *
+        Exclude $context['route'] api.info.health.check
+    
+    [FILTER]
+        Name grep
+        Match caddy
+        Exclude $request['uri'] api/_info/health-check
+    
+    [OUTPUT]
+        Name         loki
+        Match        *
+        Host         loki-gateway.loki.svc.cluster.local
+        Port         80
+        Tls          off
+        Labels       ${FLUENT_BIT_LABELS}
+        Match        shopware
+        auto_kubernetes_labels on
+        tenant_id    tenant-renaud-shop
+    
+    [OUTPUT]
+        Name         loki
+        Match        *
+        Host         loki-gateway.loki.svc.cluster.local
+        Port         80
+        Tls          off
+        Labels       job=fluentbit,service=caddy
+        Match        caddy
+        auto_kubernetes_labels on
+        tenant_id    tenant-renaud-shop
+---
+# Source: shopware/templates/prometheus_config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: renaud-shop-prometheus-config
+data:
+  prometheus.yml: |-
+    scrape_configs:
+      - job_name: kubernetes-pods
+        honor_labels: true
+        honor_timestamps: true
+        track_timestamps_staleness: false
+        scrape_interval: 1m
+        scrape_timeout: 10s
+        scrape_protocols:
+        - OpenMetricsText1.0.0
+        - OpenMetricsText0.0.1
+        - PrometheusText0.0.4
+        metrics_path: /metrics
+        scheme: http
+        enable_compression: true
+        follow_redirects: true
+        enable_http2: true
+        http_headers: null
+        relabel_configs:
+        - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+          separator: ;
+          regex: "true"
+          replacement: $1
+          action: keep
+        - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape_slow]
+          separator: ;
+          regex: "true"
+          replacement: $1
+          action: drop
+        - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scheme]
+          separator: ;
+          regex: (https?)
+          target_label: __scheme__
+          replacement: $1
+          action: replace
+        - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+          separator: ;
+          regex: (.+)
+          target_label: __metrics_path__
+          replacement: $1
+          action: replace
+        - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_port, __meta_kubernetes_pod_ip]
+          separator: ;
+          regex: (\d+);(([A-Fa-f0-9]{1,4}::?){1,7}[A-Fa-f0-9]{1,4})
+          target_label: __address__
+          replacement: '[$2]:$1'
+          action: replace
+        - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_port, __meta_kubernetes_pod_ip]
+          separator: ;
+          regex: (\d+);((([0-9]+?)(\.|$)){4})
+          target_label: __address__
+          replacement: $2:$1
+          action: replace
+        - separator: ;
+          regex: __meta_kubernetes_pod_annotation_prometheus_io_param_(.+)
+          replacement: __param_$1
+          action: labelmap
+        - separator: ;
+          regex: __meta_kubernetes_pod_label_(.+)
+          replacement: $1
+          action: labelmap
+        - source_labels: [__meta_kubernetes_namespace]
+          separator: ;
+          regex: (.*)
+          target_label: namespace
+          replacement: $1
+          action: replace
+        - source_labels: [__meta_kubernetes_pod_name]
+          separator: ;
+          regex: (.*)
+          target_label: pod
+          replacement: $1
+          action: replace
+        - source_labels: [__meta_kubernetes_pod_phase]
+          separator: ;
+          regex: Pending|Succeeded|Failed|Completed
+          replacement: $1
+          action: drop
+        - source_labels: [__meta_kubernetes_pod_node_name]
+          separator: ;
+          regex: (.*)
+          target_label: node
+          replacement: $1
+          action: replace
+        kubernetes_sd_configs:
+        - role: pod
+          kubeconfig_file: ""
+          follow_redirects: true
+          enable_http2: true
+          http_headers: null
+          namespaces:
+            names:
+            - renaud-shop
+---
+# Source: shopware/templates/store_caddy_config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: renaud-shop-caddy-config
+data:
+  Caddyfile: |
+    :8000
+    log {
+      output stdout
+      format json
+
+      output file /var/log/caddy.log {
+        format json
+        roll_size 10MB
+        roll_keep 5
+        roll_keep_for 24h
+      }
+    }
+
+    route {
+      tracing {
+        span caddy
+      }
+      header {
+       X-Trace-Id {http.vars.trace_id}
+      }
+      request_header X-Trace-Id {http.vars.trace_id}
+      @default {
+        not path /theme/* /media/* /thumbnail/* /bundles/* /sitemap/*
+      }
+      root * /var/www/html/public
+      php_fastcgi @default unix//tmp/php-fpm.sock {
+        trusted_proxies private_ranges
+        read_timeout 30s
+        write_timeout 30s
+      }
+      encode gzip
+      file_server
+    }
+---
+# Source: shopware/templates/store_monolog_config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: renaud-shop-monolog-config
+data:
+  monolog.yaml: |
+    monolog:
+      handlers:
+        business_event_handler_buffer:
+          level: info
+        console:
+          channels:
+          - '!event'
+          - '!doctrine'
+          process_psr_3_messages: false
+          type: console
+        file_log:
+          formatter: monolog.formatter.json
+          level: info
+          path: /var/log/shopware.log
+          type: stream
+        main:
+          action_level: info
+          buffer_size: 50
+          excluded_http_codes:
+          - 404
+          - 405
+          handler: nested
+          type: fingers_crossed
+        nested:
+          members:
+          - stderr
+          - file_log
+          type: group
+        stderr:
+          level: info
+          path: php://stderr
+          type: stream
+---
+# Source: shopware/charts/operator/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: manager-role
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - watch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - shop.shopware.com
+  resources:
+  - stores
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - shop.shopware.com
+  resources:
+  - stores/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - shop.shopware.com
+  resources:
+  - stores/status
+  verbs:
+  - get
+  - patch
+  - update
+---
+# Source: shopware/charts/operator/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: shopware-operator
+    app.kubernetes.io/instance: leader-election-role
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: role
+    app.kubernetes.io/part-of: shopware-operator
+  name: leader-election-role
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+---
+# Source: shopware/charts/pxc-operator/templates/role.yaml
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: renaud-shop-pxc-operator
+  namespace: renaud-shop
+  labels:
+    app.kubernetes.io/name: pxc-operator
+    helm.sh/chart: pxc-operator-1.14.0
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/version: "1.14.0"
+    app.kubernetes.io/managed-by: Helm
+rules:
+- apiGroups:
+  - pxc.percona.com
+  resources:
+  - perconaxtradbclusters
+  - perconaxtradbclusters/status
+  - perconaxtradbclusterbackups
+  - perconaxtradbclusterbackups/status
+  - perconaxtradbclusterrestores
+  - perconaxtradbclusterrestores/status
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - pods/exec
+  - pods/log
+  - configmaps
+  - services
+  - persistentvolumeclaims
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - replicasets
+  - statefulsets
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  - cronjobs
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - policy
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - certmanager.k8s.io
+  - cert-manager.io
+  resources:
+  - issuers
+  - certificates
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+  - deletecollection
+---
+# Source: shopware/charts/operator/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: shopware-operator
+    app.kubernetes.io/instance: leader-election-rolebinding
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: rolebinding
+    app.kubernetes.io/part-of: shopware-operator
+  name: leader-election-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: leader-election-role
+subjects:
+- kind: ServiceAccount
+  name: controller-manager
+---
+# Source: shopware/charts/operator/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: shopware-operator
+    app.kubernetes.io/instance: manager-rolebinding
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: clusterrolebinding
+    app.kubernetes.io/part-of: shopware-operator
+  name: manager-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: manager-role
+subjects:
+- kind: ServiceAccount
+  name: controller-manager
+---
+# Source: shopware/charts/pxc-operator/templates/role-binding.yaml
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: renaud-shop-pxc-operator
+  namespace: renaud-shop
+  labels:
+    app.kubernetes.io/name: pxc-operator
+    helm.sh/chart: pxc-operator-1.14.0
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/version: "1.14.0"
+    app.kubernetes.io/managed-by: Helm
+subjects:
+- kind: ServiceAccount
+  name: renaud-shop-pxc-operator
+roleRef:
+  kind: Role
+  name: renaud-shop-pxc-operator
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: shopware/charts/valkeyapp/templates/headless-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: renaud-shop-valkeyapp-headless
+  namespace: "renaud-shop"
+  labels:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkeyapp
+    app.kubernetes.io/version: 8.0.0
+    helm.sh/chart: valkeyapp-1.0.1
+    app.kubernetes.io/part-of: valkey
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: tcp-redis
+      port:  6379
+      targetPort: redis
+  selector:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/name: valkeyapp
+---
+# Source: shopware/charts/valkeyapp/templates/master/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: renaud-shop-valkeyapp-master
+  namespace: "renaud-shop"
+  labels:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkeyapp
+    app.kubernetes.io/version: 8.0.0
+    helm.sh/chart: valkeyapp-1.0.1
+    app.kubernetes.io/component: master
+    app.kubernetes.io/part-of: valkey
+spec:
+  type: ClusterIP
+  internalTrafficPolicy: Cluster
+  sessionAffinity: None
+  ports:
+    - name: tcp-redis
+      port: 6379
+      targetPort: redis
+      nodePort: null
+  selector:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/name: valkeyapp
+    app.kubernetes.io/component: master
+---
+# Source: shopware/charts/valkeysession/templates/headless-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: renaud-shop-valkeysession-headless
+  namespace: "renaud-shop"
+  labels:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkeysession
+    app.kubernetes.io/version: 8.0.0
+    helm.sh/chart: valkeysession-1.0.1
+    app.kubernetes.io/part-of: valkey
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: tcp-redis
+      port:  6379
+      targetPort: redis
+  selector:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/name: valkeysession
+---
+# Source: shopware/charts/valkeysession/templates/master/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: renaud-shop-valkeysession-master
+  namespace: "renaud-shop"
+  labels:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkeysession
+    app.kubernetes.io/version: 8.0.0
+    helm.sh/chart: valkeysession-1.0.1
+    app.kubernetes.io/component: master
+    app.kubernetes.io/part-of: valkey
+spec:
+  type: ClusterIP
+  internalTrafficPolicy: Cluster
+  sessionAffinity: None
+  ports:
+    - name: tcp-redis
+      port: 6379
+      targetPort: redis
+      nodePort: null
+  selector:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/name: valkeysession
+    app.kubernetes.io/component: master
+---
+# Source: shopware/charts/valkeyworker/templates/headless-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: renaud-shop-valkeyworker-headless
+  namespace: "renaud-shop"
+  labels:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkeyworker
+    app.kubernetes.io/version: 8.0.0
+    helm.sh/chart: valkeyworker-1.0.1
+    app.kubernetes.io/part-of: valkey
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: tcp-redis
+      port:  6379
+      targetPort: redis
+  selector:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/name: valkeyworker
+---
+# Source: shopware/charts/valkeyworker/templates/master/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: renaud-shop-valkeyworker-master
+  namespace: "renaud-shop"
+  labels:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkeyworker
+    app.kubernetes.io/version: 8.0.0
+    helm.sh/chart: valkeyworker-1.0.1
+    app.kubernetes.io/component: master
+    app.kubernetes.io/part-of: valkey
+spec:
+  type: ClusterIP
+  internalTrafficPolicy: Cluster
+  sessionAffinity: None
+  ports:
+    - name: tcp-redis
+      port: 6379
+      targetPort: redis
+      nodePort: null
+  selector:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/name: valkeyworker
+    app.kubernetes.io/component: master
+---
+# Source: shopware/charts/operator/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shopware-operator
+  namespace: renaud-shop
+  labels:
+    app.kubernetes.io/component: manager
+    app.kubernetes.io/created-by: shopware-operator
+    app.kubernetes.io/instance: controller-manager
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/name: deployment
+    app.kubernetes.io/part-of: shopware-operator
+    control-plane: controller-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      control-plane: controller-manager
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: manager
+      labels:
+        control-plane: controller-manager
+    spec:
+      
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+                - arm64
+              - key: kubernetes.io/os
+                operator: In
+                values:
+                - linux
+      
+      tolerations:
+      containers:
+      - args:
+        - --leader-elect
+        command:
+        - /manager
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        image: "ghcr.io/shopware/shopware-operator:0.0.24"
+        imagePullPolicy: "IfNotPresent"
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        name: manager
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          limits:
+            cpu: 500m
+            memory: 128Mi
+          requests:
+            cpu: 10m
+            memory: 64Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: controller-manager
+      terminationGracePeriodSeconds: 10
+---
+# Source: shopware/charts/pxc-operator/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: renaud-shop-pxc-operator
+  namespace: renaud-shop
+  labels:
+    app.kubernetes.io/name: pxc-operator
+    helm.sh/chart: pxc-operator-1.14.0
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/version: "1.14.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: operator
+      app.kubernetes.io/name: pxc-operator
+      app.kubernetes.io/instance: renaud-shop
+      app.kubernetes.io/part-of: pxc-operator
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: operator
+        app.kubernetes.io/name: pxc-operator
+        app.kubernetes.io/instance: renaud-shop
+        app.kubernetes.io/part-of: pxc-operator
+    spec:
+      serviceAccountName: renaud-shop-pxc-operator
+      terminationGracePeriodSeconds: 600
+      containers:
+        - name: percona-xtradb-cluster-operator
+          image: percona/percona-xtradb-cluster-operator:1.14.0
+          imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: 8080
+            name: metrics
+            protocol: TCP
+          command:
+          - percona-xtradb-cluster-operator
+          env:
+            - name: WATCH_NAMESPACE
+              value: "renaud-shop"
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: renaud-shop-pxc-operator
+            - name: LOG_STRUCTURED
+              value: "false"
+            - name: LOG_LEVEL
+              value: "INFO"
+            - name: DISABLE_TELEMETRY
+              value: "false"
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /metrics
+              port: metrics
+              scheme: HTTP
+          resources:
+            limits:
+              cpu: 200m
+              memory: 500Mi
+            requests:
+              cpu: 100m
+              memory: 20Mi
+      nodeSelector:
+        kubernetes.io/arch: arm64
+---
+# Source: shopware/charts/valkeyapp/templates/master/application.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: renaud-shop-valkeyapp-master
+  namespace: "renaud-shop"
+  labels:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkeyapp
+    app.kubernetes.io/version: 8.0.0
+    helm.sh/chart: valkeyapp-1.0.1
+    app.kubernetes.io/component: master
+    app.kubernetes.io/part-of: valkey
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: renaud-shop
+      app.kubernetes.io/name: valkeyapp
+      app.kubernetes.io/component: master
+  serviceName: renaud-shop-valkeyapp-headless
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: renaud-shop
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: valkeyapp
+        app.kubernetes.io/version: 8.0.0
+        helm.sh/chart: valkeyapp-1.0.1
+        app.kubernetes.io/component: master
+      annotations:
+        checksum/configmap: ce36bba0f0ecd2a1435db147939805e631a1479f690fbb9021e9a53fe7f2e0e4
+        checksum/health: e6094ccfe6ef68b9fe1224188ba4f7458e1dd911ec698b5e8cefedc6d07f502e
+        checksum/scripts: 7efb8d08e68d9c8dfecdb2b7a7496b4596f26c7e28d4bb03ba30a1c545d340bb
+        checksum/secret: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+    spec:
+      
+      securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+        supplementalGroups: []
+        sysctls: []
+      serviceAccountName: renaud-shop-valkeyapp-master
+      automountServiceAccountToken: false
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: renaud-shop
+                    app.kubernetes.io/name: valkeyapp
+                    app.kubernetes.io/component: master
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      enableServiceLinks: true
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: valkey
+          image: docker.io/bitnami/valkey:8.0.0-debian-12-r0
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 1001
+            runAsNonRoot: true
+            runAsUser: 1001
+            seLinuxOptions: {}
+            seccompProfile:
+              type: RuntimeDefault
+          command:
+            - /bin/bash
+          args:
+            - -c
+            - /opt/bitnami/scripts/start-scripts/start-master.sh
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: VALKEY_REPLICATION_MODE
+              value: master
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+            - name: VALKEY_TLS_ENABLED
+              value: "no"
+            - name: VALKEY_PORT
+              value: "6379"
+          ports:
+            - name: redis
+              containerPort: 6379
+          livenessProbe:
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            # One second longer than command timeout should prevent generation of zombie processes.
+            timeoutSeconds: 6
+            successThreshold: 1
+            failureThreshold: 5
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_liveness_local.sh 5
+          readinessProbe:
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 5
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_readiness_local.sh 1
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+            requests:
+              cpu: 1000m
+              memory: 500Mi
+          volumeMounts:
+            - name: start-scripts
+              mountPath: /opt/bitnami/scripts/start-scripts
+            - name: health
+              mountPath: /health
+            - name: valkey-data
+              mountPath: /data
+            - name: config
+              mountPath: /opt/bitnami/valkey/mounted-etc
+            - name: empty-dir
+              mountPath: /opt/bitnami/valkey/etc/
+              subPath: app-conf-dir
+            - name: empty-dir
+              mountPath: /tmp
+              subPath: tmp-dir
+      volumes:
+        - name: start-scripts
+          configMap:
+            name: renaud-shop-valkeyapp-scripts
+            defaultMode: 0755
+        - name: health
+          configMap:
+            name: renaud-shop-valkeyapp-health
+            defaultMode: 0755
+        - name: config
+          configMap:
+            name: renaud-shop-valkeyapp-configuration
+        - name: empty-dir
+          emptyDir: {}
+  volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: valkey-data
+        labels:
+          app.kubernetes.io/instance: renaud-shop
+          app.kubernetes.io/name: valkeyapp
+          app.kubernetes.io/component: master
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "8Gi"
+---
+# Source: shopware/charts/valkeysession/templates/master/application.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: renaud-shop-valkeysession-master
+  namespace: "renaud-shop"
+  labels:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkeysession
+    app.kubernetes.io/version: 8.0.0
+    helm.sh/chart: valkeysession-1.0.1
+    app.kubernetes.io/component: master
+    app.kubernetes.io/part-of: valkey
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: renaud-shop
+      app.kubernetes.io/name: valkeysession
+      app.kubernetes.io/component: master
+  serviceName: renaud-shop-valkeysession-headless
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: renaud-shop
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: valkeysession
+        app.kubernetes.io/version: 8.0.0
+        helm.sh/chart: valkeysession-1.0.1
+        app.kubernetes.io/component: master
+      annotations:
+        checksum/configmap: ce36bba0f0ecd2a1435db147939805e631a1479f690fbb9021e9a53fe7f2e0e4
+        checksum/health: e6094ccfe6ef68b9fe1224188ba4f7458e1dd911ec698b5e8cefedc6d07f502e
+        checksum/scripts: 7efb8d08e68d9c8dfecdb2b7a7496b4596f26c7e28d4bb03ba30a1c545d340bb
+        checksum/secret: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+    spec:
+      
+      securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+        supplementalGroups: []
+        sysctls: []
+      serviceAccountName: renaud-shop-valkeysession-master
+      automountServiceAccountToken: false
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: renaud-shop
+                    app.kubernetes.io/name: valkeysession
+                    app.kubernetes.io/component: master
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      enableServiceLinks: true
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: valkey
+          image: docker.io/bitnami/valkey:8.0.0-debian-12-r0
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 1001
+            runAsNonRoot: true
+            runAsUser: 1001
+            seLinuxOptions: {}
+            seccompProfile:
+              type: RuntimeDefault
+          command:
+            - /bin/bash
+          args:
+            - -c
+            - /opt/bitnami/scripts/start-scripts/start-master.sh
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: VALKEY_REPLICATION_MODE
+              value: master
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+            - name: VALKEY_TLS_ENABLED
+              value: "no"
+            - name: VALKEY_PORT
+              value: "6379"
+          ports:
+            - name: redis
+              containerPort: 6379
+          livenessProbe:
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            # One second longer than command timeout should prevent generation of zombie processes.
+            timeoutSeconds: 6
+            successThreshold: 1
+            failureThreshold: 5
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_liveness_local.sh 5
+          readinessProbe:
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 5
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_readiness_local.sh 1
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+            requests:
+              cpu: 1000m
+              memory: 500Mi
+          volumeMounts:
+            - name: start-scripts
+              mountPath: /opt/bitnami/scripts/start-scripts
+            - name: health
+              mountPath: /health
+            - name: valkey-data
+              mountPath: /data
+            - name: config
+              mountPath: /opt/bitnami/valkey/mounted-etc
+            - name: empty-dir
+              mountPath: /opt/bitnami/valkey/etc/
+              subPath: app-conf-dir
+            - name: empty-dir
+              mountPath: /tmp
+              subPath: tmp-dir
+      volumes:
+        - name: start-scripts
+          configMap:
+            name: renaud-shop-valkeysession-scripts
+            defaultMode: 0755
+        - name: health
+          configMap:
+            name: renaud-shop-valkeysession-health
+            defaultMode: 0755
+        - name: config
+          configMap:
+            name: renaud-shop-valkeysession-configuration
+        - name: empty-dir
+          emptyDir: {}
+  volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: valkey-data
+        labels:
+          app.kubernetes.io/instance: renaud-shop
+          app.kubernetes.io/name: valkeysession
+          app.kubernetes.io/component: master
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "8Gi"
+---
+# Source: shopware/charts/valkeyworker/templates/master/application.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: renaud-shop-valkeyworker-master
+  namespace: "renaud-shop"
+  labels:
+    app.kubernetes.io/instance: renaud-shop
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: valkeyworker
+    app.kubernetes.io/version: 8.0.0
+    helm.sh/chart: valkeyworker-1.0.1
+    app.kubernetes.io/component: master
+    app.kubernetes.io/part-of: valkey
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: renaud-shop
+      app.kubernetes.io/name: valkeyworker
+      app.kubernetes.io/component: master
+  serviceName: renaud-shop-valkeyworker-headless
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: renaud-shop
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: valkeyworker
+        app.kubernetes.io/version: 8.0.0
+        helm.sh/chart: valkeyworker-1.0.1
+        app.kubernetes.io/component: master
+      annotations:
+        checksum/configmap: ce36bba0f0ecd2a1435db147939805e631a1479f690fbb9021e9a53fe7f2e0e4
+        checksum/health: e6094ccfe6ef68b9fe1224188ba4f7458e1dd911ec698b5e8cefedc6d07f502e
+        checksum/scripts: 7efb8d08e68d9c8dfecdb2b7a7496b4596f26c7e28d4bb03ba30a1c545d340bb
+        checksum/secret: 44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+    spec:
+      
+      securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+        supplementalGroups: []
+        sysctls: []
+      serviceAccountName: renaud-shop-valkeyworker-master
+      automountServiceAccountToken: false
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: renaud-shop
+                    app.kubernetes.io/name: valkeyworker
+                    app.kubernetes.io/component: master
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      enableServiceLinks: true
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: valkey
+          image: docker.io/bitnami/valkey:8.0.0-debian-12-r0
+          imagePullPolicy: "IfNotPresent"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+            runAsGroup: 1001
+            runAsNonRoot: true
+            runAsUser: 1001
+            seLinuxOptions: {}
+            seccompProfile:
+              type: RuntimeDefault
+          command:
+            - /bin/bash
+          args:
+            - -c
+            - /opt/bitnami/scripts/start-scripts/start-master.sh
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: VALKEY_REPLICATION_MODE
+              value: master
+            - name: ALLOW_EMPTY_PASSWORD
+              value: "yes"
+            - name: VALKEY_TLS_ENABLED
+              value: "no"
+            - name: VALKEY_PORT
+              value: "6379"
+          ports:
+            - name: redis
+              containerPort: 6379
+          livenessProbe:
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            # One second longer than command timeout should prevent generation of zombie processes.
+            timeoutSeconds: 6
+            successThreshold: 1
+            failureThreshold: 5
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_liveness_local.sh 5
+          readinessProbe:
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 5
+            exec:
+              command:
+                - sh
+                - -c
+                - /health/ping_readiness_local.sh 1
+          resources:
+            limits:
+              cpu: 2000m
+              memory: 1Gi
+            requests:
+              cpu: 1000m
+              memory: 500Mi
+          volumeMounts:
+            - name: start-scripts
+              mountPath: /opt/bitnami/scripts/start-scripts
+            - name: health
+              mountPath: /health
+            - name: valkey-data
+              mountPath: /data
+            - name: config
+              mountPath: /opt/bitnami/valkey/mounted-etc
+            - name: empty-dir
+              mountPath: /opt/bitnami/valkey/etc/
+              subPath: app-conf-dir
+            - name: empty-dir
+              mountPath: /tmp
+              subPath: tmp-dir
+      volumes:
+        - name: start-scripts
+          configMap:
+            name: renaud-shop-valkeyworker-scripts
+            defaultMode: 0755
+        - name: health
+          configMap:
+            name: renaud-shop-valkeyworker-health
+            defaultMode: 0755
+        - name: config
+          configMap:
+            name: renaud-shop-valkeyworker-configuration
+        - name: empty-dir
+          emptyDir: {}
+  volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: valkey-data
+        labels:
+          app.kubernetes.io/instance: renaud-shop
+          app.kubernetes.io/name: valkeyworker
+          app.kubernetes.io/component: master
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "8Gi"
+---
+# Source: shopware/templates/tenant_bucket_policy.yaml
+# The following job spawns a MinIO CLI container and waits until the bucket is available,
+# then it changes the download policy to download of the shopware-public bucket
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: minio-cli-change-policy
+spec:
+    template:
+      spec:
+        containers:
+        - name: minio-cli
+          # Use own image here because curl is not available, and it needs to finish the Istio sidecar with:
+          # curl -fsI -X POST http://localhost:15020/quitquitquit
+          image: minio/mc
+          command: ["sh", "-c"]
+          imagePullPolicy: Always
+          args:
+          - |
+            while ! mc alias set --insecure minio http://minio.renaud-shop.svc.cluster.local $MINIO_ACCESS_KEY $MINIO_SECRET_KEY; do
+              sleep 4;
+            done
+            mc anonymous set download minio/shopware-public
+          env:
+          - name: MINIO_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: store-s3-shopware
+                key: CONSOLE_ACCESS_KEY
+          - name: MINIO_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: store-s3-shopware
+                key: CONSOLE_SECRET_KEY
+        restartPolicy: Never
+    backoffLimit: 4
+---
+# Source: shopware/templates/tenant_ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: 'minio-s3-api'
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/upstream-vhost: minio.renaud-shop.svc.cluster.local
+spec:
+  ingressClassName: "nginx"
+  rules:
+    - host: s3-api-localhost.traefik.me
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: minio
+                port:
+                  name: http-minio
+---
+# Source: shopware/templates/tenant_ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: 'minio-console'
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/upstream-vhost: shopware-minio-console.renaud-shop.svc.cluster.local
+spec:
+  ingressClassName: "nginx"
+  rules:
+    - host: s3-console-localhost.traefik.me
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: 'shopware-minio-console'
+                port:
+                  name: http-console
+---
+# Source: shopware/templates/database.yaml
+apiVersion: pxc.percona.com/v1
+kind: PerconaXtraDBCluster
+metadata:
+  name: "renaud-shop"
+spec:
+  secretsName: percona-secrets
+  crVersion: "1.14.0"
+  allowUnsafeConfigurations: true
+  initImage: "percona/percona-xtradb-cluster-operator:1.14.0"
+  pxc:
+    size: 1
+    image: percona/percona-xtradb-cluster:8.0
+    autoRecovery: true
+    topologySpreadConstraints:
+    affinity:
+    nodeSelector:
+      kubernetes.io/arch: arm64
+    annotations:
+    serviceAnnotations:
+    resources:
+    volumeSpec:
+      persistentVolumeClaim:
+        storageClassName: standard
+        resources:
+          requests:
+            storage: "8Gi"
+    gracePeriod: 600
+
+    # https://developer.shopware.com/docs/guides/hosting/performance/performance-tweaks.html
+    configuration: |
+      [mysqld]
+      group_concat_max_len=320000
+      sql_mode=''
+
+  proxysql:
+    enabled: false
+    image: percona/percona-xtradb-cluster-operator:1.14.0-proxysql
+    size: 1
+    topologySpreadConstraints:
+    affinity:
+    nodeSelector:
+      kubernetes.io/arch: amd64
+    annotations:
+    serviceAnnotations:
+    resources:
+    
+    volumeSpec:
+      persistentVolumeClaim:
+        storageClassName: ""
+        resources:
+          requests:
+            storage: "10G"
+---
+# Source: shopware/templates/store.yaml
+apiVersion: shop.shopware.com/v1
+kind: Store
+metadata:
+  name: 'renaud-shop'
+spec:
+  disableJobDeletion: false
+  disableChecks: true
+  cdnURL: 'https://s3-api-localhost.traefik.me/shopware-public'
+  s3Storage:
+    
+    endpointURL: "http://minio.renaud-shop.svc.cluster.local"
+    privateBucketName: "shopware-private"
+    publicBucketName: "shopware-public"
+    accessKeyRef:
+      name:  store-s3-shopware
+      key: "CONSOLE_ACCESS_KEY"
+    secretAccessKeyRef:
+      name: store-s3-shopware
+      key: "CONSOLE_SECRET_KEY"
+  serviceAccountName: store-sa
+
+  sessionCache:
+    adapter: redis
+    redisHost: renaud-shop-valkeysession-master
+
+  appCache:
+    adapter: redis
+    redisHost: renaud-shop-valkeyapp-master
+
+  worker:
+    adapter: redis
+    redisHost: renaud-shop-valkeyworker-master
+
+  fpm:
+    processManagement: "dynamic"
+
+  horizontalPodAutoscaler:
+
+  database:
+    host: renaud-shop-pxc
+    passwordSecretRef:
+      name: percona-secrets
+      key: root
+    user: root
+    version: "8"
+    port: 3306
+    name: shopware
+  network:
+    host: localhost.traefik.me
+    enabledIngress: true
+    ingressClassName: nginx
+    annotations:
+  container:
+    image: 593793069146.dkr.ecr.eu-central-1.amazonaws.com/customer/a4a84620-777c-4197-a191-44e1471c3c9d/af223bf8-c8b1-48cf-8cf2-70599d00c160:bar
+    replicas: 2
+    progressDeadlineSeconds: 30
+    imagePullPolicy: IfNotPresent
+    restartPolicy: Always
+    volumeMounts:
+      - mountPath: /etc/caddy
+        name: renaud-shop-caddy-config
+      - mountPath: /var/www/html/config/packages/monolog.yaml
+        name: renaud-shop-monolog-config
+        subPath: monolog.yaml
+      - mountPath: /var/log
+        name: logs
+
+    imagePullSecrets:
+
+    topologySpreadConstraints:
+
+    nodeSelector:
+
+    affinity:
+
+    labels:
+
+    annotations:
+
+    extraContainers:
+      - name: logging
+        image:  "cr.fluentbit.io/fluent/fluent-bit:3.1.4"
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: FLUENT_BIT_LABELS
+          value: job=fluentbit,service=shopwareCore
+        command:
+          - /fluent-bit/bin/fluent-bit
+        args:
+          - '--workdir=/fluent-bit/etc'
+          - '--config=/fluent-bit/etc/conf/fluent-bit.conf'
+        ports:
+          - name: http
+            containerPort: 2020
+            protocol: TCP
+          - name: metrics
+            containerPort: 2021
+            protocol: TCP
+        resources: {}
+        volumeMounts:
+          - name: renaud-shop-fluent-bit
+            mountPath: /fluent-bit/etc/conf
+          - name: logs
+            mountPath: /var/log
+            readOnly: true
+        livenessProbe:
+          httpGet:
+            path: /
+            port: http
+            scheme: HTTP
+          timeoutSeconds: 1
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /api/v1/health
+            port: http
+            scheme: HTTP
+          timeoutSeconds: 1
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+
+    resources:
+    extraEnvs:
+      - name: FLUENT_BIT_LABELS
+        value: job=fluentbit,service=shopwareCore
+    volumes:
+      - configMap:
+          defaultMode: 420
+          name: renaud-shop-caddy-config
+        name: renaud-shop-caddy-config
+      - configMap:
+          defaultMode: 420
+          name: renaud-shop-monolog-config
+        name: renaud-shop-monolog-config
+      - name: logs
+        emptyDir: {}
+      - name: renaud-shop-fluent-bit
+        configMap:
+          name: renaud-shop-fluent-bit
+          defaultMode: 420
+  setupJobContainer:
+    extraEnvs:
+    - name: FLUENT_BIT_LABELS
+      value: job=fluentbit,service=setupJob
+  migrationJobContainer:
+    extraEnvs:
+    - name: FLUENT_BIT_LABELS
+      value: job=fluentbit,service=migrationJob
+---
+# Source: shopware/templates/tenant.yaml
+# https://min.io/docs/minio/kubernetes/upstream/reference/operator-crd.html#tenantspec
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: 'renaud-shop-minio'
+  labels:
+    app: minio
+  annotations:
+    prometheus.io/path: /minio/v2/metrics/cluster
+    prometheus.io/port: "9000"
+    prometheus.io/scrape: "true"
+spec:
+  prometheusOperator: false
+  
+  # activate mTLS between Pods. The default is true. Istio is handling mTLS, so we deactivate it when using Istio.
+  requestAutoCert: false
+  
+
+  image: quay.io/minio/minio:RELEASE.2024-04-06T05-26-02Z
+  imagePullPolicy: IfNotPresent
+  configuration:
+    name: minio-configuration
+  users:
+    - name: store-s3-shopware
+  pools:
+    - servers: 4
+      name: pool-0
+      volumesPerServer: 2
+      resources:
+        limits:
+          cpu: 1000m
+          memory: 2Gi
+        requests:
+          cpu: 1000m
+          memory: 2Gi
+      volumeClaimTemplate:
+        metadata:
+          name: data
+        spec:
+          storageClassName: standard
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 10Gi
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+      containerSecurityContext:
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+  mountPath: /export
+  subPath: /data
+  features:
+    bucketDNS: false
+    enableSFTP: false
+  buckets:
+    - name: shopware-private
+    - name: shopware-public
+  podManagementPolicy: Parallel
