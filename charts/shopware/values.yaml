@@ -177,14 +177,18 @@ store:
   #       level: info
 
   opensearch:
-    username: shopware-<APPLICATION-ID>
-    password: foo
+    enabled: true
+    username: shopware
+    passwordSecrfetRef:
+      name: opensearch-credential
+      key: password
     host: cluster-1.opensearch.svc.cluster.local
     schema: http # Istio doing the TLS part
     index:
       prefix: shopware6
       shards: 1
       replicas: 3
+
   container:
     # This image is used for the setup job and the deployment. If you want to migrate to a new
     # version just update this and the operator makes sure to handle the migrations.
