@@ -1,0 +1,367 @@
+{{- if not .Values.crds.installOnly }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: fastly-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: fastly-operator
+    app.kubernetes.io/release-name: '{{ .Release.Name }}'
+    app.kubernetes.io/release-namespace: '{{ .Release.Namespace }}'
+  name: '{{ .Release.Name }}-controller-manager'
+  namespace: '{{ .Release.Namespace }}'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: fastly-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: fastly-operator
+    app.kubernetes.io/release-name: '{{ .Release.Name }}'
+    app.kubernetes.io/release-namespace: '{{ .Release.Namespace }}'
+  name: '{{ .Release.Name }}-leader-election-role'
+  namespace: '{{ .Release.Namespace }}'
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: fastly-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: fastly-operator
+    app.kubernetes.io/release-name: '{{ .Release.Name }}'
+    app.kubernetes.io/release-namespace: '{{ .Release.Namespace }}'
+  name: '{{ .Release.Name }}-fastlyservice-admin-role'
+rules:
+- apiGroups:
+  - fastly.shopware.com
+  resources:
+  - fastlyservices
+  verbs:
+  - '*'
+- apiGroups:
+  - fastly.shopware.com
+  resources:
+  - fastlyservices/status
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: fastly-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: fastly-operator
+    app.kubernetes.io/release-name: '{{ .Release.Name }}'
+    app.kubernetes.io/release-namespace: '{{ .Release.Namespace }}'
+  name: '{{ .Release.Name }}-fastlyservice-editor-role'
+rules:
+- apiGroups:
+  - fastly.shopware.com
+  resources:
+  - fastlyservices
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - fastly.shopware.com
+  resources:
+  - fastlyservices/status
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: fastly-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: fastly-operator
+    app.kubernetes.io/release-name: '{{ .Release.Name }}'
+    app.kubernetes.io/release-namespace: '{{ .Release.Namespace }}'
+  name: '{{ .Release.Name }}-fastlyservice-viewer-role'
+rules:
+- apiGroups:
+  - fastly.shopware.com
+  resources:
+  - fastlyservices
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - fastly.shopware.com
+  resources:
+  - fastlyservices/status
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: fastly-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: fastly-operator
+    app.kubernetes.io/release-name: '{{ .Release.Name }}'
+    app.kubernetes.io/release-namespace: '{{ .Release.Namespace }}'
+  name: '{{ .Release.Name }}-fastlysnippet-admin-role'
+rules:
+- apiGroups:
+  - fastly.shopware.com
+  resources:
+  - fastlysnippets
+  verbs:
+  - '*'
+- apiGroups:
+  - fastly.shopware.com
+  resources:
+  - fastlysnippets/status
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: fastly-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: fastly-operator
+    app.kubernetes.io/release-name: '{{ .Release.Name }}'
+    app.kubernetes.io/release-namespace: '{{ .Release.Namespace }}'
+  name: '{{ .Release.Name }}-fastlysnippet-editor-role'
+rules:
+- apiGroups:
+  - fastly.shopware.com
+  resources:
+  - fastlysnippets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - fastly.shopware.com
+  resources:
+  - fastlysnippets/status
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: fastly-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: fastly-operator
+    app.kubernetes.io/release-name: '{{ .Release.Name }}'
+    app.kubernetes.io/release-namespace: '{{ .Release.Namespace }}'
+  name: '{{ .Release.Name }}-fastlysnippet-viewer-role'
+rules:
+- apiGroups:
+  - fastly.shopware.com
+  resources:
+  - fastlysnippets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - fastly.shopware.com
+  resources:
+  - fastlysnippets/status
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: fastly-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: fastly-operator
+    app.kubernetes.io/release-name: '{{ .Release.Name }}'
+    app.kubernetes.io/release-namespace: '{{ .Release.Namespace }}'
+  name: '{{ .Release.Name }}-manager-role'
+rules:
+- apiGroups:
+  - fastly.shopware.com
+  resources:
+  - fastlyservices
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - fastly.shopware.com
+  resources:
+  - fastlyservices/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - fastly.shopware.com
+  resources:
+  - fastlyservices/status
+  verbs:
+  - get
+  - patch
+  - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: fastly-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: fastly-operator
+    app.kubernetes.io/release-name: '{{ .Release.Name }}'
+    app.kubernetes.io/release-namespace: '{{ .Release.Namespace }}'
+  name: '{{ .Release.Name }}-metrics-auth-role'
+rules:
+- apiGroups:
+  - authentication.k8s.io
+  resources:
+  - tokenreviews
+  verbs:
+  - create
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  verbs:
+  - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: fastly-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: fastly-operator
+    app.kubernetes.io/release-name: '{{ .Release.Name }}'
+    app.kubernetes.io/release-namespace: '{{ .Release.Namespace }}'
+  name: '{{ .Release.Name }}-metrics-reader'
+rules:
+- nonResourceURLs:
+  - /metrics
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: fastly-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: fastly-operator
+    app.kubernetes.io/release-name: '{{ .Release.Name }}'
+    app.kubernetes.io/release-namespace: '{{ .Release.Namespace }}'
+  name: '{{ .Release.Name }}-leader-election-rolebinding'
+  namespace: '{{ .Release.Namespace }}'
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: '{{ .Release.Name }}-leader-election-role'
+subjects:
+- kind: ServiceAccount
+  name: '{{ .Release.Name }}-controller-manager'
+  namespace: '{{ .Release.Namespace }}'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: fastly-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: fastly-operator
+    app.kubernetes.io/release-name: '{{ .Release.Name }}'
+    app.kubernetes.io/release-namespace: '{{ .Release.Namespace }}'
+  name: '{{ .Release.Name }}-manager-rolebinding'
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: '{{ .Release.Name }}-manager-role'
+subjects:
+- kind: ServiceAccount
+  name: '{{ .Release.Name }}-controller-manager'
+  namespace: '{{ .Release.Namespace }}'
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: fastly-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: fastly-operator
+    app.kubernetes.io/release-name: '{{ .Release.Name }}'
+    app.kubernetes.io/release-namespace: '{{ .Release.Namespace }}'
+  name: '{{ .Release.Name }}-metrics-auth-rolebinding'
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: '{{ .Release.Name }}-metrics-auth-role'
+subjects:
+- kind: ServiceAccount
+  name: '{{ .Release.Name }}-controller-manager'
+  namespace: '{{ .Release.Namespace }}'
+{{- end }}
