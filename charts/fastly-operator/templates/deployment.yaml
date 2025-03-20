@@ -1,0 +1,109 @@
+{{- if not .Values.crds.installOnly }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: '{{ .Release.Name }}-fastly-operator'
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/component: manager
+    app.kubernetes.io/created-by: fastly-operator
+    app.kubernetes.io/instance: fastly-operator
+    app.kubernetes.io/managed-by: fastly-operator
+    app.kubernetes.io/name: deployment
+    app.kubernetes.io/part-of: fastly-operator
+    control-plane: fastly-operator
+{{- with .Values.labels }}
+    {{- toYaml . | nindent 4 }}
+{{- end }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      control-plane: fastly-operator
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: operator
+        {{- with .Values.podAnnotations }}
+            {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        control-plane: fastly-operator
+    spec:
+      {{- if hasKey .Values "affinity" }}
+      affinity:
+        {{- with .Values.affinity }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- else }}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/arch
+                operator: In
+                values:
+                - amd64
+                - arm64
+              - key: kubernetes.io/os
+                operator: In
+                values:
+                - linux
+      {{- end }}
+      tolerations:
+        {{- with .Values.tolerations }}
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+      containers:
+      - args:
+        - --leader-elect
+        {{- if hasKey .Values "logFormat" }}
+        - --log-format {{ .Values.logFormat }}
+        {{- end }}
+        {{- if hasKey .Values "logLevel" }}
+        - --log-level {{ .Values.logLevel }}
+        {{- end }}
+        command:
+        - /manager
+        env:
+        - name: FASTLY_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.fastlyApiSecretRef.name }}
+              key: {{ .Values.fastlyApiSecretRef.key }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        name: operator
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          {{- with .Values.resources }}
+              {{- toYaml . | nindent 10 }}
+          {{- end }}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: '{{ .Release.Name }}-fastly-operator'
+      terminationGracePeriodSeconds: 10
+{{- end }}

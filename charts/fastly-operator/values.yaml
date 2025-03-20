@@ -1,0 +1,63 @@
+# Default values for the operator.
+# This is a YAML-formatted file.
+# Declare variables that will be passed into your templates.
+
+image:
+  repository: ghcr.io/shopware/fastly-operator
+  # if not set appVersion field from Chart.yaml is used
+  tag: ""
+  pullPolicy: IfNotPresent
+
+## Custom resource configuration
+crds:
+  # Install and upgrade CRDs
+  install: true
+  # This will install only the crd's
+  installOnly: false
+
+# rbac: settings for deployer RBAC creation
+rbac:
+  # rbac.create: if false, RBAC resources should be in place
+  create: true
+
+# serviceAccount: settings for Service Accounts used by the deployer
+serviceAccount:
+  # serviceAccount.create: Whether to create the Service Accounts or not
+  create: true
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 128Mi
+  requests:
+    cpu: 10m
+    memory: 128Mi
+
+tolerations: []
+# affinity:
+#   nodeAffinity:
+#     requiredDuringSchedulingIgnoredDuringExecution:
+#       nodeSelectorTerms:
+#       - matchExpressions:
+#         - key: kubernetes.io/arch
+#           operator: In
+#           values:
+#           - amd64
+#           - arm64
+#         - key: kubernetes.io/os
+#           operator: In
+#           values:
+#           - linux
+
+labels: {}
+podAnnotations: {}
+
+fastlyApiSecretRef:
+  name: "fastly-api-key"
+  key: "key"
+
+# Set loglevel. Valid would be: Info, Warn, Error, Debug
+logLevel: Info
+# Set the format, default is json. Possible values are text, json, zap-pretty
+# zap-pretty is used for makefile run command to pretty print the json output
+logFormat: json
