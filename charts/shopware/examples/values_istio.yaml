@@ -211,9 +211,6 @@ regcred:
   aws:
     name: github-regcred
 
-opensearch:
-  enabled: false
-
 redissession:
   enabled: false
   architecture: standalone
