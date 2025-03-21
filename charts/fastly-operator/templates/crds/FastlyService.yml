@@ -1,0 +1,195 @@
+{{- if .Values.crds.install }}
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.17.2
+  name: fastlyservices.fastly.shopware.com
+spec:
+  group: fastly.shopware.com
+  names:
+    kind: FastlyService
+    listKind: FastlyServiceList
+    plural: fastlyservices
+    singular: fastlyservice
+  scope: Namespaced
+  versions:
+    - name: v1
+      schema:
+        openAPIV3Schema:
+          properties:
+            apiVersion:
+              description: |-
+                APIVersion defines the versioned schema of this representation of an object.
+                Servers should convert recognized schemas to the latest internal value, and
+                may reject unrecognized values.
+                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+              type: string
+            kind:
+              description: |-
+                Kind is a string value representing the REST resource this object represents.
+                Servers may infer this from the endpoint the client submits requests to.
+                Cannot be updated.
+                In CamelCase.
+                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+              type: string
+            metadata:
+              type: object
+            spec:
+              properties:
+                comment:
+                  type: string
+                domainFilterRegex:
+                  type: string
+                ingressRef:
+                  minLength: 1
+                  type: string
+                  x-kubernetes-validations:
+                    - message: Value is immutable
+                      rule: self == oldSelf
+                originSSLHostname:
+                  minLength: 1
+                  type: string
+                  x-kubernetes-validations:
+                    - message: Value is immutable
+                      rule: self == oldSelf
+                type:
+                  enum:
+                    - wasm
+                    - vcl
+                  type: string
+                  x-kubernetes-validations:
+                    - message: Value is immutable
+                      rule: self == oldSelf
+                vclSnippets:
+                  items:
+                    properties:
+                      ref:
+                        minLength: 1
+                        type: string
+                    required:
+                      - ref
+                    type: object
+                  type: array
+              required:
+                - ingressRef
+                - originSSLHostname
+                - type
+              type: object
+            status:
+              properties:
+                activeVersion:
+                  type: integer
+                backend:
+                  properties:
+                    address:
+                      type: string
+                    connectTimeout:
+                      description: |-
+                        AutoLoadbalance     *bool
+                        BetweenBytesTimeout *int
+                        Comment             *string
+                      type: integer
+                    healthCheck:
+                      description: |-
+                        CreatedAt      time.Time
+                        DeletedAt           *time.Time
+                        ErrorThreshold      *int
+                        FirstByteTimeout    *int
+                      type: string
+                    hostname:
+                      type: string
+                    name:
+                      description: |-
+                        KeepAliveTime       *int
+                        MaxConn             *int
+                        MaxTLSVersion       *string
+                        MinTLSVersion       *string
+                      type: string
+                    port:
+                      description: OverrideHost        *string
+                      type: integer
+                    sslCertHostname:
+                      description: |-
+                        RequestCondition    *string
+                        ShareKey            *string
+                        SSLCACert           *string
+                      type: string
+                    sslSNIHostname:
+                      description: |-
+                        SSLCheckCert        *bool
+                        SSLCiphers          *string
+                        SSLClientCert       *string
+                        SSLClientKey        *string
+                      type: string
+                    state:
+                      type: string
+                  type: object
+                conditions:
+                  items:
+                    properties:
+                      lastUpdatedTime:
+                        format: date-time
+                        type: string
+                      message:
+                        type: string
+                      reason:
+                        type: string
+                      status:
+                        type: string
+                      type:
+                        type: string
+                    type: object
+                  type: array
+                customerID:
+                  type: string
+                ingressDomains:
+                  additionalProperties:
+                    properties:
+                      TLSRemoteState:
+                        type: string
+                      TLSState:
+                        type: string
+                      TLSSubsciptionID:
+                        type: string
+                      domainState:
+                        type: string
+                    required:
+                      - TLSRemoteState
+                      - TLSState
+                      - TLSSubsciptionID
+                      - domainState
+                    type: object
+                  type: object
+                message:
+                  type: string
+                newVersion:
+                  type: integer
+                ready:
+                  type: string
+                serviceID:
+                  type: string
+                state:
+                  type: string
+                vclSnippetsStatus:
+                  additionalProperties:
+                    properties:
+                      contentHash:
+                        type: string
+                      errorMessage:
+                        type: string
+                      main:
+                        type: boolean
+                      state:
+                        type: string
+                    required:
+                      - main
+                    type: object
+                  type: object
+              type: object
+          type: object
+      served: true
+      storage: true
+      subresources:
+        status: {}
+{{- end }}
