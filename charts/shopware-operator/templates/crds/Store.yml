@@ -14820,6 +14820,54 @@ spec:
                     - enabledIngress
                     - host
                   type: object
+                opensearch:
+                  default:
+                    enabled: false
+                  properties:
+                    enabled:
+                      type: boolean
+                    host:
+                      type: string
+                    index:
+                      default:
+                        prefix: sw
+                        replicas: 3
+                        shards: 3
+                      properties:
+                        prefix:
+                          type: string
+                        replicas:
+                          type: integer
+                        shards:
+                          type: integer
+                      type: object
+                    passwordSecretRef:
+                      properties:
+                        key:
+                          minLength: 1
+                          type: string
+                        name:
+                          minLength: 1
+                          type: string
+                      required:
+                        - key
+                        - name
+                      type: object
+                    port:
+                      default: 9200
+                      format: int32
+                      type: integer
+                    schema:
+                      default: https
+                      enum:
+                        - http
+                        - https
+                      type: string
+                    username:
+                      type: string
+                  required:
+                    - enabled
+                  type: object
                 otel:
                   properties:
                     enabled:
