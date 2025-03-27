@@ -191,6 +191,8 @@ helm install my-shop shopware/shopware --namespace shopware --set store.containe
 
 Once the setup job in your cluster is complete and your store is in the ready state, you can access the shop at <https://localhost.traefik.me/>
 If needed, you can modify the domain by updating the values.yaml file.
+If your css is not loading correctly, you may need to open the s3 bucket URL and accept also the ssl certificate for the s3 domain which is under
+<https://s3-api-localhost.traefik.me> by default. After that the store should be up and running.
 
 ### Create Docker image
 
