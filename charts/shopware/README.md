@@ -169,7 +169,7 @@ For a minimal installation, run:
 
 ```sh
 helm repo add shopware https://shopware.github.io/helm-charts/
-helm install op shopware/shopware-operator --namespace shopware --create-namespace
+helm install op shopware/operator --namespace shopware --create-namespace
 helm install my-shop shopware/shopware --namespace shopware
 ```
 
@@ -177,7 +177,7 @@ If you want to use your own image use:
 
 ```sh
 helm repo add shopware https://shopware.github.io/helm-charts/
-helm install op shopware/shopware-operator --namespace shopware --create-namespace
+helm install op shopware/operator --namespace shopware --create-namespace
 helm install my-shop shopware/shopware --namespace shopware --set store.container.image=<image-name>
 ```
 
