@@ -63,10 +63,12 @@ spec:
       - args:
         - --leader-elect
         {{- if hasKey .Values "logFormat" }}
-        - -log-format={{ .Values.logFormat }}
+        - --log-format
+        - {{ .Values.logFormat }}
         {{- end }}
         {{- if hasKey .Values "logLevel" }}
-        - -log-level={{ .Values.logLevel }}
+        - --log-level
+        - {{ .Values.logLevel }}
         {{- end }}
         command:
         - /manager
