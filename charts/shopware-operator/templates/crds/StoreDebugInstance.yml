@@ -1,0 +1,133 @@
+{{- if .Values.crds.install }}
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.17.0
+  name: storedebuginstances.shop.shopware.com
+spec:
+  group: shop.shopware.com
+  names:
+    kind: StoreDebugInstance
+    listKind: StoreDebugInstanceList
+    plural: storedebuginstances
+    shortNames:
+      - stdi
+    singular: storedebuginstance
+  scope: Namespaced
+  versions:
+    - additionalPrinterColumns:
+        - jsonPath: .status.state
+          name: State
+          type: string
+      name: v1
+      schema:
+        openAPIV3Schema:
+          description: StoreDebugInstance is the Schema for the storedebuginstances API.
+          properties:
+            apiVersion:
+              description: |-
+                APIVersion defines the versioned schema of this representation of an object.
+                Servers should convert recognized schemas to the latest internal value, and
+                may reject unrecognized values.
+                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+              type: string
+            kind:
+              description: |-
+                Kind is a string value representing the REST resource this object represents.
+                Servers may infer this from the endpoint the client submits requests to.
+                Cannot be updated.
+                In CamelCase.
+                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: StoreDebugInstanceSpec defines the desired state of StoreDebugInstance.
+              properties:
+                duration:
+                  default: 1h
+                  description: |-
+                    Duration is the duration of the debug instance after which it will be deleted
+                    e.g. 1h or 30m
+                  type: string
+                extraContainerPorts:
+                  description: |-
+                    ExtraContainerPorts is the extra ports to add to the debug instance
+                    if it should be exposed to the outside world
+                  items:
+                    description: ContainerPort represents a network port in a single container.
+                    properties:
+                      containerPort:
+                        description: |-
+                          Number of port to expose on the pod's IP address.
+                          This must be a valid port number, 0 < x < 65536.
+                        format: int32
+                        type: integer
+                      hostIP:
+                        description: What host IP to bind the external port to.
+                        type: string
+                      hostPort:
+                        description: |-
+                          Number of port to expose on the host.
+                          If specified, this must be a valid port number, 0 < x < 65536.
+                          If HostNetwork is specified, this must match ContainerPort.
+                          Most containers do not need this.
+                        format: int32
+                        type: integer
+                      name:
+                        description: |-
+                          If specified, this must be an IANA_SVC_NAME and unique within the pod. Each
+                          named port in a pod must have a unique name. Name for the port that can be
+                          referred to by services.
+                        type: string
+                      protocol:
+                        default: TCP
+                        description: |-
+                          Protocol for port. Must be UDP, TCP, or SCTP.
+                          Defaults to "TCP".
+                        type: string
+                    required:
+                      - containerPort
+                    type: object
+                  type: array
+                extraLabels:
+                  additionalProperties:
+                    type: string
+                  description: ExtraLabels is the extra labels to add to the debug instance
+                  type: object
+                storeRef:
+                  description: StoreRef is the reference to the store to debug
+                  type: string
+              type: object
+            status:
+              description: StoreDebugInstanceStatus defines the observed state of StoreDebugInstance.
+              properties:
+                conditions:
+                  items:
+                    properties:
+                      lastTransitionTime:
+                        format: date-time
+                        type: string
+                      lastUpdatedTime:
+                        format: date-time
+                        type: string
+                      message:
+                        type: string
+                      reason:
+                        type: string
+                      status:
+                        type: string
+                      type:
+                        type: string
+                    type: object
+                  type: array
+                state:
+                  type: string
+              type: object
+          type: object
+      served: true
+      storage: true
+      subresources:
+        status: {}
+{{- end }}
