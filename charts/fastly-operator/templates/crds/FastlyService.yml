@@ -11,10 +11,24 @@ spec:
     kind: FastlyService
     listKind: FastlyServiceList
     plural: fastlyservices
+    shortNames:
+      - fastlyserv
+      - fastlysvc
+      - fastlys
     singular: fastlyservice
   scope: Namespaced
   versions:
-    - name: v1
+    - additionalPrinterColumns:
+        - jsonPath: .status.serviceID
+          name: ServiceID
+          type: string
+        - jsonPath: .status.state
+          name: State
+          type: string
+        - jsonPath: .metadata.creationTimestamp
+          name: Age
+          type: date
+      name: v1
       schema:
         openAPIV3Schema:
           properties:
@@ -41,14 +55,39 @@ spec:
                   type: string
                 domainFilterRegex:
                   type: string
-                ingressRef:
+                originSSLHostname:
                   minLength: 1
                   type: string
                   x-kubernetes-validations:
                     - message: Value is immutable
                       rule: self == oldSelf
-                originSSLHostname:
-                  minLength: 1
+                sourceRef:
+                  description: SourceRef is the name of the source resource (Ingress, VirtualService, or Gateway)
+                  properties:
+                    apiGroup:
+                      type: string
+                    kind:
+                      type: string
+                    name:
+                      type: string
+                    namespace:
+                      type: string
+                  required:
+                    - apiGroup
+                    - kind
+                    - name
+                    - namespace
+                  type: object
+                  x-kubernetes-validations:
+                    - message: Value is immutable
+                      rule: self == oldSelf
+                sourceType:
+                  default: ingress
+                  description: SourceType defines the type of the source to use (ingress, istio-virtualservice, istio-gateway)
+                  enum:
+                    - ingress
+                    - istio-virtualservice
+                    - istio-gateway
                   type: string
                   x-kubernetes-validations:
                     - message: Value is immutable
@@ -72,8 +111,8 @@ spec:
                     type: object
                   type: array
               required:
-                - ingressRef
                 - originSSLHostname
+                - sourceRef
                 - type
               type: object
             status:
@@ -187,6 +226,8 @@ spec:
                     type: object
                   type: object
               type: object
+          required:
+            - spec
           type: object
       served: true
       storage: true

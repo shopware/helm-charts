@@ -22,7 +22,7 @@ metadata:
     app.kubernetes.io/part-of: fastly-operator
     app.kubernetes.io/release-name: '{{ .Release.Name }}'
     app.kubernetes.io/release-namespace: '{{ .Release.Namespace }}'
-  name: '{{ .Release.Name }}-leader-election-role'
+  name: '{{ .Release.Name }}-le-fastly-operator'
   namespace: '{{ .Release.Namespace }}'
 rules:
 - apiGroups:
@@ -56,6 +56,61 @@ rules:
   verbs:
   - create
   - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: fastly-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: fastly-operator
+    app.kubernetes.io/release-name: '{{ .Release.Name }}'
+    app.kubernetes.io/release-namespace: '{{ .Release.Namespace }}'
+  name: '{{ .Release.Name }}-fastly-operator'
+rules:
+- apiGroups:
+  - fastly.shopware.com
+  resources:
+  - fastlyservices
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - fastly.shopware.com
+  resources:
+  - fastlyservices/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - fastly.shopware.com
+  resources:
+  - fastlyservices/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - fastly.shopware.com
+  resources:
+  - fastlysnippets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - get
+  - list
+  - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -233,45 +288,6 @@ metadata:
     app.kubernetes.io/part-of: fastly-operator
     app.kubernetes.io/release-name: '{{ .Release.Name }}'
     app.kubernetes.io/release-namespace: '{{ .Release.Namespace }}'
-  name: '{{ .Release.Name }}-manager-role'
-rules:
-- apiGroups:
-  - fastly.shopware.com
-  resources:
-  - fastlyservices
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - fastly.shopware.com
-  resources:
-  - fastlyservices/finalizers
-  verbs:
-  - update
-- apiGroups:
-  - fastly.shopware.com
-  resources:
-  - fastlyservices/status
-  verbs:
-  - get
-  - patch
-  - update
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  labels:
-    app.kubernetes.io/component: rbac
-    app.kubernetes.io/created-by: fastly-operator
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/part-of: fastly-operator
-    app.kubernetes.io/release-name: '{{ .Release.Name }}'
-    app.kubernetes.io/release-namespace: '{{ .Release.Namespace }}'
   name: '{{ .Release.Name }}-metrics-auth-role'
 rules:
 - apiGroups:
@@ -314,16 +330,16 @@ metadata:
     app.kubernetes.io/part-of: fastly-operator
     app.kubernetes.io/release-name: '{{ .Release.Name }}'
     app.kubernetes.io/release-namespace: '{{ .Release.Namespace }}'
-  name: '{{ .Release.Name }}-leader-election-rolebinding'
+  name: '{{ .Release.Name }}-le-fastly-operator'
   namespace: '{{ .Release.Namespace }}'
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: '{{ .Release.Name }}-leader-election-role'
+  name: '{{ .Release.Name }}-le-fastly-operator'
 subjects:
 - kind: ServiceAccount
-  name: controller-manager
-  namespace: system
+  name: '{{ .Release.Name }}-fastly-operator'
+  namespace: '{{ .Release.Namespace }}'
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -339,11 +355,11 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: '{{ .Release.Name }}-manager-role'
+  name: '{{ .Release.Name }}-fastly-operator'
 subjects:
 - kind: ServiceAccount
-  name: controller-manager
-  namespace: system
+  name: '{{ .Release.Name }}-fastly-operator'
+  namespace: '{{ .Release.Namespace }}'
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
