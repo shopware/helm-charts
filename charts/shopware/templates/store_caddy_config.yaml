@@ -12,7 +12,6 @@ data:
       format json
 
       output file {{ include "caddyLogPath" . }} {
-        format json
         roll_size 10MB
         roll_keep 5
         roll_keep_for 24h
