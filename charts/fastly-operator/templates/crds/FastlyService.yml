@@ -182,7 +182,7 @@ spec:
                   type: array
                 customerID:
                   type: string
-                ingressDomains:
+                domains:
                   additionalProperties:
                     properties:
                       TLSRemoteState:
