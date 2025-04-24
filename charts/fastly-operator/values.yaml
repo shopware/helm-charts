@@ -61,3 +61,11 @@ logLevel: Info
 # Set the format, default is json. Possible values are text, json, zap-pretty
 # zap-pretty is used for makefile run command to pretty print the json output
 logFormat: json
+# Array of extra K8s manifests to deploy
+# extraObjects:
+#   - apiVersion: v1
+#     kind: Secret
+#     metadata:
+#       name: fastly-api-key
+#     stringData:
+#       key: foo
