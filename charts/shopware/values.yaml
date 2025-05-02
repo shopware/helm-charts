@@ -127,6 +127,21 @@ store:
   #   enabled: false
   #   exporterEndpoint: http://opentelemetry-collector.opentelemetry-collector.svc.cluster.local:4317
 
+  # OpenSearch configuration for search functionality
+  # opensearch:
+  #   enabled: false
+  #   host: opensearch-cluster-master
+  #   port: 9200
+  #   username: admin
+  #   passwordSecretRef:
+  #     name: opensearch-secrets
+  #     key: password
+  #   schema: https
+  #   index:
+  #     prefix: sw
+  #     replicas: 3
+  #     shards: 3
+
   database:
     user: "root"
     # version: '8'
