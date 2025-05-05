@@ -47,24 +47,6 @@ dependencies:
     repository: oci://registry-1.docker.io/bitnamicharts
     condition: valkeyworker.enabled
 
-  - name: redis
-    alias: redisapp
-    version: 19.1.2
-    repository: oci://registry-1.docker.io/bitnamicharts
-    condition: redisapp.enabled
-
-  - name: redis
-    alias: redissession
-    version: 19.1.2
-    repository: oci://registry-1.docker.io/bitnamicharts
-    condition: redissession.enabled
-
-  - name: redis
-    alias: redisworker
-    version: 19.1.2
-    repository: oci://registry-1.docker.io/bitnamicharts
-    condition: redisworker.enabled
-
   - name: grafana
     alias: grafana
     version: 8.5.0
