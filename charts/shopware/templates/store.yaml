@@ -129,7 +129,8 @@ spec:
     port: {{ .Values.store.database.port | default 3306 }}
     name: {{ .Values.store.database.name | default "shopware" }}
   network:
-    host: {{ template "generateHost" . }}
+    hosts: {{ .Values.store.network.hosts }}
+    appURLHost: {{ .Values.store.network.appURLHost }}
     {{- if hasKey .Values.store "network" }}
     enabledIngress: {{ .Values.store.network.enabled | default false }}
     ingressClassName: {{ .Values.store.network.ingressClassName | default "" }}
