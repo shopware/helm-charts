@@ -14797,12 +14797,18 @@ spec:
                       additionalProperties:
                         type: string
                       type: object
+                    appURLHost:
+                      type: string
                     enabledIngress:
                       default: false
                       type: boolean
                     host:
-                      minLength: 1
                       type: string
+                    hosts:
+                      description: 'The listType is used to make the slice unique, the unique constraint is not working: the runtime complexity becomes quadratic'
+                      items:
+                        type: string
+                      type: array
                     ingressClassName:
                       type: string
                     labels:
@@ -14818,7 +14824,6 @@ spec:
                       type: string
                   required:
                     - enabledIngress
-                    - host
                   type: object
                 opensearch:
                   default:
