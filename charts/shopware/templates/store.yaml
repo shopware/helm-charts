@@ -100,6 +100,41 @@ spec:
     password: {{ .Values.store.adminCredentials.password | default "" }}
   {{- end }}
 
+  {{- if hasKey .Values.store "opensearch" }}
+  opensearch:
+    enabled: {{ .Values.store.opensearch.enabled | default false }}
+    {{- if .Values.store.opensearch.host }}
+    host: {{ .Values.store.opensearch.host }}
+    {{- end }}
+    {{- if .Values.store.opensearch.port }}
+    port: {{ .Values.store.opensearch.port }}
+    {{- end }}
+    {{- if .Values.store.opensearch.username }}
+    username: {{ .Values.store.opensearch.username }}
+    {{- end }}
+    {{- if .Values.store.opensearch.passwordSecretRef }}
+    passwordSecretRef:
+      {{- with .Values.store.opensearch.passwordSecretRef }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+    {{- end }}
+    {{- if .Values.store.opensearch.schema }}
+    schema: {{ .Values.store.opensearch.schema }}
+    {{- end }}
+    {{- if .Values.store.opensearch.index }}
+    index:
+      {{- if .Values.store.opensearch.index.prefix }}
+      prefix: {{ .Values.store.opensearch.index.prefix }}
+      {{- end }}
+      {{- if .Values.store.opensearch.index.replicas }}
+      replicas: {{ .Values.store.opensearch.index.replicas }}
+      {{- end }}
+      {{- if .Values.store.opensearch.index.shards }}
+      shards: {{ .Values.store.opensearch.index.shards }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+
   database:
     {{- if .Values.percona.enabled }}
     host: {{ template "getPerconaDBHost" . }}
