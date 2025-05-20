@@ -76,7 +76,7 @@ serviceAccountAnnotations: {}
 store:
   # DEPRECATED, please use appURLHost in the network settings. With the next miner version this setting will be gone.
   # The host will overwrite the network.appURLHost. Check appURLHost for more information.
-  host: localhost.traefik.me
+  # host: localhost.traefik.me
 
   # This configuration is used to disable S3 and database checks prior to setup and shop creation.
   disableChecks: false
