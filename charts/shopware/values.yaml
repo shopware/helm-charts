@@ -74,9 +74,8 @@ percona:
 serviceAccountAnnotations: {}
 
 store:
-  # We use traefik.me to resolve to 127.0.0.1
-  # Enter your DNS name for the shop.
-  # This will make sure that your sales-channel is set up correctly and the ingress is using the host address.
+  # DEPRECATED, please use appURLHost in the network settings. With the next miner version this setting will be gone.
+  # The host will overwrite the network.appURLHost. Check appURLHost for more information.
   host: localhost.traefik.me
 
   # This configuration is used to disable S3 and database checks prior to setup and shop creation.
@@ -243,6 +242,17 @@ store:
   # the Readme and use kind, you can use nginx as ingress class and everything should run
   # out of the box.
   network:
+    # We use traefik.me to resolve to 127.0.0.1
+    # Enter your DNS name for the shop.
+    # Sets the ingress rules for each host.
+    hosts:
+      - localhost.traefik.me
+
+    # This is the URL where the SBP is pinging for a license check. The URL must be also in the the hosts list.
+    # This will make sure that your sales-channel is set up correctly. Passed to shopware as env APP_URL
+    # Supported with shopware-operator:0.0.45
+    appURLHost: localhost.traefik.me
+
     enabled: true
     ingressClassName: nginx
     # annotations:
