@@ -70,6 +70,14 @@ metadata:
   name: '{{ .Release.Name }}-fastly-operator'
 rules:
 - apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
   - fastly.shopware.com
   resources:
   - fastlyservices
