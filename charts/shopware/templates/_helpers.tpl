@@ -6,14 +6,6 @@
 {{- randAlphaNum 18 | nospace | b64enc -}}
 {{- end -}}
 
-{{ define "generateHost" -}}
-{{- if hasKey .Values.store "host" }}
-{{- .Values.store.host }}
-{{- else }}
-{{- printf "localhost.traefik.me" }}
-{{- end }}
-{{- end -}}
-
 {{ define "generateS3URLConsole" -}}
 {{- if hasKey .Values.store "host" }}
 {{- printf "s3-console-%s" .Values.store.host }}
