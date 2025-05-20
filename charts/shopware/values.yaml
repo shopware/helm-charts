@@ -246,12 +246,12 @@ store:
     # Enter your DNS name for the shop.
     # Sets the ingress rules for each host.
     hosts:
-      - localhost.traefik.me
+      - kubernets.feuer.space
 
     # This is the URL where the SBP is pinging for a license check. The URL must be also in the the hosts list.
     # This will make sure that your sales-channel is set up correctly. Passed to shopware as env APP_URL
     # Supported with shopware-operator:0.0.45
-    appURLHost: localhost.traefik.me
+    appURLHost: kubernets.feuer.space
 
     enabled: true
     ingressClassName: nginx

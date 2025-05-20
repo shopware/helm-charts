@@ -1,0 +1,3 @@
+fastlyDebugSecret: some-secret-for-debugging
+enableImageOptimization: true
+baseDomain: foo.shopware.store

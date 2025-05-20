@@ -1,0 +1,10 @@
+apiVersion: fastly.shopware.com/v1
+kind: FastlySnippet
+metadata:
+  name: error
+spec:
+  content: |
+    set obj.status = 200;
+    set obj.http.Content-Type = "text/plain";
+    synthetic obj.response;
+    return (deliver);

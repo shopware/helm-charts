@@ -1,0 +1,75 @@
+apiVersion: fastly.shopware.com/v1
+kind: FastlySnippet
+metadata:
+  name: 20-deliver
+spec:
+  content: |
+    # --- START: LOGGING ---
+    if (resp.http.log-origin) {
+      set req.http.log-origin = resp.http.log-origin;
+    }
+
+    if (fastly.ff.visits_this_service == 0) {
+      unset resp.http.log-origin;
+    }
+    # --- END: LOGGING ---
+    # --- START: SHOPWARE ---
+    if (std.strlen(req.http.X-Cdn) == 0) {
+      # Remove the exact PHP Version from the response for more security (e.g. 404 pages)
+      unset resp.http.x-powered-by;
+
+      # We use fastly.ff.visits_this_service to avoid running this logic on shield nodes. We only need to
+      # run it on edge nodes
+      if (fastly.ff.visits_this_service == 0 && resp.http.sw-invalidation-states) {
+        # invalidation headers are only for internal use
+        unset resp.http.sw-invalidation-states;
+
+        ## we don't want the client to cache
+        set resp.http.Cache-Control = "no-cache, private";
+      }
+    }
+    # --- END: SHOPWARE ---
+
+    # --- START: prepare headers for logging
+    set req.http.log-instance_id = resp.http.x-instance-id;
+    set resp.http.x-trace-id = req.http.x-trace-id;
+    # --- END: prepare headers for logging ---
+
+    # --- START: DEBUG HEADERS ---
+    if (req.http.Fastly-Debug == "{{ .Values.fastlyDebugSecret }}") {
+      if (req.http.X-Backend-Id != "") {
+          set resp.http.X-Backend-Id = req.http.X-Backend-Id;
+      }
+      if (req.http.X-Backend-Name != "") {
+          set resp.http.X-Backend-Name = req.http.X-Backend-Name;
+      }
+      if (req.http.X-Fastly-Backend-Id != "") {
+          set resp.http.X-Fastly-Backend-Id = req.http.X-Fastly-Backend-Id;
+      }
+      if (req.http.X-Instance-Id != "") {
+          set resp.http.X-Instance-Id = req.http.X-Instance-Id;
+      }
+      if (req.http.X-S3-Bucket != "") {
+          set resp.http.X-S3-Bucket = req.http.X-S3-Bucket;
+      }
+      if (req.http.X-S3-Prefix != "") {
+          set resp.http.X-S3-Prefix = req.http.X-S3-Prefix;
+      }
+      if (req.http.X-Cdn != "") {
+          set resp.http.X-Cdn = req.http.X-Cdn;
+      }
+      if (req.http.X-Aws-Region != "") {
+          set resp.http.X-Aws-Region = req.http.X-Aws-Region;
+      }
+    }
+    # --- END: ADD DEBUG HEADERS ---
+
+    # --- START: ADD CORS HEADERS (CDN) ---
+    if (req.http.X-Cdn != "") {
+      if (!resp.http.Access-Control-Allow-Origin && !resp.http.Access-Control-Allow-Methods) {
+          set resp.http.Access-Control-Allow-Origin = "*";
+          set resp.http.Access-Control-Allow-Methods = "GET,HEAD,POST";
+          set resp.http.Vary:Origin = "";
+      }
+    }
+    # --- END: ADD CORS HEADERS ---

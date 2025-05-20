@@ -1,0 +1,10 @@
+apiVersion: fastly.shopware.com/v1
+kind: FastlySnippet
+metadata:
+  name: 10-miss
+spec:
+  content: |
+    # --- START: SERVICE PINNING ---
+    # https://developer.fastly.com/learning/concepts/shielding/#service-pinning
+    call svc_pin_shield_fixup;
+    # --- END: SERVICE PINNING ---

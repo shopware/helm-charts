@@ -1,0 +1,176 @@
+apiVersion: fastly.shopware.com/v1
+kind: FastlySnippet
+metadata:
+  name: 1-recv
+spec:
+  content: |
+    # --- START: GENERATE TRACE ID ---
+    set req.http.x-trace-vcl-span-id = randomstr(16, "0123456789abcdef");
+    if (req.http.traceparent ~ "^\d+-(\w+)-(\w+)-\d+$") {
+      set req.http.x-trace-id = re.group.1;
+      set req.http.x-trace-parent-span-id = re.group.2;
+    } else {
+      set req.http.x-trace-id = randomstr(32, "0123456789abcdef");
+    }
+    set req.http.x-trace-server-role = if (fastly.ff.visits_this_service == 0, "edge", "shield");
+    # --- END: GENERATE TRACE ID ---
+
+    # --- START: SERVICE PINNING ---
+    # https://developer.fastly.com/learning/concepts/shielding/#service-pinning
+    if (!req.http.Fastly-FF) {
+      # Capture the incoming hostname from the client
+      set req.http.x-orig-host = req.http.host;
+    } else if (req.http.x-orig-host) {
+      # Overwrite the anchor hostname at the shield with the original client requested hostname
+      set req.http.host = req.http.x-orig-host;
+    }
+    # --- END: SERVICE PINNING ---
+
+    # --- START: SECURE FASTLY DEBUG ---
+    # see https://developer.fastly.com/reference/http/http-headers/Fastly-Debug/
+    if (req.http.Fastly-Debug != {{ .Values.fastlyDebugSecret }}) {
+      unset req.http.Fastly-Debug;
+    }
+    # --- END: SECURE FASTLY DEBUG ---
+
+    # --- START: EDGE THUMBNAIL GENERATION ---
+    if (req.url.ext ~ "(?i)^(gif|png|jpe?g|webp)$") {
+      set req.http.x-fastly-imageopto-api = "fastly";
+
+      // Example path: /H/U/a/J1YLW/thumbnail/9d/e6/e8/1604866189/H52A0625_800x800.JPG?1604866197
+      // S3 prefix: /H/U/a/J1YLW
+      // Folder: thumbnail
+      // Media path: 9d/e6/e8/1604866189
+      // Media name: H52A0625
+      // Width: 800
+      // Height: 800
+      // Extension: JPG
+
+
+      if (req.url.path ~ "^\/(.*)\/thumbnail\/(.*)\/(.*)_(\d+)x(\d+)\.(.*)$") {
+        // group 1: s3Prefix
+        // group 2: mediaPath
+        // group 3: mediaName
+        // group 4: width
+        // group 5: height
+        // group 6: ext
+
+        set req.url = re.group.1 + "/media/" + re.group.2 + "/" + re.group.3 + "." + re.group.6;
+        set req.url = querystring.add(req.url, "width", re.group.5);
+      }
+    }
+    # --- END: EDGE THUMBNAIL GENERATION ---
+
+    // START: PASS BLACKFIRE REQUESTS
+    # disable profiling for blackfire requests for now
+    unset req.http.X-Blackfire-Query;
+
+    if (req.esi_level > 0) {
+        # ESI request should not be included in the profile.
+        # Instead you should profile them separately, each one
+        # in their dedicated profile.
+        # Removing the Blackfire header avoids to trigger the profiling.
+        # Not returning let it go trough your usual workflow as a regular
+        # ESI request without distinction.
+        unset req.http.X-Blackfire-Query;
+    }
+
+    if (req.http.X-Blackfire-Query) {
+        return (pass);
+    }
+    // END: PASS BLACKFIRE REQUESTS
+
+    // START: ENFORCE HTTPS
+    if (!req.http.Fastly-SSL) {
+      error 801 "Force SSL";
+    }
+    // END: ENFORCE HTTPS
+
+    {{- if .Values.enableImageOptimization }}
+    // START: ENABLE IMAGE OPTIMIZATION
+    if (req.url.ext ~ "(?i)^(gif|png|jpe?g|webp)$") {
+      set req.http.x-fastly-imageopto-api = "fastly";
+    }
+    // END: ENABLE IMAGE OPTIMIZATION
+    {{- end -}}
+
+    // START: SHOPWARE
+    # Don't allow clients to force a pass
+    if (req.restarts == 0) {
+      unset req.http.x-pass;
+    }
+
+    # Enable Fastly authentification for single purges
+    set req.http.Fastly-Purge-Requires-Auth = "1";
+
+    # Mitigate httpoxy application vulnerability, see: https://httpoxy.org/
+    unset req.http.Proxy;
+
+    # Strip query strings only needed by browser javascript. Customize to used tags.
+    if (req.url != req.url.path) {
+      set req.url = querystring.filter(req.url,
+        "pk_campaign" + querystring.filtersep() +
+        "piwik_campaign" + querystring.filtersep() +
+        "pk_kwd" + querystring.filtersep() +
+        "piwik_kwd" + querystring.filtersep() +
+        "pk_keyword" + querystring.filtersep() +
+        "pixelId" + querystring.filtersep() +
+        "kwid" + querystring.filtersep() +
+        "kw" + querystring.filtersep() +
+        "adid" + querystring.filtersep() +
+        "chl" + querystring.filtersep() +
+        "dv" + querystring.filtersep() +
+        "nk" + querystring.filtersep() +
+        "pa" + querystring.filtersep() +
+        "camid" + querystring.filtersep() +
+        "adgid" + querystring.filtersep() +
+        "cx" + querystring.filtersep() +
+        "ie" + querystring.filtersep() +
+        "cof" + querystring.filtersep() +
+        "siteurl" + querystring.filtersep() +
+        "utm_source" + querystring.filtersep() +
+        "utm_medium" + querystring.filtersep() +
+        "utm_campaign" + querystring.filtersep() +
+        "_ga" + querystring.filtersep() +
+        "gclid"
+        );
+    }
+
+    # Normalize query arguments
+    set req.url = querystring.sort(req.url);
+
+    # Make sure that the client ip is forward to the client.
+    if (req.http.x-forwarded-for) {
+        set req.http.X-Forwarded-For = req.http.X-Forwarded-For + ", " + client.ip;
+    } else {
+        set req.http.X-Forwarded-For = client.ip;
+    }
+
+    # Don't cache Authenticate & Authorization
+    if (req.http.Authenticate || req.http.Authorization) {
+        set req.http.x-pass = "1";
+    }
+
+    # Always pass these paths directly to php without caching
+    # Note: virtual URLs might bypass this rule (e.g. /en/checkout)
+    if (req.url.path ~ "^/(checkout|account|admin|api|csrf)(/.*)?$") {
+        set req.http.x-pass = "1";
+    }
+
+    # Disable stale_while_revalidate feature on SHIELD node to avoid caching issue when both soft-purges and shieding are used.
+    if (fastly.ff.visits_this_service > 0) {
+      set req.max_stale_while_revalidate = 0s;
+    }
+    /// END: SHOPWARE
+
+    # --- START: SHOPWARE PAAS ---
+    # preserve real client IP address
+    if (fastly.ff.visits_this_service == 0 && req.restarts == 0) {
+      set req.http.Fastly-Client-IP = client.ip;
+    }
+
+    # Disable cache for logged-in admin
+    if (req.http.cookie:saasStorefrontAccessToken) {
+        set req.http.x-pass = "1";
+    }
+    # --- END: SHOPWARE PAAS ---

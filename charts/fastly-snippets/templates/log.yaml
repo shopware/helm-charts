@@ -1,0 +1,18 @@
+apiVersion: fastly.shopware.com/v1
+kind: FastlySnippet
+metadata:
+  name: log
+spec:
+  content: |
+    # Only emit log origin/shield info if an origin/shield request was made
+    if (fastly_info.state !~ "^(MISS|PASS|ERROR)") {
+      unset req.http.log-origin:host;
+      unset req.http.log-origin:ip;
+      unset req.http.log-origin:method;
+      unset req.http.log-origin:name;
+      unset req.http.log-origin:port;
+      unset req.http.log-origin:reason;
+      unset req.http.log-origin:shield;
+      unset req.http.log-origin:status;
+      unset req.http.log-origin:url;
+    }

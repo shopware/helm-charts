@@ -1,0 +1,15 @@
+apiVersion: fastly.shopware.com/v1
+kind: FastlySnippet
+metadata:
+  name: 0-init
+spec:
+  content: |
+    # --- START: SERVICE PINNING ---
+    # https://developer.fastly.com/learning/concepts/shielding/#service-pinning
+    sub svc_pin_shield_fixup {
+        if (req.backend.is_shield) {
+            # Explicitly set the host to a domain that is attached to your service
+            set bereq.http.host = "x.{{ .Values.baseDomain }}";
+        }
+    }
+    # --- END: SERVICE PINNING ---
