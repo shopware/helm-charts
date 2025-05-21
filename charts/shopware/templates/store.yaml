@@ -135,7 +135,10 @@ spec:
     hosts:
       - {{ .Values.store.host }}
     {{- else }}
-    hosts: {{ .Values.store.network.hosts }}
+    hosts:
+      {{- with .Values.store.network.hosts }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
     appURLHost: {{ .Values.store.network.appURLHost }}
     {{- end}}
     {{- if hasKey .Values.store "network" }}
