@@ -61,6 +61,9 @@ spec:
                   x-kubernetes-validations:
                     - message: Value is immutable
                       rule: self == oldSelf
+                overwriteHostHeader:
+                  description: Overwriting the Host header on the origin downstream backend
+                  type: string
                 sourceRef:
                   description: SourceRef is the name of the source resource (Ingress, VirtualService, or Gateway)
                   properties:
