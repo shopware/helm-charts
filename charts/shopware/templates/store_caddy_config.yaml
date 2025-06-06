@@ -29,7 +29,7 @@ data:
       }
       request_header X-Trace-Id {http.vars.trace_id}
       @default {
-        not path /theme/* /media/* /thumbnail/* /bundles/* /sitemap/*
+        not path /theme/* /media/* /thumbnail/* /bundles/*
       }
       root * /var/www/html/public
       php_fastcgi @default unix//tmp/php-fpm.sock {
