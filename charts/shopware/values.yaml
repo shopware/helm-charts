@@ -87,6 +87,12 @@ store:
   # remove this if you do not want to use a service account
   serviceAccountName: store-sa
 
+  caddy:
+    # This is the read timeout for the caddy server. Default is 60s.
+    readTimeout: 60s
+    # This is the write timeout for the caddy server. Default is 60s.
+    writeTimeout: 60s
+    
   cdnURL: "example.com"
 
   # Shop settings can be configured at any time using the deployment helper.
