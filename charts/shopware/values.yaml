@@ -630,3 +630,15 @@ prometheus:
   server:
     configMapOverrideName: "prometheus-config"
     releaseNamespace: true
+
+# additional kubernetes objects
+# extraObjects:
+#   - apiVersion: v1
+#     kind: ConfigMap
+#     metadata:
+#       name: s3-fastly-connection
+#     data:
+#       domains: |
+#         - cdn.foo.example
+#       port: "443"
+#       address: <bucket>.s3.eu-central-1.amazonaws.com
