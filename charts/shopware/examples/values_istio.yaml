@@ -38,11 +38,6 @@ percona:
 
     # We overwrite the topologySpreadConstraints for this to schedule only one database
     topologySpreadConstraints:
-    # Currently Percona only supports amd64, so we set a node selector.
-    # This could also be a problem for Mac users here.
-    # TODO: Change the image once they support AMD and ARM architectures
-    nodeSelector:
-      kubernetes.io/arch: amd64
 
   # This is only useful if you want more performance since the sql-proxy is using connection-pooling.
   proxy:
@@ -68,12 +63,6 @@ percona:
       "sidecar.istio.io/inject": "false"
     storageClassName: gp2
     storageSize: 10G
-
-    # Currently Percona only supports amd64, so we set a node selector. This could also be
-    # a problem for our mac users here.
-    # TODO: Change the image once they support AMD and ARM architectures
-    nodeSelector:
-      kubernetes.io/arch: amd64
 
 store:
   # We use traefik.me to resolve to 127.0.0.1
@@ -279,12 +268,6 @@ blackfire:
     limits:
       memory: 512Mi
       cpu: 100m
-
-# Percona has currently only AMD images, so we make sure with a mixed cluster that we
-# use the AMD clusters.
-pxc-operator:
-  nodeSelector:
-    kubernetes.io/arch: amd64
 
 # This controls the Shopware operator helm chart which can be found here:
 shopware-operator:
