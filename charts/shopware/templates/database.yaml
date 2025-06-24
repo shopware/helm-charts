@@ -51,6 +51,7 @@ spec:
       [mysqld]
       group_concat_max_len=320000
       sql_mode=''
+      default-time-zone=+00:00
 
   proxysql:
     enabled: {{ .Values.percona.proxy.enabled | default false }}
