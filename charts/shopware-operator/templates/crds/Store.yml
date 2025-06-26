@@ -44,6 +44,37 @@ spec:
               type: object
             spec:
               properties:
+                ScheduledTask:
+                  default:
+                    command: bin/console scheduled-task:run -v -n --no-wait
+                    schedule: 0 * * * *
+                    timeZone: Etc/UTC
+                  properties:
+                    command:
+                      default: bin/console scheduled-task:run -v -n --no-wait
+                      description: The schedule task command
+                      type: string
+                    schedule:
+                      default: 0 * * * *
+                      description: |-
+                        The schedule in Cron format, see https://en.wikipedia.org/wiki/Cron.
+                        Default to every hour at minute 0.
+                      type: string
+                    suspend:
+                      default: false
+                      description: |-
+                        This flag tells the controller to suspend subsequent executions, it does
+                        not apply to already started executions.  Defaults to false.
+                      type: boolean
+                    timeZone:
+                      default: Etc/UTC
+                      description: The time zone name for the given schedule, see https://en.wikipedia.org/wiki/List_of_tz_database_time_zones. Default is Etc/UTC.
+                      type: string
+                  required:
+                    - command
+                    - schedule
+                    - timeZone
+                  type: object
                 adminCredentials:
                   default:
                     password: ""
