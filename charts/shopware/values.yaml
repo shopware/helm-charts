@@ -81,7 +81,7 @@ store:
     readTimeout: 60s
     # This is the write timeout for the caddy server. Default is 60s.
     writeTimeout: 60s
-    
+
   cdnURL: "example.com"
 
   # Shop settings can be configured at any time using the deployment helper.
@@ -224,6 +224,13 @@ store:
     #     value: SomeStringValue
     #   - name: FPM_PM
     #     value: static
+
+  #scheduledTask:
+  #  command: bin/console scheduled-task:run -v -n --no-wait
+  #   suspend: false
+  #   # The schedule in Cron format, see https://en.wikipedia.org/wiki/Cron.
+  #   schedule: 0 * * * *
+  #   timeZine: Etc/UTC
 
   # Each deployment and job from the operator can be overridden using the default container specifications defined
   # in the store's container specification.
@@ -459,7 +466,6 @@ redisworker:
 #     memory: 100Mi
 #     cpu: 100m
 
-
 # This controls the Shopware operator helm chart which can be found here:
 # DEPRECATED: This has moved because the seperated crd installation.
 # shopware-operator:
@@ -614,7 +620,6 @@ prometheus:
   server:
     configMapOverrideName: "prometheus-config"
     releaseNamespace: true
-
 # additional kubernetes objects
 # extraObjects:
 #   - apiVersion: v1
