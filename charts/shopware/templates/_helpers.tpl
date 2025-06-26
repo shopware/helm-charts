@@ -92,10 +92,6 @@ secretAccessKeyRef:
 {{- end }}
 {{- end -}}
 
-{{ define "getOpenSearchClusterName" -}}
-{{ printf "%s-opensearch-cluster" .Release.Name }}
-{{- end -}}
-
 {{ define "getCaddyConfigName" -}}
 {{ printf "%s-caddy-config" .Release.Name }}
 {{- end -}}
