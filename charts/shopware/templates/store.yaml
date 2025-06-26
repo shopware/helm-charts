@@ -67,6 +67,11 @@ spec:
     locale: {{ .Values.store.shopConfiguration.locale | default "en-GB" }}
   {{- end }}
 
+  {{- with .Values.store.scheduledTask }}
+  scheduledTask:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
   fpm:
     {{- if hasKey .Values.store "fpm" }}
     processManagement: {{ .Values.store.fpm.processManagement | default "dynamic" }}
