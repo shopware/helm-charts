@@ -354,9 +354,6 @@ minio:
     # annotations:
     tls: {}
 
-opensearch:
-  enabled: false
-
 valkeyapp:
   enabled: true
   architecture: standalone
