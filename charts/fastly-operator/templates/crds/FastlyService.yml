@@ -25,6 +25,12 @@ spec:
         - jsonPath: .status.state
           name: State
           type: string
+        - jsonPath: .status.ready
+          name: TLS Ready
+          type: string
+        - jsonPath: .status.activeVersion
+          name: ActiveVersion
+          type: string
         - jsonPath: .metadata.creationTimestamp
           name: Age
           type: date
