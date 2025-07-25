@@ -61,15 +61,6 @@ spec:
         {{- end }}
       containers:
       - args:
-        - --leader-elect
-        {{- if hasKey .Values "logFormat" }}
-        - --log-format
-        - {{ .Values.logFormat }}
-        {{- end }}
-        {{- if hasKey .Values "logLevel" }}
-        - --log-level
-        - {{ .Values.logLevel }}
-        {{- end }}
         command:
         - /manager
         env:
@@ -78,6 +69,36 @@ spec:
             secretKeyRef:
               name: {{ .Values.fastlyApiSecretRef.name }}
               key: {{ .Values.fastlyApiSecretRef.key }}
+        - name: LEADER_ELECT
+          value: "true"
+        {{- if hasKey .Values "logLevel" }}
+        - name: LOG_LEVEL
+          value: "{{ .Values.logLevel }}"
+        {{- end }}
+        {{- if hasKey .Values "logFormat" }}
+        - name: LOG_FORMAT
+          value: "{{ .Values.logFormat }}"
+        {{- end }}
+        {{- if hasKey .Values "sources" }}
+        - name: SOURCES
+          value: "{{ .Values.sources | join "," }}"
+        {{- end }}
+        {{- if and (hasKey .Values "events") (hasKey .Values.events "nats") (.Values.events.nats.enable) }}
+        - name: NATS_ADDRESS
+          value: "{{ required "if nats is enabled set the address" .Values.events.nats.address }}"
+        {{- if hasKey .Values.events.nats "topic" }}
+        - name: NATS_TOPIC
+          value: "{{ .Values.events.nats.topic | default "fastly-events" }}"
+        {{- end }}
+        {{- if hasKey .Values.events.nats "credentialsRef" }}
+        - name: NATS_CREDENTIALS
+          value: "/secrets/{{ .Values.events.nats.credentialsRef.key }}"
+        {{- end }}
+        {{- if hasKey .Values.events.nats "nkeyRef" }}
+        - name: NATS_NKEY
+          value: "/secrets/{{ .Values.events.nats.nkeyRef.key }}"
+        {{- end }}
+        {{- end }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
         imagePullPolicy: "{{ .Values.image.pullPolicy }}"
         livenessProbe:
@@ -102,10 +123,34 @@ spec:
           capabilities:
             drop:
             - ALL
+        volumeMounts:
+          {{- if and (hasKey .Values "events") (hasKey .Values.events "nats") (.Values.events.nats.enable) }}
+          {{- if hasKey .Values.events.nats "nkeyRef" }}
+          - mountPath: /secrets
+            name: nkey
+          {{- end }}
+          {{- if hasKey .Values.events.nats "credentialsRef" }}
+          - mountPath: /secrets
+            name: credentials
+          {{- end }}
+          {{- end }}
       securityContext:
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
       serviceAccountName: '{{ .Release.Name }}-fastly-operator'
       terminationGracePeriodSeconds: 10
+      volumes:
+        {{- if and (hasKey .Values "events") (hasKey .Values.events "nats") (.Values.events.nats.enable) }}
+        {{- if hasKey .Values.events.nats "nkeyRef" }}
+        - name: nkey
+          secret:
+            secretName: {{ .Values.events.nats.nkeyRef.name }}
+        {{- end }}
+        {{- if hasKey .Values.events.nats "credentialsRef" }}
+        - name: credentials
+          secret:
+            secretName: {{ .Values.events.nats.credentialsRef.name }}
+        {{- end }}
+        {{- end }}
 {{- end }}

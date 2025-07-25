@@ -56,10 +56,30 @@ fastlyApiSecretRef:
   name: "fastly-api-key"
   key: "key"
 
-# Set loglevel. Valid would be: Info, Warn, Error, Debug
-logLevel: Info
-# Set the format, default is json. Possible values are text, json, zap-pretty
-# zap-pretty is used for makefile run command to pretty print the json output
+# Per default we watch on ingress and config-map
+# sources:
+#   - ingress
+#   - config-map
+#   - istio-gateway
+#   - istio-virtualservice
+
+# Currently we only support Nats for internal usage, If you want a different publish message system let us know with an issue or pull request.
+# events:
+#   nats:
+#     enable: true
+#     nkeyRef:
+#       name: "nats-nkey"
+#       key: "nkey-file"
+#     credentialsRef:
+#       name: "nats-credentials"
+#       key: "creds-file"
+#     address: nats://nats.nats-namespace.svc.cluster.local
+#     topic: "fastly-events"
+
+# Supported levels: debug, info, warn, error, dpanic, panic, fatal
+logLevel: info
+# Supported formats: json, text, zap-pretty
+# Use zap-pretty for the makefile run command, as it will be properly formatted
 logFormat: json
 # Array of extra K8s manifests to deploy
 # extraObjects:
