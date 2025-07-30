@@ -67,6 +67,9 @@ store:
   # The host will overwrite the network.appURLHost. Check appURLHost for more information.
   # host: localhost.traefik.me
 
+  # annotations:
+  # labels:
+
   # This configuration is used to disable S3 and database checks prior to setup and shop creation.
   disableChecks: false
   disableDatabaseCheck: false
