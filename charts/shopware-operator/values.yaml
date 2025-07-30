@@ -27,6 +27,36 @@ serviceAccount:
   # serviceAccount.create: Whether to create the Service Accounts or not
   create: true
 
+# Enable event publishing when the store status resource is updated. This
+# is useful if you want to add external applications which will wait until the
+# operator is ready. Example event:
+# {
+#   "message": "Update store status",
+#   "condition": {
+#     "type": "initializing",
+#     "lastTransitionTime": null,
+#     "lastUpdatedTime": "2025-07-07T14:00:52Z",
+#     "message": "Waiting for deployment to get ready. Target replicas: 2, Ready replicas: 0",
+#     "status": "True"
+#   },
+#   "deployedImage": "ghcr.io/shopware/shopware-kubernetes:latest",
+#   "storeLabels": {
+#     "app.kubernetes.io/managed-by": "Helm"
+#   }
+# }
+# Currently we only support Nats for internal usage, If you want a different publish message system let us know with an issue or pull request.
+# events:
+#   nats:
+#     nkeyRef:
+#       name: "nats-nkey" # secret name
+#       key: "nkey" # file
+#     enable: true
+#     credentialsRef:
+#       name: "nats-credentials" # secret name
+#       key: "creds" # file
+#     address: nats://nats.nats-namespace.svc.cluster.local
+#     topic: "shopware-operator"
+
 # These are the defaults of the operator SDK. Feel free to adjust to your needs.
 resources:
   limits:
@@ -55,6 +85,11 @@ tolerations: []
 labels: {}
 podAnnotations: {}
 
-# If set to true this will create json logs instead of user logs
-logStructured: true
-debug: false
+# Supported levels: debug, info, warn, error, dpanic, panic, fatal
+logLevel: info
+# Supported formats: json, text, zap-pretty
+# Use zap-pretty for the makefile run command, as it will be properly formatted
+logFormat: json
+# Disable check for s3 and database checks. Useful if network access is not given for the s3 or database.
+# This is a global level. You can also control this per store.
+disableChecks: false
