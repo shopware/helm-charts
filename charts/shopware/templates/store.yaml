@@ -3,6 +3,14 @@ kind: Store
 metadata:
   name: '{{ .Release.Name }}'
   namespace: '{{ .Release.Namespace }}'
+  {{- with .Values.store.labels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.store.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   disableJobDeletion: {{ .Values.store.disableJobDeletion | default false }}
   disableChecks: {{ .Values.store.disableChecks | default false }}
