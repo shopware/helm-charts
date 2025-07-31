@@ -82,6 +82,7 @@ tolerations: []
 #           values:
 #           - linux
 
+podLabels: {}
 labels: {}
 podAnnotations: {}
 
