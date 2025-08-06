@@ -212,8 +212,8 @@ spec:
           {{- toYaml . | nindent 8 }}
       {{- end }}
 
-    extraContainers:
-      {{- with .Values.store.container.extraContainers }}
+    initContainers:
+      {{- with .Values.store.container.initContainers }}
           {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- if hasKey .Values.store "sidecarLogging" }}
@@ -259,6 +259,11 @@ spec:
           failureThreshold: 3
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
+      {{- end }}
+
+    extraContainers:
+      {{- with .Values.store.container.extraContainers }}
+          {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- if hasKey .Values.store "fpm" }}
       {{- if ne .Values.store.fpm.processManagement "dynamic" }}
