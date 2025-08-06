@@ -220,6 +220,7 @@ spec:
       - name: logging
         image:  "{{ .Values.store.sidecarLogging.image.repository }}:{{ .Values.store.sidecarLogging.image.tag }}"
         imagePullPolicy: {{ .Values.store.sidecarLogging.image.pullPolicy | default "IfNotPresent" }}
+        restartPolicy: Always
         command:
           - /fluent-bit/bin/fluent-bit
         args:
