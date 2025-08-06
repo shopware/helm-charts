@@ -92,7 +92,7 @@ jobs:
           helm repo add opentelemetry https://open-telemetry.github.io/opentelemetry-helm-charts
           helm dependency build charts/shopware
 
-          helm install op --namespace test charts/shopware-operator
+          helm template op charts/shopware-operator --namespace test | kubectl apply --server-side -f -
           helm install test --namespace test charts/shopware \
             --set minio.storageSize=100Mi \
             --set minio.resources.requests.cpu=100m \

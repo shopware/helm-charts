@@ -212,14 +212,15 @@ spec:
           {{- toYaml . | nindent 8 }}
       {{- end }}
 
-    extraContainers:
-      {{- with .Values.store.container.extraContainers }}
+    initContainers:
+      {{- with .Values.store.container.initContainers }}
           {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- if hasKey .Values.store "sidecarLogging" }}
       - name: logging
         image:  "{{ .Values.store.sidecarLogging.image.repository }}:{{ .Values.store.sidecarLogging.image.tag }}"
         imagePullPolicy: {{ .Values.store.sidecarLogging.image.pullPolicy | default "IfNotPresent" }}
+        restartPolicy: Always
         command:
           - /fluent-bit/bin/fluent-bit
         args:
@@ -259,6 +260,11 @@ spec:
           failureThreshold: 3
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
+      {{- end }}
+
+    extraContainers:
+      {{- with .Values.store.container.extraContainers }}
+          {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- if hasKey .Values.store "fpm" }}
       {{- if ne .Values.store.fpm.processManagement "dynamic" }}
