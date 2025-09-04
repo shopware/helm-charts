@@ -25146,14 +25146,21 @@ spec:
                   default:
                     currency: EUR
                     locale: en-GB
+                    usageDataConsent: allowed
                   properties:
                     currency:
                       type: string
                     locale:
                       type: string
+                    usageDataConsent:
+                      enum:
+                        - revoked
+                        - allowed
+                      type: string
                   required:
                     - currency
                     - locale
+                    - usageDataConsent
                   type: object
                 storefrontDeploymentContainer:
                   default: {}
