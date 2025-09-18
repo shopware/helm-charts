@@ -192,6 +192,13 @@ spec:
                   type: array
                 customerID:
                   type: string
+                datadogLogging:
+                  properties:
+                    errorMessage:
+                      type: string
+                    state:
+                      type: string
+                  type: object
                 domains:
                   additionalProperties:
                     properties:

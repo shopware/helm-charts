@@ -56,6 +56,17 @@ fastlyApiSecretRef:
   name: "fastly-api-key"
   key: "key"
 
+fastlyLogging:
+  datadog:
+    enable: false
+    # apiKeySecretRef:
+    #   name: "datadog"
+    #   key: "api-key"
+    # region: "EU"
+    # formatVersion: 2
+    # # Comma separated list of tags, e.g. "tag1:value,tag2:value"
+    # tags: ""
+
 # Per default we watch on ingress and config-map
 # sources:
 #   - ingress
