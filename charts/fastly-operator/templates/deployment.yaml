@@ -99,6 +99,19 @@ spec:
           value: "/secrets/{{ .Values.events.nats.nkeyRef.key }}"
         {{- end }}
         {{- end }}
+        {{- if (.Values.fastlyLogging.datadog.enable) }}
+        - name: DATADOG_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: "{{ .Values.fastlyLogging.datadog.apiKeySecretRef.name }}"
+              key: "{{ .Values.fastlyLogging.datadog.apiKeySecretRef.key }}"
+        - name: DATADOG_LOGGING_REGION
+          value: "{{ .Values.fastlyLogging.datadog.region }}"
+        - name: DATADOG_LOGGING_FORMAT_VERSION
+          value: "{{ .Values.fastlyLogging.datadog.formatVersion }}"
+        - name: DATADOG_LOGGING_TAGS
+          value: "{{ .Values.fastlyLogging.datadog.tags }}"
+        {{- end }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
         imagePullPolicy: "{{ .Values.image.pullPolicy }}"
         livenessProbe:
