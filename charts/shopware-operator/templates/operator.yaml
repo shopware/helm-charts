@@ -73,6 +73,8 @@ rules:
 - apiGroups:
   - ""
   resources:
+  - persistentvolumeclaims
+  - persistentvolumes
   - pods
   verbs:
   - create
@@ -157,7 +159,8 @@ rules:
   resources:
   - storedebuginstances
   - storeexecs
-  - storesnapshots
+  - storesnapshotcreates
+  - storesnapshotrestores
   verbs:
   - create
   - delete
@@ -172,7 +175,8 @@ rules:
   - storedebuginstances/finalizers
   - storeexecs/finalizers
   - stores/finalizers
-  - storesnapshots/finalizers
+  - storesnapshotcreates/finalizers
+  - storesnapshotrestores/finalizers
   verbs:
   - update
 - apiGroups:
@@ -181,7 +185,8 @@ rules:
   - storedebuginstances/status
   - storeexecs/status
   - stores/status
-  - storesnapshots/status
+  - storesnapshotcreates/status
+  - storesnapshotrestores/status
   verbs:
   - get
   - patch
