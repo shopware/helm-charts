@@ -359,6 +359,10 @@ minio:
 
 valkeyapp:
   enabled: true
+  image:
+    registry: docker.io
+    repository: valkey/valkey
+    tag: 8.0
   architecture: standalone
   replica:
     replicaCount: 1
@@ -375,6 +379,10 @@ valkeyapp:
 
 valkeysession:
   enabled: true
+  image:
+    registry: docker.io
+    repository: valkey/valkey
+    tag: 8.0
   architecture: standalone
   replica:
     replicaCount: 1
@@ -391,6 +399,10 @@ valkeysession:
 
 valkeyworker:
   enabled: true
+  image:
+    registry: docker.io
+    repository: valkey/valkey
+    tag: 8.0
   architecture: standalone
   replica:
     replicaCount: 1
