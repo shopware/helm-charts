@@ -78,6 +78,8 @@ store:
   # The name of the service account to use for the store deployments.
   # remove this if you do not want to use a service account
   serviceAccountName: store-sa
+  # Disables mounting the kubernetes service account token
+  automountServiceAccountToken: false
 
   caddy:
     # This is the read timeout for the caddy server. Default is 60s.
