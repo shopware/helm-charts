@@ -37326,6 +37326,9 @@ spec:
                       type: string
                     state:
                       type: string
+                    storeReplicas:
+                      format: int32
+                      type: integer
                   type: object
                 conditions:
                   items:
@@ -37363,6 +37366,9 @@ spec:
                       type: string
                     state:
                       type: string
+                    storeReplicas:
+                      format: int32
+                      type: integer
                   type: object
                 workerState:
                   properties:
@@ -37375,6 +37381,9 @@ spec:
                       type: string
                     state:
                       type: string
+                    storeReplicas:
+                      format: int32
+                      type: integer
                   type: object
               type: object
           type: object
