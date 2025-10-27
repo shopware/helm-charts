@@ -12,7 +12,7 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  disableJobDeletion: {{ .Values.store.disableJobDeletion | default true }}
+  disableJobDeletion: {{ .Values.store.disableJobDeletion | default false }}
   disableChecks: {{ .Values.store.disableChecks | default false }}
   {{- if .Values.minio.enabled }}
   cdnURL: 'https://{{ template "generateS3URLApi" . }}/shopware-public'
