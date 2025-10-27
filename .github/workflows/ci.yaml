@@ -65,7 +65,7 @@ jobs:
 
   test-on-cluster:
     name: Cluster E2E Test
-    runs-on: runs-on=${{ github.run_id }}/runner=sw-amd64/cpu=4
+    runs-on: runs-on=${{ github.run_id }}/runner=sw-amd64/cpu=8
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -103,7 +103,12 @@ jobs:
           kubectl wait --namespace test --for=condition=Available --timeout=60s deployment/op-shopware-operator || {
             kubectl get deployment/shopware-operator --namespace test -o json && exit 2
           }
-          kubectl wait --namespace test store/test --for='jsonpath={.status.state}'=setup --timeout=1m
+          kubectl wait --namespace test --for=condition=Ready --timeout=2m pods/test-pxc-0 || {
+            kubectl get pods/test-pxc-0 --namespace test -o json && exit 22
+          }
+          kubectl wait --namespace test store/test --for='jsonpath={.status.state}'=setup --timeout=2m || {
+            kubectl get deployment/shopware-operator --namespace test -o json && exit 23
+          }
 
           kubectl wait --namespace test tenant/test-minio --for='jsonpath={.status.currentState}'=Initialized --timeout=1m || {
             kubectl get tenant/test-minio --namespace test -o json; \
