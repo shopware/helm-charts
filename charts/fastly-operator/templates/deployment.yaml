@@ -112,6 +112,18 @@ spec:
         - name: DATADOG_LOGGING_TAGS
           value: "{{ .Values.fastlyLogging.datadog.tags }}"
         {{- end }}
+        {{- if (.Values.fastlyTokenControler.enable) }}
+        - name: FASTLY_TOKEN_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: "{{ .Values.fastlyTokenControler.userSecretRef.name }}"
+              key: "{{ .Values.fastlyTokenControler.userSecretRef.userKey }}"
+        - name: FASTLY_TOKEN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: "{{ .Values.fastlyTokenControler.userSecretRef.name }}"
+              key: "{{ .Values.fastlyTokenControler.userSecretRef.passwordKey }}"
+        {{- end }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
         imagePullPolicy: "{{ .Values.image.pullPolicy }}"
         livenessProbe:
