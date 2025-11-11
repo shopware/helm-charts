@@ -78,9 +78,29 @@ rules:
   - list
   - watch
 - apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
   - fastly.shopware.com
   resources:
   - fastlyservices
+  - fastlytokens
   verbs:
   - create
   - delete
@@ -93,12 +113,14 @@ rules:
   - fastly.shopware.com
   resources:
   - fastlyservices/finalizers
+  - fastlytokens/finalizers
   verbs:
   - update
 - apiGroups:
   - fastly.shopware.com
   resources:
   - fastlyservices/status
+  - fastlytokens/status
   verbs:
   - get
   - patch

@@ -56,6 +56,16 @@ fastlyApiSecretRef:
   name: "fastly-api-key"
   key: "key"
 
+# To generate FastlyTokens we need a username and a password from a user which has a userToken and has
+# no active SSO login. Set the token via fastlyApiSecretRef and add your username/email and the password.
+# This is not required, if you don't want to use the token crd, just leave this empty
+fastlyTokenControler:
+  enable: false
+  # userSecretRef:
+  #   name: "fastly-user-secret"
+  #   userKey: "username"
+  #   passwordKey: "password"
+
 fastlyLogging:
   datadog:
     enable: false
