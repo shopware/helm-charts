@@ -245,6 +245,19 @@ store:
   # storefrontDeploymentContainer:
   # workerDeploymentContainer:
 
+  # OpenSearch configuration for product search and indexing
+  # When enabled, host and passwordSecretRef are required
+  opensearch:
+    enabled: false
+    # host: opensearch.local
+    # username: admin
+    # passwordSecretRef:
+    #   name: opensearch-credentials
+    #   key: password
+    # port: 9200
+    # scheme: https
+    # index: shopware
+
   # You need to set the correct ingressClassName for this to work properly. If you follow
   # the Readme and use kind, you can use nginx as ingress class and everything should run
   # out of the box.
