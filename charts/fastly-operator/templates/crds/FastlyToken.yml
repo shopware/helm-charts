@@ -67,6 +67,17 @@ spec:
                   items:
                     type: string
                   type: array
+                serviceRefs:
+                  items:
+                    properties:
+                      name:
+                        minLength: 1
+                        type: string
+                      namespace:
+                        minLength: 1
+                        type: string
+                    type: object
+                  type: array
                 tlsAccess:
                   default: false
                   type: boolean
@@ -78,7 +89,6 @@ spec:
                   type: string
               required:
                 - secretRef
-                - serviceIDs
               type: object
             status:
               properties:
