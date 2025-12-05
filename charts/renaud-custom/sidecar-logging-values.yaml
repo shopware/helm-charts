@@ -1,0 +1,94 @@
+# shopware-operator:
+#   image: 
+#     # pullPolicy: Always
+
+prometheus:
+  rbac:
+    create: false
+  server:
+    clusterRoleNameOverride: renaud-shopware-prometheus-server
+
+minio:
+  storageClassName: standard
+
+store:
+  setupJobContainer:
+    extraContainers:
+      - name: logging
+        env:
+        - name: FLUENT_BIT_LABELS
+          value: "job=fluentbit,service=setupJob"
+  migrationJobContainer:
+    extraContainers:
+      - name: logging
+        env:
+        - name: FLUENT_BIT_LABELS
+          value: "job=fluentbit,service=migrationJob"
+  # We use traefik.me to resolve to 127.0.0.1
+  # Enter your DNS name for the shop.
+  # This will make sure that your sales-channel is set up correctly and the ingress is using the host address.
+  # host: renaud-shopware.shopware.systems
+  host: localhost.traefik.me
+  container:
+    # image: ghcr.io/shopware-redstone/customer:b8bdf650-4e46-11ef-9d8a-5a6aabbdaa93
+    image: 593793069146.dkr.ecr.eu-central-1.amazonaws.com/customer/a4a84620-777c-4197-a191-44e1471c3c9d/af223bf8-c8b1-48cf-8cf2-70599d00c160:bar
+    extraEnvs:
+      - name: FLUENT_BIT_LABELS
+        value: "job=fluentbit,service=shopwareCore"
+  monolog:
+    handlers:
+      main:
+        type: fingers_crossed
+        action_level: info
+        handler: nested
+        excluded_http_codes: [404, 405]
+        buffer_size: 50
+      nested:
+        type: group
+        members: [stderr, file_log]
+      stderr:
+        type: stream
+        path: php://stderr
+        level: info
+      file_log:
+        type: stream
+        path: "/var/log/shopware.log"
+        level: info
+        formatter: 'monolog.formatter.json'
+      console:
+        type: console
+        process_psr_3_messages: false
+        channels: ["!event", "!doctrine"]
+      business_event_handler_buffer:
+        level: info
+  sidecarLogging:
+    image:
+      repository: cr.fluentbit.io/fluent/fluent-bit
+      tag: 3.1.4
+      # pullPolicy: IfNotPresent
+    # logFfolder: /var/log
+    # logFile: shopware.log
+    # lokiHost: loki-gateway.loki.svc.cluster.local
+
+grafana:
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          type: prometheus
+          uid: prometheus
+          url: http://shopware-prometheus-server.shopware.svc.cluster.local
+        - name: Loki
+          type: loki
+          url: http://loki-gateway.loki.svc.cluster.local
+
+percona:
+  database:
+    storageClassName: standard
+    nodeSelector:
+      kubernetes.io/arch: arm64
+
+pxc-operator:
+  nodeSelector:
+    kubernetes.io/arch: arm64
