@@ -202,18 +202,9 @@ spec:
                 domains:
                   additionalProperties:
                     properties:
-                      TLSRemoteState:
-                        type: string
-                      TLSState:
-                        type: string
-                      TLSSubsciptionID:
-                        type: string
                       domainState:
                         type: string
                     required:
-                      - TLSRemoteState
-                      - TLSState
-                      - TLSSubsciptionID
                       - domainState
                     type: object
                   type: object
