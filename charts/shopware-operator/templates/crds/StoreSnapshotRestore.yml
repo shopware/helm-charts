@@ -55,7 +55,7 @@ spec:
               properties:
                 container:
                   default:
-                    image: ghcr.io/shopware/shopware-operator-snapshot:0.0.66
+                    image: ghcr.io/shopware/shopware-operator-snapshot:0.0.67
                     terminationGracePeriodSeconds: 30
                   description: The Image gets replaces with the tag of the crd
                   properties:
