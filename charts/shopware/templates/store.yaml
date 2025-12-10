@@ -359,16 +359,9 @@ spec:
     {{- end }}
     port: {{ .Values.store.opensearch.port | default 9200 }}
     schema: {{ .Values.store.opensearch.schema | default "https" }}
-    {{- if hasKey .Values.store.opensearch "index" }}
     index:
       prefix: {{ .Values.store.opensearch.index.prefix | default "sw" }}
       shards: {{ .Values.store.opensearch.index.shards | default 3 }}
       replicas: {{ .Values.store.opensearch.index.replicas | default 3 }}
-    {{- else }}
-    index:
-      prefix: sw
-      shards: 3
-      replicas: 3
-    {{- end }}
   {{- end }}
   {{- end }}
