@@ -804,6 +804,66 @@ entries:
     version: 0.0.1
   shopware:
   - apiVersion: v2
+    appVersion: 0.0.48
+    created: "2025-12-10T15:06:39.101927698Z"
+    dependencies:
+    - condition: percona.enabled
+      name: pxc-operator
+      repository: https://percona.github.io/percona-helm-charts/
+      version: 1.14.0
+    - alias: valkeyapp
+      condition: valkeyapp.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 1.0.1
+    - alias: valkeysession
+      condition: valkeysession.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 1.0.1
+    - alias: valkeyworker
+      condition: valkeyworker.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 1.0.1
+    - alias: redisapp
+      condition: redisapp.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 19.1.2
+    - alias: redissession
+      condition: redissession.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 19.1.2
+    - alias: redisworker
+      condition: redisworker.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 19.1.2
+    - alias: grafana
+      condition: grafana.enabled
+      name: grafana
+      repository: https://grafana.github.io/helm-charts
+      version: 8.5.0
+    - alias: prometheus
+      condition: prometheus.enabled
+      name: prometheus
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 25.24.1
+    - alias: otel-collector
+      condition: otel-collector.enabled
+      name: opentelemetry-collector
+      repository: https://open-telemetry.github.io/opentelemetry-helm-charts
+      version: 0.108.0
+    description: A Helm chart for Kubernetes
+    digest: 82caca90fadb9ddadace11121e4754690075f3b16c6cbb13f0bf795f0e5a6128
+    name: shopware
+    type: application
+    urls:
+    - https://github.com/shopware/helm-charts/releases/download/shopware-0.0.48/shopware-0.0.48.tgz
+    version: 0.0.48
+  - apiVersion: v2
     appVersion: 0.0.47
     created: "2025-10-07T13:14:53.353045866Z"
     dependencies:
@@ -3425,4 +3485,4 @@ entries:
     urls:
     - https://github.com/shopware/helm-charts/releases/download/shopware-0.0.3/shopware-0.0.3.tgz
     version: 0.0.3
-generated: "2025-12-09T17:16:01.029545377Z"
+generated: "2025-12-10T15:06:39.102410448Z"
