@@ -338,3 +338,27 @@ spec:
   migrationJobContainer:
     {{- toYaml . | nindent 4 }}
   {{- end }}
+
+  {{- if hasKey .Values.store "opensearch" }}
+  {{- if .Values.store.opensearch.enabled }}
+  opensearch:
+    enabled: {{ .Values.store.opensearch.enabled }}
+    {{- if hasKey .Values.store.opensearch "host" }}
+    host: {{ .Values.store.opensearch.host }}
+    {{- else }}
+    {{- fail "value for .Values.store.opensearch.host is required when opensearch is enabled" }}
+    {{- end }}
+    username: {{ .Values.store.opensearch.username | default "admin" }}
+    {{- if hasKey .Values.store.opensearch "passwordSecretRef" }}
+    passwordSecretRef:
+      {{- with .Values.store.opensearch.passwordSecretRef }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+    {{- else }}
+    {{- fail "value for .Values.store.opensearch.passwordSecretRef is required when opensearch is enabled" }}
+    {{- end }}
+    port: {{ .Values.store.opensearch.port | default 9200 }}
+    schema: {{ .Values.store.opensearch.scheme | default "https" }}
+    index: {{ .Values.store.opensearch.index | default "shopware" }}
+  {{- end }}
+  {{- end }}
