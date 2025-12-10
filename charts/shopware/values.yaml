@@ -255,8 +255,11 @@ store:
     #   name: opensearch-credentials
     #   key: password
     # port: 9200
-    # scheme: https
-    # index: shopware
+    # schema: https
+    # index:
+    #   prefix: sw
+    #   shards: 3
+    #   replicas: 3
 
   # You need to set the correct ingressClassName for this to work properly. If you follow
   # the Readme and use kind, you can use nginx as ingress class and everything should run
