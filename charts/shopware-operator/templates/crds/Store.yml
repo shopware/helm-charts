@@ -18948,9 +18948,26 @@ spec:
                       type: object
                     appURLHost:
                       type: string
+                    enabledGateway:
+                      default: false
+                      type: boolean
                     enabledIngress:
                       default: false
                       type: boolean
+                    gatewayAnnotations:
+                      additionalProperties:
+                        type: string
+                      type: object
+                    gatewayLabels:
+                      additionalProperties:
+                        type: string
+                      type: object
+                    gatewayName:
+                      type: string
+                    gatewayNamespace:
+                      type: string
+                    gatewaySectionName:
+                      type: string
                     host:
                       type: string
                     hosts:
@@ -18958,8 +18975,16 @@ spec:
                       items:
                         type: string
                       type: array
+                    ingressAnnotations:
+                      additionalProperties:
+                        type: string
+                      type: object
                     ingressClassName:
                       type: string
+                    ingressLabels:
+                      additionalProperties:
+                        type: string
+                      type: object
                     labels:
                       additionalProperties:
                         type: string
@@ -18972,6 +18997,7 @@ spec:
                       default: store-tls
                       type: string
                   required:
+                    - enabledGateway
                     - enabledIngress
                   type: object
                 opensearch:
