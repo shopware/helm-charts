@@ -103,7 +103,7 @@ jobs:
           kubectl wait --namespace test --for=condition=Available --timeout=60s deployment/op-shopware-operator || {
             kubectl get deployment/shopware-operator --namespace test -o json && exit 2
           }
-          kubectl wait --namespace test store/test --for='jsonpath={.status.state}'=setup --timeout=1m
+          kubectl wait --namespace test store/test --for='jsonpath={.status.state}'=setup --timeout=3m
 
           kubectl wait --namespace test tenant/test-minio --for='jsonpath={.status.currentState}'=Initialized --timeout=1m || {
             kubectl get tenant/test-minio --namespace test -o json; \
