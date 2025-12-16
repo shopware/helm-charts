@@ -146,7 +146,14 @@ For a minimal installation, run:
 
 ```sh
 helm repo add shopware https://shopware.github.io/helm-charts/
-helm install op shopware/operator --namespace shopware --create-namespace
+
+# Step 1: Install CRDs first
+helm template shopware/operator --set crds.installOnly=true | kubectl apply --server-side -f -
+
+# Step 2: Install the operator
+helm template op shopware/operator --namespace shopware --create-namespace --set crds.installOnly=false --set crds.install=false | kubectl apply -f -
+
+# Step 3: Install Shopware
 helm install my-shop shopware/shopware --namespace shopware
 ```
 
@@ -154,7 +161,14 @@ If you want to use your own image use:
 
 ```sh
 helm repo add shopware https://shopware.github.io/helm-charts/
-helm install op shopware/operator --namespace shopware --create-namespace
+
+# Step 1: Install CRDs first
+helm template shopware/operator --set crds.installOnly=true | kubectl apply --server-side -f -
+
+# Step 2: Install the operator
+helm template op shopware/operator --namespace shopware --create-namespace --set crds.installOnly=false --set crds.install=false | kubectl apply -f -
+
+# Step 3: Install Shopware with custom image
 helm install my-shop shopware/shopware --namespace shopware --set store.container.image=<image-name>
 ```
 
@@ -235,7 +249,14 @@ For a more complex setup with additional prerequisites, you can install this Hel
 ```sh
 kubectl create namespace shopware
 kubectl label namespace shopware istio-injection=enabled
-helm install op shopware/shopware-operator --namespace shopware --create-namespace
+
+# Step 1: Install CRDs first
+helm template shopware/operator --set crds.installOnly=true | kubectl apply --server-side -f -
+
+# Step 2: Install the operator
+helm template op shopware/operator --namespace shopware --create-namespace --set crds.installOnly=false --set crds.install=false | kubectl apply -f -
+
+# Step 3: Install Shopware with Istio configuration
 helm install my-shop shopware/shopware --namespace shopware --values examples/values_istio.yaml
 ```
 
@@ -248,6 +269,12 @@ helm install my-shop shopware/shopware --namespace shopware --values examples/va
 ### Operator
 
 As the operator is still in beta, we advise against using it at the cluster level.
+
+The operator installation requires a two-step process:
+1. **Install CRDs first**: Custom Resource Definitions (CRDs) must be installed separately using server-side apply to ensure proper resource management
+2. **Install the operator**: After CRDs are in place, the operator itself can be installed
+
+This approach provides better control over CRD lifecycle management and prevents conflicts during upgrades.
 
 ### Shopware Image
 
