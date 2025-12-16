@@ -178,6 +178,7 @@ helm repo add shopware https://shopware.github.io/helm-charts/
 helm template shopware/operator --set crds.installOnly=true | kubectl apply --server-side -f -
 
 # Step 2: Install the operator
+kubectl create namespace shopware
 helm template op shopware/operator --namespace shopware --create-namespace --set crds.installOnly=false --set crds.install=false | kubectl apply -f -
 
 # Step 3: Install Shopware
