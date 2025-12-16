@@ -6,22 +6,6 @@
 {{- randAlphaNum 18 | nospace | b64enc -}}
 {{- end -}}
 
-{{ define "generateS3URLConsole" -}}
-{{- if hasKey .Values.store "host" }}
-{{- printf "s3-console-%s" .Values.store.host }}
-{{- else }}
-{{- printf "s3-console.localhost.traefik.me" }}
-{{- end }}
-{{- end -}}
-
-{{ define "generateS3URLApi" -}}
-{{- if hasKey .Values.store "host" }}
-{{- printf "s3-api-%s" .Values.store.host }}
-{{- else }}
-{{- printf "s3-api.localhost.traefik.me" }}
-{{- end }}
-{{- end -}}
-
 {{ define "getPerconaDBHost" -}}
 {{- if hasKey .Values.percona "proxy" }}
 {{- if .Values.percona.proxy.enabled }}
@@ -33,26 +17,6 @@
 {{- end -}}
 
 {{ define "getStoreS3" -}}
-{{- if .Values.minio.enabled }}
-{{- if .Values.minio.useTLS }}
-endpointURL: "https://minio.{{ .Release.Namespace }}.svc.cluster.local"
-{{- else }}
-endpointURL: "http://minio.{{ .Release.Namespace }}.svc.cluster.local"
-{{- end }}
-privateBucketName: "shopware-private"
-publicBucketName: "shopware-public"
-accessKeyRef:
-  name:  {{ template "getTenantUserSecretName" . }}
-  key: "CONSOLE_ACCESS_KEY"
-secretAccessKeyRef:
-  name: {{ template "getTenantUserSecretName" . }}
-  key: "CONSOLE_SECRET_KEY"
-
-{{- if hasKey .Values.store "s3Storage" }}
-{{- fail "If you use MinIO the s3Storage variables will get overwritten! Please remove them" }}
-{{- end }}
-
-{{- else }}
 endpointURL: {{ .Values.store.s3Storage.endpointURL | default "https://s3.eu-central-1.amazonaws.com" }}
 privateBucketName: {{ .Values.store.s3Storage.privateBucketName | default "shopware-private" }}
 publicBucketName: {{ .Values.store.s3Storage.publicBucketName | default "shopware-public" }}
@@ -65,7 +29,6 @@ accessKeyRef:
 secretAccessKeyRef:
   {{ toYaml .Values.store.s3Storage.secretAccessKeyRef | nindent 2 }}
 {{- end }}
-{{- end}}
 {{- end -}}
 
 {{ define "getSessionCacheMasterService" -}}
@@ -110,18 +73,6 @@ secretAccessKeyRef:
 
 {{ define "getBlackfireServiceName" -}}
 {{ "blackfire" }}
-{{- end -}}
-
-{{ define "getTenantUserSecretName" -}}
-{{ "store-s3-shopware" }}
-{{- end -}}
-
-{{ define "getTenantUserSecretAccessKeyName" -}}
-{{ "CONSOLE_SECRET_KEY" }}
-{{- end -}}
-
-{{ define "getTenantUserAccessKeyName" -}}
-{{ "CONSOLE_ACCESS_KEY" }}
 {{- end -}}
 
 # Defined by the operator itself

@@ -165,45 +165,6 @@ store:
             averageValue: "50"
             type: AverageValue
 
-minio:
-  # This enabled the s3 MinIO and creates a tenant. This requires the MinIO operator
-  # to work properly. You can use aws s3 also, but then need to overwrite the values
-  # in the store resource.
-  enabled: true
-  # This disables the MinIO mtls. Please don't use this in production! This is required
-  # for a local or Istio installation.
-  useTLS: false
-  # This enabled readonly for anonymous on the shopware-public bucket. This is required
-  # for Shopware to work properly. But you can disable it. This will create a job in Kubernetes.
-  publishPublicBucket: true
-  certSecretName: tenant-cert
-  secretName: minio-s3
-  tenantVersion: quay.io/minio/minio:RELEASE.2024-04-06T05-26-02Z
-  storageClassName: gp3
-  storageSize: 10Gi
-  # This image is used to add permissions for the public bucket.
-  # When using Istio, the image must include curl; hence, we use minio/mc.
-  # For non-Istio installations, the client image can be minio/mc.
-  clientImage: ghcr.io/shopware-redstone/k8s-tooling-image:latest
-
-  # This configuration sets the username and password for MinIO login.
-  # If the password is not specified, it will be automatically generated.
-  #rootUser: admin
-  #rootPassword: <random-id>
-
-  # You need to set the correct ingressClassName for this to work properly. If you follow
-  # the Readme and use kind, you can use nginx as ingress class and everything should run
-  # out of the box.
-  ingress:
-    enabled: true
-    className: nginx
-    annotations:
-      cert-manager.io/cluster-issuer: letsencrypt
-      # Shopware admin app.js is too big for the default. It is more than 64MB
-      nginx.ingress.kubernetes.io/proxy-body-size: '0'
-      nginx.ingress.kubernetes.io/service-upstream: "true"
-      nginx.ingress.kubernetes.io/ssl-redirect: "true"
-
 # This is used by Shopware to map the aws secret into our cluster to pull images
 regcred:
   clusterStore:

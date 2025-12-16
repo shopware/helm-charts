@@ -35,7 +35,7 @@ For advanced configurations, please refer to the [Istio example](examples/values
 
 This Helm chart installs the Percona Operator along with a MySQL database.
 For more information on Percona, visit [Percona's website](https://www.percona.com/).
-Currently, this Helm chart supports Percona and S3 MinIO by default.
+Currently, this Helm chart supports Percona by default.
 However, you can modify the configuration to your needs.
 
 > [!WARNING]
@@ -74,29 +74,6 @@ To properly set up the network configuration, we provide a baseline [config](kin
 
 ```sh
 kind create cluster --config kind-config.yaml
-```
-
-### Install MinIO Operator
-
-MinIO is a high-performance, S3-compatible object store built for large-scale AI/ML, data lake, and database workloads.
-MinIO is used for public assets and private files.
-
-For more information, visit the [MinIO documentation](https://min.io/).
-
-We use MinIO here to force Shopware to use S3, reducing write operations since Shopware is optimized for S3 usage.
-You can also use AWS S3.
-To disable MinIO, set `minio.enabled` to `false` in the [values.yaml](values.yaml) file.
-
-> [!WARNING]
-> Do not use this setup in production!
-> mTLS is disabled in the MinIO values because Kind provides a self-signed certificate for MinIO, which is incompatible with Shopware.
-> One solution could be to use a proper certificate authority for the cluster.
-> With Istio, this is not an issue as mTLS is handled by Istio.
-
-To install the MinIO Operator in your cluster, execute:
-
-```sh
-kubectl apply -k "github.com/minio/operator?ref=v6.0.3"
 ```
 
 ### Install Ingress in Kind

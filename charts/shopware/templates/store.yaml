@@ -14,11 +14,7 @@ metadata:
 spec:
   disableJobDeletion: {{ .Values.store.disableJobDeletion | default false }}
   disableChecks: {{ .Values.store.disableChecks | default false }}
-  {{- if .Values.minio.enabled }}
-  cdnURL: 'https://{{ template "generateS3URLApi" . }}/shopware-public'
-  {{- else }}
   cdnURL: {{ .Values.store.cdnURL }}
-  {{- end }}
   s3Storage:
     {{- include "getStoreS3" . | nindent 4 -}}
 
