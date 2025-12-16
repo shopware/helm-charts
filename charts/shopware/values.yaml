@@ -335,45 +335,69 @@ store:
   #   labels:
   #     test: 'migrationContainer'
 
-minio:
-  # This enabled the s3 MinIO and creates a tenant. This requires the MinIO operator
-  # to work properly. You can use aws s3 also, but then need to overwrite the values
-  # in the store resource.
+rustfs:
+  # This enables RustFS, a high-performance S3-compatible object store written in Rust.
+  # RustFS is used for public assets and private files, providing an alternative to MinIO.
   enabled: true
-  # This disables the MinIO mtls. Please don't use this in production! This is required
-  # for a local or Istio installation.
-  useTLS: false
-  # This enabled readonly for anonymous on the shopware-public bucket. This is required
-  # for Shopware to work properly. But you can disable it. This will trigger a job in Kubernetes.
-  publishPublicBucket: true
-  tenantVersion: quay.io/minio/minio:RELEASE.2024-04-06T05-26-02Z
-  # storageClassName:
-  # storageSize: 10Gi
-  # This image is used to add permissions for the public bucket.
-  # When using Istio, the image must include curl; hence, we use minio/mc.
-  # For non-Istio installations, the client image can be minio/mc.
-  # clientImage: minio/mc
-  # resources:
-  #   requests:
-  #     memory: 2Gi
-  #     cpu: 1000m
-  #   limits:
-  #     memory: 2Gi
-  #     cpu: 1000m
 
-  # This configuration sets the username and password for MinIO login.
-  # If the password is not specified, it will be automatically generated.
-  #rootUser: admin
-  #rootPassword: <random-id>
+  # RustFS supports two deployment modes:
+  # - standalone (default): Single pod with single PVC for development/testing
+  # - distributed: Multiple pods with multiple PVCs for high availability
+  mode:
+    distributed:
+      enabled: false
+    standalone:
+      enabled: true
 
-  # You need to set the correct ingressClassName for this to work properly. If you follow
-  # the Readme and use kind, you can use nginx as ingress class and everything should run
-  # out of the box.
+  # Number of RustFS nodes (only applicable in distributed mode)
+  replicaCount: 1
+
+  # Storage configuration
+  storageclass:
+    name: "standard"
+    dataStorageSize: 256Mi
+    logStorageSize: 256Mi
+
+  # RustFS credentials
+  # If not specified, defaults will be used (rustfsadmin/rustfsadmin)
+  # secret:
+  #   rustfs:
+  #     access_key: rustfsadmin
+  #     secret_key: rustfsadmin
+
+  # Ingress configuration
+  # You need to set the correct ingressClassName for this to work properly.
+  # If you follow the Readme and use kind, you can use nginx as ingress class.
+  # The rustfs chart creates an ingress for the console (port 9001) using these settings
   ingress:
     enabled: true
     className: nginx
-    # annotations:
-    tls: {}
+    hosts:
+      - host: s3-console.traefik.me
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    nginxAnnotations:
+      nginx.ingress.kubernetes.io/affinity: cookie
+      nginx.ingress.kubernetes.io/session-cookie-expires: "3600"
+      nginx.ingress.kubernetes.io/session-cookie-hash: sha1
+      nginx.ingress.kubernetes.io/session-cookie-max-age: "3600"
+      nginx.ingress.kubernetes.io/session-cookie-name: rustfs
+    # tls: []
+
+  # S3 API endpoint ingress (port 9000)
+  # This is managed by the Shopware chart, not the rustfs subchart
+  s3Ingress:
+    enabled: true
+    className: nginx
+    host: s3.traefik.me
+    annotations:
+      nginx.ingress.kubernetes.io/affinity: cookie
+      nginx.ingress.kubernetes.io/session-cookie-expires: "3600"
+      nginx.ingress.kubernetes.io/session-cookie-hash: sha1
+      nginx.ingress.kubernetes.io/session-cookie-max-age: "3600"
+      nginx.ingress.kubernetes.io/session-cookie-name: rustfs
+    # tls: []
 
 valkeyapp:
   enabled: true

@@ -33,9 +33,10 @@ This Helm chart can be installed locally or within an existing Kubernetes cluste
 This guide focuses on a simple local installation to help you get started.
 For advanced configurations, please refer to the [Istio example](examples/values_istio.yaml).
 
-This Helm chart installs the Percona Operator along with a MySQL database.
+This Helm chart installs the Percona Operator along with a MySQL database and RustFS for S3-compatible object storage.
 For more information on Percona, visit [Percona's website](https://www.percona.com/).
-Currently, this Helm chart supports Percona and S3 MinIO by default.
+For more information on RustFS, visit the [RustFS GitHub repository](https://github.com/rustfs/rustfs).
+Currently, this Helm chart supports Percona and RustFS by default.
 However, you can modify the configuration to your needs.
 
 > [!WARNING]
@@ -74,29 +75,35 @@ To properly set up the network configuration, we provide a baseline [config](kin
 
 ```sh
 kind create cluster --config kind-config.yaml
+
+# Install Gateway API CRDs
+kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/standard-install.yaml
 ```
 
-### Install MinIO Operator
+### RustFS for S3-Compatible Storage
 
-MinIO is a high-performance, S3-compatible object store built for large-scale AI/ML, data lake, and database workloads.
-MinIO is used for public assets and private files.
+RustFS is automatically installed as part of the Shopware chart and provides S3-compatible object storage.
 
-For more information, visit the [MinIO documentation](https://min.io/).
+**Default Credentials:**
+- Access Key: `rustfsadmin`
+- Secret Key: `rustfsadmin`
 
-We use MinIO here to force Shopware to use S3, reducing write operations since Shopware is optimized for S3 usage.
-You can also use AWS S3.
-To disable MinIO, set `minio.enabled` to `false` in the [values.yaml](values.yaml) file.
+**Access URLs:**
+- S3 API: https://s3.traefik.me
+- Console UI: https://s3-console.traefik.me
 
-> [!WARNING]
-> Do not use this setup in production!
-> mTLS is disabled in the MinIO values because Kind provides a self-signed certificate for MinIO, which is incompatible with Shopware.
-> One solution could be to use a proper certificate authority for the cluster.
-> With Istio, this is not an issue as mTLS is handled by Istio.
+**Buckets:**
+- `shopware-private` - Private files (automatic)
+- `shopware-public` - Public assets (automatic, read-only access)
 
-To install the MinIO Operator in your cluster, execute:
-
-```sh
-kubectl apply -k "github.com/minio/operator?ref=v6.0.3"
+**Customizing Credentials:**
+Set in `values.yaml`:
+```yaml
+rustfs:
+  secret:
+    rustfs:
+      access_key: your-access-key
+      secret_key: your-secret-key
 ```
 
 ### Install Ingress in Kind
@@ -169,7 +176,17 @@ For a minimal installation, run:
 
 ```sh
 helm repo add shopware https://shopware.github.io/helm-charts/
-helm install op shopware/operator --namespace shopware --create-namespace
+
+# Step 1: Create the namespace
+kubectl create namespace shopware
+
+# Step 2: Install CRDs first
+helm template shopware/operator --set crds.installOnly=true | kubectl apply --server-side -f -
+
+# Step 3: Install the operator
+helm template op shopware/operator --namespace shopware --create-namespace --set crds.installOnly=false --set crds.install=false | kubectl apply -f -
+
+# Step 4: Install Shopware
 helm install my-shop shopware/shopware --namespace shopware
 ```
 
@@ -177,7 +194,14 @@ If you want to use your own image use:
 
 ```sh
 helm repo add shopware https://shopware.github.io/helm-charts/
-helm install op shopware/operator --namespace shopware --create-namespace
+
+# Step 1: Install CRDs first
+helm template shopware/operator --set crds.installOnly=true | kubectl apply --server-side -f -
+
+# Step 2: Install the operator
+helm template op shopware/operator --namespace shopware --create-namespace --set crds.installOnly=false --set crds.install=false | kubectl apply -f -
+
+# Step 3: Install Shopware with custom image
 helm install my-shop shopware/shopware --namespace shopware --set store.container.image=<image-name>
 ```
 
@@ -186,13 +210,10 @@ helm install my-shop shopware/shopware --namespace shopware --set store.containe
 > [create your own custom Docker images](#create-docker-image) and override the default image in the Helm chart.
 
 > [!NOTE]
-> The s3 tenant setup may take a few seconds.
-> So Shopware is running before the assets are public.
+> The RustFS storage and database setup may take a few seconds.
 
 Once the setup job in your cluster is complete and your store is in the ready state, you can access the shop at <https://localhost.traefik.me/>
 If needed, you can modify the domain by updating the values.yaml file.
-If your css is not loading correctly, you may need to open the s3 bucket URL and accept also the ssl certificate for the s3 domain which is under
-<https://s3-api-localhost.traefik.me> by default. After that the store should be up and running.
 
 ### Create Docker image
 
@@ -258,7 +279,14 @@ For a more complex setup with additional prerequisites, you can install this Hel
 ```sh
 kubectl create namespace shopware
 kubectl label namespace shopware istio-injection=enabled
-helm install op shopware/shopware-operator --namespace shopware --create-namespace
+
+# Step 1: Install CRDs first
+helm template shopware/operator --set crds.installOnly=true | kubectl apply --server-side -f -
+
+# Step 2: Install the operator
+helm template op shopware/operator --namespace shopware --create-namespace --set crds.installOnly=false --set crds.install=false | kubectl apply -f -
+
+# Step 3: Install Shopware with Istio configuration
 helm install my-shop shopware/shopware --namespace shopware --values examples/values_istio.yaml
 ```
 
@@ -272,7 +300,46 @@ helm install my-shop shopware/shopware --namespace shopware --values examples/va
 
 As the operator is still in beta, we advise against using it at the cluster level.
 
+The operator installation requires a two-step process:
+1. **Install CRDs first**: Custom Resource Definitions (CRDs) must be installed separately using server-side apply to ensure proper resource management
+2. **Install the operator**: After CRDs are in place, the operator itself can be installed
+
+This approach provides better control over CRD lifecycle management and prevents conflicts during upgrades.
+
 ### Shopware Image
 
 While a default image is provided with this Helm chart, it is recommended that you do not use it. Instead, create your own custom
 Docker images and override the default image in the Helm chart using a values file.
+
+### RustFS S3 Storage
+
+**Default Setup:**
+- **Mode**: Standalone (1 pod)
+- **Storage Class**: `standard`
+- **Credentials**: `rustfsadmin` / `rustfsadmin`
+- **S3 API**: https://s3.traefik.me (port 9000)
+- **Console**: https://s3-console.traefik.me (port 9001)
+
+**Important:**
+- Buckets (`shopware-private`, `shopware-public`) are created automatically
+- Internal cluster communication uses: `http://<release>-rustfs-svc.<namespace>.svc.cluster.local:9000`
+- Public CDN URL: `https://s3.traefik.me/shopware-public`
+
+**Switching to AWS S3:**
+```yaml
+rustfs:
+  enabled: false
+
+store:
+  s3Storage:
+    endpointURL: https://s3.amazonaws.com
+    privateBucketName: my-private-bucket
+    publicBucketName: my-public-bucket
+    region: us-east-1
+    accessKeyRef:
+      name: aws-credentials
+      key: access_key
+    secretAccessKeyRef:
+      name: aws-credentials
+      key: secret_key
+```

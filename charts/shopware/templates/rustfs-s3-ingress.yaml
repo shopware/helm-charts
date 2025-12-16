@@ -1,0 +1,33 @@
+{{- if .Values.rustfs.enabled }}
+{{- if .Values.rustfs.s3Ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-rustfs-s3-api
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: rustfs
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  {{- with .Values.rustfs.s3Ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.rustfs.s3Ingress.className }}
+  rules:
+    - host: {{ .Values.rustfs.s3Ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ .Release.Name }}-rustfs-svc
+                port:
+                  name: endpoint
+  {{- with .Values.rustfs.s3Ingress.tls }}
+  tls:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}
+{{- end }}

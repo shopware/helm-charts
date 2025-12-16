@@ -80,7 +80,7 @@ jobs:
 
       - name: Run chart-testing (install)
         run: |
-          kubectl apply -k "github.com/minio/operator?ref=v5.0.15"
+          kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/standard-install.yaml
           kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/baremetal/deploy.yaml
           kubectl create namespace test
           kubectl rollout status --namespace ingress-nginx deployment/ingress-nginx-controller --timeout=60s
@@ -90,25 +90,23 @@ jobs:
           helm repo add prometheus https://prometheus-community.github.io/helm-charts
           helm repo add shopware https://shopware.github.io/helm-charts
           helm repo add opentelemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+          helm repo add rustfs https://rustfs.github.io/helm
           helm dependency build charts/shopware
 
-          helm template op charts/shopware-operator --namespace test | kubectl apply --server-side -f -
+          helm template charts/shopware-operator --set crds.installOnly=true | kubectl apply --server-side -f -
+          helm template op charts/shopware-operator --namespace test --set crds.installOnly=false --set crds.install=false | kubectl apply -f -
+
           helm install test --namespace test charts/shopware \
-            --set minio.storageSize=100Mi \
-            --set minio.resources.requests.cpu=100m \
+            --set rustfs.storageclass.dataStorageSize=100Mi \
+            --set rustfs.storageclass.logStorageSize=100Mi \
             --set valkeyapp.master.resources.requests.cpu=200m \
             --set valkeysession.master.resources.requests.cpu=200m \
             --set valkeyworker.master.resources.requests.cpu=200m
 
           kubectl wait --namespace test --for=condition=Available --timeout=60s deployment/op-shopware-operator || {
-            kubectl get deployment/shopware-operator --namespace test -o json && exit 2
+            kubectl get deployment/op-shopware-operator --namespace test -o json && exit 2
           }
           kubectl wait --namespace test store/test --for='jsonpath={.status.state}'=setup --timeout=1m
-
-          kubectl wait --namespace test tenant/test-minio --for='jsonpath={.status.currentState}'=Initialized --timeout=1m || {
-            kubectl get tenant/test-minio --namespace test -o json; \
-            kubectl get pod/test-minio-pool-0-0 --namespace test -o json && exit 3
-          }
 
           sleep 10
 
