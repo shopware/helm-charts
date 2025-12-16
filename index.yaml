@@ -243,6 +243,16 @@ entries:
     version: 0.0.3
   operator:
   - apiVersion: v2
+    appVersion: 0.0.69
+    created: "2025-12-16T14:31:10.932808914Z"
+    description: A Helm chart for Kubernetes
+    digest: 4515c9452d1a3a758336ce4b5e92e0b5ce1d7670a3e7607d37a903a74d9655d0
+    name: operator
+    type: application
+    urls:
+    - https://github.com/shopware/helm-charts/releases/download/operator-0.0.69/operator-0.0.69.tgz
+    version: 0.0.69
+  - apiVersion: v2
     appVersion: 0.0.67
     created: "2025-12-09T14:55:30.294853939Z"
     description: A Helm chart for Kubernetes
@@ -803,6 +813,70 @@ entries:
     - https://github.com/shopware/helm-charts/releases/download/operator-0.0.1/operator-0.0.1.tgz
     version: 0.0.1
   shopware:
+  - apiVersion: v2
+    appVersion: 0.0.50
+    created: "2025-12-16T14:31:11.36522446Z"
+    dependencies:
+    - condition: percona.enabled
+      name: pxc-operator
+      repository: https://percona.github.io/percona-helm-charts/
+      version: 1.14.0
+    - condition: rustfs.enabled
+      name: rustfs
+      repository: https://rustfs.github.io/helm
+      version: 0.0.73
+    - alias: valkeyapp
+      condition: valkeyapp.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 1.0.1
+    - alias: valkeysession
+      condition: valkeysession.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 1.0.1
+    - alias: valkeyworker
+      condition: valkeyworker.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 1.0.1
+    - alias: redisapp
+      condition: redisapp.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 19.1.2
+    - alias: redissession
+      condition: redissession.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 19.1.2
+    - alias: redisworker
+      condition: redisworker.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 19.1.2
+    - alias: grafana
+      condition: grafana.enabled
+      name: grafana
+      repository: https://grafana.github.io/helm-charts
+      version: 8.5.0
+    - alias: prometheus
+      condition: prometheus.enabled
+      name: prometheus
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 25.24.1
+    - alias: otel-collector
+      condition: otel-collector.enabled
+      name: opentelemetry-collector
+      repository: https://open-telemetry.github.io/opentelemetry-helm-charts
+      version: 0.108.0
+    description: A Helm chart for Kubernetes
+    digest: a87926e7a5f5138fcfc75431eedefc2b4449e57ac86be5e6a00341f416e63bb9
+    name: shopware
+    type: application
+    urls:
+    - https://github.com/shopware/helm-charts/releases/download/shopware-0.0.50/shopware-0.0.50.tgz
+    version: 0.0.50
   - apiVersion: v2
     appVersion: 0.0.49
     created: "2025-12-11T07:10:54.227187993Z"
@@ -3545,4 +3619,4 @@ entries:
     urls:
     - https://github.com/shopware/helm-charts/releases/download/shopware-0.0.3/shopware-0.0.3.tgz
     version: 0.0.3
-generated: "2025-12-11T07:10:54.227690709Z"
+generated: "2025-12-16T14:31:11.365699837Z"
