@@ -29,6 +29,11 @@ dependencies:
     version: 1.14.0
     repository: https://percona.github.io/percona-helm-charts/
 
+  - name: rustfs
+    condition: rustfs.enabled
+    version: 0.0.73
+    repository: https://rustfs.github.io/helm
+
   - name: valkey
     alias: valkeyapp
     version: 1.0.1

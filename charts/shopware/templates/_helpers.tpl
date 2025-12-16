@@ -17,6 +17,17 @@
 {{- end -}}
 
 {{ define "getStoreS3" -}}
+{{- if .Values.rustfs.enabled }}
+endpointURL: "http://{{ .Release.Name }}-rustfs-svc.{{ .Release.Namespace }}.svc.cluster.local:9000"
+privateBucketName: "shopware-private"
+publicBucketName: "shopware-public"
+accessKeyRef:
+  name: {{ .Release.Name }}-rustfs-secret
+  key: RUSTFS_ACCESS_KEY
+secretAccessKeyRef:
+  name: {{ .Release.Name }}-rustfs-secret
+  key: RUSTFS_SECRET_KEY
+{{- else }}
 endpointURL: {{ .Values.store.s3Storage.endpointURL | default "https://s3.eu-central-1.amazonaws.com" }}
 privateBucketName: {{ .Values.store.s3Storage.privateBucketName | default "shopware-private" }}
 publicBucketName: {{ .Values.store.s3Storage.publicBucketName | default "shopware-public" }}
@@ -28,6 +39,7 @@ accessKeyRef:
 {{- if .Values.store.s3Storage.secretAccessKeyRef }}
 secretAccessKeyRef:
   {{ toYaml .Values.store.s3Storage.secretAccessKeyRef | nindent 2 }}
+{{- end }}
 {{- end }}
 {{- end -}}
 

@@ -1,0 +1,59 @@
+{{- if .Values.rustfs.enabled }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-rustfs-bucket-init
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: rustfs-bucket-init
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: 10
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: rustfs-bucket-init
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: create-buckets
+        image: minio/mc:latest
+        command: ["sh", "-c"]
+        args:
+        - |
+          set -e
+          echo "Waiting for RustFS to be ready..."
+          until mc alias set rustfs http://{{ .Release.Name }}-rustfs-svc.{{ .Release.Namespace }}.svc.cluster.local:9000 $RUSTFS_ACCESS_KEY $RUSTFS_SECRET_KEY; do
+            echo "RustFS not ready yet, waiting..."
+            sleep 5
+          done
+
+          echo "Creating shopware-private bucket..."
+          mc mb --ignore-existing rustfs/shopware-private
+
+          echo "Creating shopware-public bucket..."
+          mc mb --ignore-existing rustfs/shopware-public
+
+          echo "Setting public read policy on shopware-public bucket..."
+          mc anonymous set download rustfs/shopware-public
+
+          echo "Buckets created successfully!"
+          mc ls rustfs
+        env:
+        - name: RUSTFS_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-rustfs-secret
+              key: RUSTFS_ACCESS_KEY
+        - name: RUSTFS_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Release.Name }}-rustfs-secret
+              key: RUSTFS_SECRET_KEY
+{{- end }}

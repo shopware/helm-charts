@@ -165,6 +165,25 @@ store:
             averageValue: "50"
             type: AverageValue
 
+rustfs:
+  enabled: true
+  mode:
+    distributed:
+      enabled: true
+    standalone:
+      enabled: false
+  replicaCount: 4
+  storageClassName: gp3
+  storageSize: 10Gi
+  ingress:
+    enabled: true
+    className: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
+      nginx.ingress.kubernetes.io/proxy-body-size: '0'
+      nginx.ingress.kubernetes.io/service-upstream: "true"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+
 # This is used by Shopware to map the aws secret into our cluster to pull images
 regcred:
   clusterStore:

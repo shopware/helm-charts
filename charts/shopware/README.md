@@ -33,9 +33,10 @@ This Helm chart can be installed locally or within an existing Kubernetes cluste
 This guide focuses on a simple local installation to help you get started.
 For advanced configurations, please refer to the [Istio example](examples/values_istio.yaml).
 
-This Helm chart installs the Percona Operator along with a MySQL database.
+This Helm chart installs the Percona Operator along with a MySQL database and RustFS for S3-compatible object storage.
 For more information on Percona, visit [Percona's website](https://www.percona.com/).
-Currently, this Helm chart supports Percona by default.
+For more information on RustFS, visit the [RustFS GitHub repository](https://github.com/rustfs/rustfs).
+Currently, this Helm chart supports Percona and RustFS by default.
 However, you can modify the configuration to your needs.
 
 > [!WARNING]
@@ -74,6 +75,32 @@ To properly set up the network configuration, we provide a baseline [config](kin
 
 ```sh
 kind create cluster --config kind-config.yaml
+```
+
+### RustFS for S3-Compatible Storage
+
+RustFS is automatically installed as part of the Shopware chart and provides S3-compatible object storage.
+
+**Default Credentials:**
+- Access Key: `rustfsadmin`
+- Secret Key: `rustfsadmin`
+
+**Access URLs:**
+- S3 API: https://s3.traefik.me
+- Console UI: https://s3-console.traefik.me
+
+**Buckets:**
+- `shopware-private` - Private files (automatic)
+- `shopware-public` - Public assets (automatic, read-only access)
+
+**Customizing Credentials:**
+Set in `values.yaml`:
+```yaml
+rustfs:
+  secret:
+    rustfs:
+      access_key: your-access-key
+      secret_key: your-secret-key
 ```
 
 ### Install Ingress in Kind
@@ -177,13 +204,10 @@ helm install my-shop shopware/shopware --namespace shopware --set store.containe
 > [create your own custom Docker images](#create-docker-image) and override the default image in the Helm chart.
 
 > [!NOTE]
-> The s3 tenant setup may take a few seconds.
-> So Shopware is running before the assets are public.
+> The RustFS storage and database setup may take a few seconds.
 
 Once the setup job in your cluster is complete and your store is in the ready state, you can access the shop at <https://localhost.traefik.me/>
 If needed, you can modify the domain by updating the values.yaml file.
-If your css is not loading correctly, you may need to open the s3 bucket URL and accept also the ssl certificate for the s3 domain which is under
-<https://s3-api-localhost.traefik.me> by default. After that the store should be up and running.
 
 ### Create Docker image
 
@@ -280,3 +304,36 @@ This approach provides better control over CRD lifecycle management and prevents
 
 While a default image is provided with this Helm chart, it is recommended that you do not use it. Instead, create your own custom
 Docker images and override the default image in the Helm chart using a values file.
+
+### RustFS S3 Storage
+
+**Default Setup:**
+- **Mode**: Standalone (1 pod)
+- **Storage Class**: `standard`
+- **Credentials**: `rustfsadmin` / `rustfsadmin`
+- **S3 API**: https://s3.traefik.me (port 9000)
+- **Console**: https://s3-console.traefik.me (port 9001)
+
+**Important:**
+- Buckets (`shopware-private`, `shopware-public`) are created automatically
+- Internal cluster communication uses: `http://<release>-rustfs-svc.<namespace>.svc.cluster.local:9000`
+- Public CDN URL: `https://s3.traefik.me/shopware-public`
+
+**Switching to AWS S3:**
+```yaml
+rustfs:
+  enabled: false
+
+store:
+  s3Storage:
+    endpointURL: https://s3.amazonaws.com
+    privateBucketName: my-private-bucket
+    publicBucketName: my-public-bucket
+    region: us-east-1
+    accessKeyRef:
+      name: aws-credentials
+      key: access_key
+    secretAccessKeyRef:
+      name: aws-credentials
+      key: secret_key
+```
