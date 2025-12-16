@@ -18,7 +18,7 @@ spec:
   {{- if .Values.rustfs.s3Ingress.enabled }}
   cdnURL: 'https://{{ .Values.rustfs.s3Ingress.host }}/shopware-public'
   {{- else }}
-  cdnURL: 'http://{{ .Release.Name }}-rustfs.{{ .Release.Namespace }}.svc.cluster.local/shopware-public'
+  cdnURL: 'http://{{ .Release.Name }}-rustfs-svc.{{ .Release.Namespace }}.svc.cluster.local:9000/shopware-public'
   {{- end }}
   {{- else }}
   cdnURL: {{ .Values.store.cdnURL }}

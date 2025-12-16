@@ -174,14 +174,16 @@ For a minimal installation, run:
 ```sh
 helm repo add shopware https://shopware.github.io/helm-charts/
 
-# Step 1: Install CRDs first
+# Step 1: Create the namespace
+kubectl create namespace shopware
+
+# Step 2: Install CRDs first
 helm template shopware/operator --set crds.installOnly=true | kubectl apply --server-side -f -
 
-# Step 2: Install the operator
-kubectl create namespace shopware
+# Step 3: Install the operator
 helm template op shopware/operator --namespace shopware --create-namespace --set crds.installOnly=false --set crds.install=false | kubectl apply -f -
 
-# Step 3: Install Shopware
+# Step 4: Install Shopware
 helm install my-shop shopware/shopware --namespace shopware
 ```
 

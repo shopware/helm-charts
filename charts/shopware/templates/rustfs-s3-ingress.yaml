@@ -25,5 +25,9 @@ spec:
                 name: {{ .Release.Name }}-rustfs-svc
                 port:
                   name: endpoint
+  {{- with .Values.rustfs.s3Ingress.tls }}
+  tls:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 {{- end }}
 {{- end }}
