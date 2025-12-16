@@ -75,6 +75,9 @@ To properly set up the network configuration, we provide a baseline [config](kin
 
 ```sh
 kind create cluster --config kind-config.yaml
+
+# Install Gateway API CRDs
+kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/standard-install.yaml
 ```
 
 ### RustFS for S3-Compatible Storage
