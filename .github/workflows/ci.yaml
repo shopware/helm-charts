@@ -80,6 +80,7 @@ jobs:
 
       - name: Run chart-testing (install)
         run: |
+          kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/standard-install.yaml
           kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/baremetal/deploy.yaml
           kubectl create namespace test
           kubectl rollout status --namespace ingress-nginx deployment/ingress-nginx-controller --timeout=60s
