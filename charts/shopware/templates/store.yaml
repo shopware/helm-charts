@@ -77,7 +77,7 @@ spec:
   shopConfiguration:
     currency: {{ .Values.store.shopConfiguration.currency | default "EUR" }}
     locale: {{ .Values.store.shopConfiguration.locale | default "en-GB" }}
-    usageDataConsent: {{ .Values.store.shopConfiguration.usageDataConsent | default "revoked" }}
+    usageDataConsent: {{ .Values.store.shopConfiguration.usageDataConsent | default "allowed" }}
     {{- if hasKey .Values.store.shopConfiguration "fastly" }}
     fastly:
       serviceRef:
