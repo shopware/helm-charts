@@ -24,6 +24,9 @@ spec:
         - jsonPath: .status.remoteState
           name: RemoteState
           type: string
+        - jsonPath: .spec.sourceType
+          name: Source
+          type: string
         - jsonPath: .status.subscriptionID
           name: SubscriptionID
           type: string
@@ -65,6 +68,40 @@ spec:
                   items:
                     type: string
                   type: array
+                sourceRef:
+                  description: SourceRef is the name of the source resource
+                  properties:
+                    apiGroup:
+                      type: string
+                    kind:
+                      type: string
+                    name:
+                      type: string
+                    namespace:
+                      type: string
+                  required:
+                    - apiGroup
+                    - kind
+                    - name
+                    - namespace
+                  type: object
+                  x-kubernetes-validations:
+                    - message: Value is immutable
+                      rule: self == oldSelf
+                sourceType:
+                  default: empty
+                  description: SourceType defines the type of the source to use
+                  enum:
+                    - ingress
+                    - istio-virtualservice
+                    - istio-gateway
+                    - config-map
+                    - http-routes
+                    - empty
+                  type: string
+                  x-kubernetes-validations:
+                    - message: Value is immutable
+                      rule: self == oldSelf
               required:
                 - commonName
               type: object

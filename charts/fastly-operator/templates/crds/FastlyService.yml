@@ -28,6 +28,9 @@ spec:
         - jsonPath: .status.ready
           name: Ready
           type: string
+        - jsonPath: .spec.sourceType
+          name: Source
+          type: string
         - jsonPath: .status.activeVersion
           name: ActiveVersion
           type: string
@@ -92,12 +95,14 @@ spec:
                       rule: self == oldSelf
                 sourceType:
                   default: ingress
-                  description: SourceType defines the type of the source to use (ingress, istio-virtualservice, istio-gateway)
+                  description: SourceType defines the type of the source to use
                   enum:
                     - ingress
                     - istio-virtualservice
                     - istio-gateway
+                    - http-route
                     - config-map
+                    - empty
                   type: string
                   x-kubernetes-validations:
                     - message: Value is immutable
