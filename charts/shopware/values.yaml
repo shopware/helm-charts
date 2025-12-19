@@ -276,9 +276,21 @@ store:
     # Supported with shopware-operator:0.0.45
     appURLHost: localhost.traefik.me
 
-    enabled: true
+    enabledIngress: true
     ingressClassName: nginx
+    # ingressAnnotations:
+    # ingressLabels:
+
+    # DEPRECATED: Works only for nginx when used
     # annotations:
+    # DEPRECATED: Works only for nginx when used
+    # enabled: true
+
+    # enabledGateway: false
+    # gatewayName:
+    # gatewaySectionName:
+    # httpRouteAnnotations:
+    # httpRouteLabels:
 
   # You have the option to run commands both before and after the /setup command is executed.
   # If you wish to run the default setup script included in the official Shopware Docker image,
