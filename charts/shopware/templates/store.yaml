@@ -182,8 +182,8 @@ spec:
       {{- with .Values.store.network.ingressLabels }}
         {{- toYaml . | nindent 6 }}
       {{- end }}
-    
-    enableGateway: {{ .Values.store.network.enableGateway | default false }}
+
+    enabledGateway: {{ .Values.store.network.enabledGateway | default false }}
     gatewayName: {{ .Values.store.network.gatewayName | default "" }}
     gatewaySectionName: {{ .Values.store.network.gatewaySectionName | default "" }}
     gatewayAnnotations:
