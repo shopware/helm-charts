@@ -186,6 +186,7 @@ spec:
     enabledGateway: {{ .Values.store.network.enabledGateway | default false }}
     gatewayName: {{ .Values.store.network.gatewayName | default "" }}
     gatewaySectionName: {{ .Values.store.network.gatewaySectionName | default "" }}
+    gatewayNamespace: {{ .Values.store.network.gatewayNamespace | default "" }}
     gatewayAnnotations:
       {{- with .Values.store.network.httpRouteAnnotations }}
         {{- toYaml . | nindent 6 }}
