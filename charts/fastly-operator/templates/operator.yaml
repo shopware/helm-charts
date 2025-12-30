@@ -139,6 +139,7 @@ rules:
 - apiGroups:
   - gateway.networking.k8s.io
   resources:
+  - gateways
   - httproutes
   verbs:
   - get
