@@ -67,9 +67,6 @@ spec:
                 originSSLHostname:
                   minLength: 1
                   type: string
-                  x-kubernetes-validations:
-                    - message: Value is immutable
-                      rule: self == oldSelf
                 overwriteHostHeader:
                   description: Overwriting the Host header on the origin downstream backend
                   type: string
@@ -90,9 +87,6 @@ spec:
                     - name
                     - namespace
                   type: object
-                  x-kubernetes-validations:
-                    - message: Value is immutable
-                      rule: self == oldSelf
                 sourceType:
                   default: ingress
                   description: SourceType defines the type of the source to use
@@ -104,17 +98,11 @@ spec:
                     - config-map
                     - empty
                   type: string
-                  x-kubernetes-validations:
-                    - message: Value is immutable
-                      rule: self == oldSelf
                 type:
                   enum:
                     - wasm
                     - vcl
                   type: string
-                  x-kubernetes-validations:
-                    - message: Value is immutable
-                      rule: self == oldSelf
                 vclSnippets:
                   items:
                     properties:

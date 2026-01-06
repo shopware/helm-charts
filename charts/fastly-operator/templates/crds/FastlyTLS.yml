@@ -85,9 +85,6 @@ spec:
                     - name
                     - namespace
                   type: object
-                  x-kubernetes-validations:
-                    - message: Value is immutable
-                      rule: self == oldSelf
                 sourceType:
                   default: empty
                   description: SourceType defines the type of the source to use
@@ -96,12 +93,9 @@ spec:
                     - istio-virtualservice
                     - istio-gateway
                     - config-map
-                    - http-routes
+                    - http-route
                     - empty
                   type: string
-                  x-kubernetes-validations:
-                    - message: Value is immutable
-                      rule: self == oldSelf
               required:
                 - commonName
               type: object
