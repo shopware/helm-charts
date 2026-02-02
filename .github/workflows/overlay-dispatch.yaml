@@ -27,7 +27,7 @@ jobs:
         id: octo-sts
         uses: octo-sts/action@v1.0.0
         with:
-          scope: repo:shopware-redstone/paas-backend-overlays
+          scope: shopware-redstone/paas-backend-overlays
           identity: "shopware-helm-charts-dispatch"
 
       - name: Send repository_dispatch
