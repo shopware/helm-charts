@@ -1,0 +1,65 @@
+name: Dispatch Overlay PR
+
+on:
+  workflow_run:
+    workflows: ["Publish charts to repo"]
+    types:
+      - completed
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  dispatch:
+    name: Dispatch overlay workflow
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Authenticate to overlays repository
+        id: octo-sts
+        uses: octo-sts/action@v1.0.0
+        with:
+          scope: repo:shopware-redstone/paas-backend-overlays
+          identity: "shopware-helm-charts-dispatch"
+
+      - name: Send repository_dispatch
+        env:
+          GH_TOKEN: ${{ steps.octo-sts.outputs.token }}
+        run: |
+          set -euo pipefail
+
+          OWNER="${GITHUB_REPOSITORY%/*}"
+          REPO="${GITHUB_REPOSITORY#*/}"
+          HEAD_SHA="${{ github.event.workflow_run.head_sha }}"
+          CHARTS=$(git diff --name-only "${HEAD_SHA}^" "${HEAD_SHA}" -- charts/*/Chart.yaml | awk -F/ '{print $2}' | sort -u)
+
+          if [ -z "$CHARTS" ]; then
+            echo "No chart releases detected."
+            exit 0
+          fi
+
+          for CHART in $CHARTS; do
+            case "$CHART" in
+              shopware|shopware-operator) ;;
+              *) continue ;;
+            esac
+
+            VERSION=$(awk -F': *' '$1 == "version" { print $2; exit }' "charts/$CHART/Chart.yaml")
+            SOURCE_REF="${CHART}-${VERSION}"
+
+            gh api repos/shopware-redstone/paas-backend-overlays/dispatches \
+              -f event_type='overlay_workflow' \
+              -f client_payload[repository_owner]="$OWNER" \
+              -f client_payload[repository]="$REPO" \
+              -f client_payload[chart]="$CHART" \
+              -f client_payload[source_ref]="$SOURCE_REF" \
+              -f client_payload[target_version]="$VERSION"
+          done
