@@ -84,6 +84,8 @@ spec:
           value: "{{ .Values.sources | join "," }}"
         {{- end }}
         {{- if and (hasKey .Values "events") (hasKey .Values.events "nats") (.Values.events.nats.enable) }}
+        - name: NATS_ENABLE
+          value: "true"
         - name: NATS_ADDRESS
           value: "{{ required "if nats is enabled set the address" .Values.events.nats.address }}"
         {{- if hasKey .Values.events.nats "topic" }}
