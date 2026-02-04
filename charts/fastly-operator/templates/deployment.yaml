@@ -93,11 +93,11 @@ spec:
           value: "{{ .Values.events.nats.topic | default "fastly-events" }}"
         {{- end }}
         {{- if hasKey .Values.events.nats "credentialsRef" }}
-        - name: NATS_CREDENTIALS
+        - name: NATS_CREDENTIALS_FILE
           value: "/secrets/{{ .Values.events.nats.credentialsRef.key }}"
         {{- end }}
         {{- if hasKey .Values.events.nats "nkeyRef" }}
-        - name: NATS_NKEY
+        - name: NATS_NKEY_FILE
           value: "/secrets/{{ .Values.events.nats.nkeyRef.key }}"
         {{- end }}
         {{- end }}
