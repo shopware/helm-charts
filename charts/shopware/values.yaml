@@ -95,6 +95,14 @@ store:
   # shopConfiguration:
   #   currency: EUR
   #   locale: en-GB
+  #   usageDataConsent: allowed
+  #   fastly:
+  #     serviceRef:
+  #       key: service-name
+  #       name: fastly-api-secret
+  #     tokenRef:
+  #       key: api-token
+  #       name: fastly-api-secret
 
   # s3 storage configuration
   # s3Storage:
