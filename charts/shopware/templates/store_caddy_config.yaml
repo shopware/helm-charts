@@ -5,21 +5,67 @@ metadata:
   namespace: '{{ .Release.Namespace }}'
 data:
   Caddyfile: |
-    :8000
-{{- if hasKey .Values.store "sidecarLogging" }}
-    log {
-      output stdout
-      format json
+{{- if .Values.store.frankenphp.enabled }}
+    {
+      skip_install_trust
 
-      output file {{ include "caddyLogPath" . }} {
-        roll_size 10MB
-        roll_keep 5
-        roll_keep_for 24h
+      {$CADDY_GLOBAL_OPTIONS}
+
+      servers {
+        trusted_proxies static private_ranges
+      }
+
+      frankenphp {
+{{- if hasKey .Values.store.frankenphp "maxThreads" }}
+        max_threads {{ .Values.store.frankenphp.maxThreads }}
+{{- end }}
+{{- if hasKey .Values.store.frankenphp "maxWaitTime" }}
+        max_wait_time {{ .Values.store.frankenphp.maxWaitTime }}
+{{- end }}
+        {$FRANKENPHP_CONFIG}
       }
     }
-{{ else }}
-    log
-{{- end }}
+
+    {$CADDY_EXTRA_CONFIG}
+
+    :8000 {
+{{- include "storeCaddyLogConfig" . | trim | nindent 6 }}
+      tracing {
+        span caddy
+      }
+      header {
+       X-Trace-Id {http.vars.trace_id}
+      }
+      request_header X-Trace-Id {http.vars.trace_id}
+      root * /var/www/html/public
+      encode gzip
+
+      @theme path /theme/*
+      @phpRoute {
+        not path /theme/* /media/* /thumbnail/* /bundles/*
+        not file {path}
+      }
+
+      rewrite @phpRoute index.php
+
+      @frontController path index.php
+      php @frontController
+
+      handle @theme {
+        @theme_file file
+        handle @theme_file {
+          file_server
+        }
+        respond 410
+      }
+
+      file_server {
+        hide *.php
+      }
+    }
+{{- else }}
+    :8000
+{{- include "storeCaddyLogConfig" . | trim | nindent 4 }}
     route {
       tracing {
         span caddy
@@ -40,3 +86,4 @@ data:
       encode gzip
       file_server
     }
+{{- end }}
