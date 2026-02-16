@@ -6117,6 +6117,8 @@ spec:
                     redisDatabase:
                       default: 0
                       type: integer
+                    redisDsn:
+                      type: string
                     redisHost:
                       type: string
                     redisPort:
@@ -19158,6 +19160,8 @@ spec:
                     redisDatabase:
                       default: 0
                       type: integer
+                    redisDsn:
+                      type: string
                     redisHost:
                       type: string
                     redisPort:
@@ -31311,6 +31315,8 @@ spec:
                     redisDatabase:
                       default: 0
                       type: integer
+                    redisDsn:
+                      type: string
                     redisHost:
                       type: string
                     redisPort:
