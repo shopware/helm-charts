@@ -12250,7 +12250,13 @@ spec:
                 disableDatabaseCheck:
                   default: false
                   type: boolean
+                disableFastlyCheck:
+                  default: false
+                  type: boolean
                 disableJobDeletion:
+                  type: boolean
+                disableOpensearchCheck:
+                  default: false
                   type: boolean
                 disableS3Check:
                   default: false
