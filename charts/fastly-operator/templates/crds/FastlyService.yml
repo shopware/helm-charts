@@ -209,6 +209,9 @@ spec:
                   type: string
                 serviceID:
                   type: string
+                sourceNotFoundTime:
+                  format: date-time
+                  type: string
                 state:
                   type: string
                 vclSnippetsStatus:

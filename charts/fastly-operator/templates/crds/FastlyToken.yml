@@ -95,6 +95,10 @@ spec:
               type: object
             status:
               properties:
+                activeServiceIDs:
+                  items:
+                    type: string
+                  type: array
                 firstTokenCharacters:
                   type: string
                 lastUsedAt:
