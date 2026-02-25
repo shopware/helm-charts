@@ -419,6 +419,18 @@ rustfs:
       nginx.ingress.kubernetes.io/session-cookie-name: rustfs
     # tls: []
 
+valkeysessionSentinel:
+  enabled: false
+  host: valkeysession-sentinel
+  port: 26379
+  dbindex: 0
+
+valkeyworkerSentinel:
+  enabled: false
+  host: valkeyworker-sentinel
+  port: 26379
+  dbindex: 0
+
 valkeyapp:
   enabled: true
   image:

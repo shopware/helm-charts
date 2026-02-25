@@ -42,7 +42,10 @@ spec:
   {{- end }}
 
   sessionCache:
-    {{- if or .Values.valkeysession.enabled .Values.redissession.enabled}}
+    {{- if .Values.valkeysessionSentinel.enabled }}
+    adapter: redis
+    redisDsn: 'redis:?host[{{ .Values.valkeysessionSentinel.host }}:{{ .Values.valkeysessionSentinel.port | default 26379 }}]&redis_sentinel=mymaster&dbindex={{ .Values.valkeysessionSentinel.dbindex | default 0 }}'
+    {{- else if or .Values.valkeysession.enabled .Values.redissession.enabled }}
     adapter: redis
     redisHost: {{ template "getSessionCacheMasterService" . }}
     {{- else }}
@@ -58,7 +61,10 @@ spec:
     {{- end }}
 
   worker:
-    {{- if or .Values.valkeyworker.enabled .Values.redisworker.enabled}}
+    {{- if .Values.valkeyworkerSentinel.enabled }}
+    adapter: redis
+    redisDsn: 'redis:?host[{{ .Values.valkeyworkerSentinel.host }}:{{ .Values.valkeyworkerSentinel.port | default 26379 }}]&redis_sentinel=mymaster&dbindex={{ .Values.valkeyworkerSentinel.dbindex | default 0 }}'
+    {{- else if or .Values.valkeyworker.enabled .Values.redisworker.enabled}}
     adapter: redis
     redisHost: {{ template "getWorkerMasterService" . }}
     {{- else }}
