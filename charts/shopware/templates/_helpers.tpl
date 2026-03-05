@@ -97,6 +97,23 @@ secretAccessKeyRef:
 {{ $fluentBitCaddyInputPath }}
 {{- end -}}
 
+{{- define "storeCaddyLogConfig" -}}
+{{- if hasKey .Values.store "sidecarLogging" -}}
+log {
+  output stdout
+  format json
+
+  output file {{ include "caddyLogPath" . }} {
+    roll_size 10MB
+    roll_keep 5
+    roll_keep_for 24h
+  }
+}
+{{- else -}}
+log
+{{- end -}}
+{{- end -}}
+
 {{ define "fluentBitConfigmap" -}}
 {{- if hasKey .Values.store "sidecarLogging" }}
 {{- $fluentBitShopwareInputPath := printf "Path %s/%s"  (.Values.store.sidecarLogging.logFolder | default "/var/log") (.Values.store.sidecarLogging.logFile | default "shopware.log") -}}
