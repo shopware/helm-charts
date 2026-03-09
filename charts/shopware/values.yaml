@@ -81,6 +81,11 @@ store:
   # Disables mounting the kubernetes service account token
   automountServiceAccountToken: false
 
+  frankenphp:
+    enabled: false
+    # maxThreads: 40
+    # maxWaitTime: 10s
+
   caddy:
     # This is the read timeout for the caddy server. Default is 60s.
     readTimeout: 60s
