@@ -49,28 +49,17 @@ metadata:
 spec:
   host: store-shopware.{{ .Release.Namespace }}.svc.cluster.local
   trafficPolicy:
+    connectionPool:
+      http:
+        idleTimeout: 300s
+      tcp:
+        idleTimeout: 300s
+        maxConnectionDuration: 70s
     outlierDetection:
       consecutive5xxErrors: 100
       interval: 1s
       baseEjectionTime: 1m
     loadBalancer:
-      localityLbSetting:
-        enabled: true
-        distribute:
-          - from: {{ .Values.region }}/{{ .Values.region }}a/*
-            to:
-              "{{ .Values.region }}/{{ .Values.region}}a/*": 80
-              "{{ .Values.region }}/{{ .Values.region}}b/*": 10
-              "{{ .Values.region }}/{{ .Values.region}}c/*": 10
-          - from: {{ .Values.region }}/{{ .Values.region }}b/*
-            to:
-              "{{ .Values.region }}/{{ .Values.region}}a/*": 10
-              "{{ .Values.region }}/{{ .Values.region}}b/*": 80
-              "{{ .Values.region }}/{{ .Values.region}}c/*": 10
-          - from: {{ .Values.region }}/{{ .Values.region }}c/*
-            to:
-              "{{ .Values.region }}/{{ .Values.region}}a/*": 10
-              "{{ .Values.region }}/{{ .Values.region}}b/*": 10
-              "{{ .Values.region }}/{{ .Values.region}}c/*": 80
+      simple: LEAST_REQUEST
 ---
 {{ end }}
