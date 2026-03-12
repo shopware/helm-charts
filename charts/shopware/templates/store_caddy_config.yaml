@@ -5,6 +5,14 @@ metadata:
   namespace: '{{ .Release.Namespace }}'
 data:
   Caddyfile: |
+    {
+      servers {
+        timeouts {
+          # keep idle connections open long enough so Envoy doesn't try to reuse a connection Caddy already closed
+          idle 30m
+        }
+      }
+    }
     :8000
 {{- if hasKey .Values.store "sidecarLogging" }}
     log {
