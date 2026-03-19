@@ -27,7 +27,7 @@ jobs:
 
       - name: Authenticate to overlays repository
         id: octo-sts
-        uses: octo-sts/action@v1.2.0
+        uses: octo-sts/action@v1.1.1
         with:
           scope: shopware-redstone/paas-backend-overlays
           identity: "shopware-helm-charts-dispatch"
