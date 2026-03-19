@@ -55,7 +55,11 @@ jobs:
             esac
 
             VERSION=$(awk -F': *' '$1 == "version" { print $2; exit }' "charts/$CHART/Chart.yaml")
-            SOURCE_REF="${CHART}-${VERSION}"
+            TAG_PREFIX="$CHART"
+            if [ "$CHART" = "shopware-operator" ]; then
+              TAG_PREFIX="operator"
+            fi
+            SOURCE_REF="${TAG_PREFIX}-${VERSION}"
 
             gh api repos/shopware-redstone/paas-backend-overlays/dispatches \
               -f event_type='overlay_workflow' \
