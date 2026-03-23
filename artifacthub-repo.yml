@@ -1,0 +1,15 @@
+repositoryID: c5f9c777-78d0-4581-b1c5-735ab95e5de9
+owners:
+  - name: traysercassa
+    email: p.derks@shopware.com
+  - name: tombojer
+    email: t.bojer@shopware.com
+  - name: shyim
+    email: s.sayakci@shopware.com
+  - name: kevinrudde
+    email: k.rudde@shopware.com
+  - name: drzombey
+    email: t.lange@shopware.com
+ignore:
+  - name: fastly-operator # Feel free to look, but operator is not public yet
+  - name: fastly-snippets # Feel free to look, but operator is not public yet
