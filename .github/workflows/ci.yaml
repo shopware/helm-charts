@@ -62,6 +62,14 @@ jobs:
       - name: helm lint
         run: |
           helm lint charts/shopware
+      - name: Check for null values in rendered templates
+        run: |
+          helm dependency build charts/shopware
+          helm template test charts/shopware > rendered.yaml
+          if grep -n ': null$' rendered.yaml; then
+            echo "::error::Rendered templates contain 'null' values. Wrap optional fields in {{- with }} blocks to omit them when unset."
+            exit 1
+          fi
 
   test-on-cluster:
     name: Cluster E2E Test
