@@ -14,33 +14,35 @@ spec:
     size: {{ .Values.percona.database.size | default 1 }}
     image: percona/percona-xtradb-cluster:{{ .Values.percona.database.version | default "8.0" }}
     autoRecovery: true
+    {{- with .Values.percona.database.topologySpreadConstraints }}
     topologySpreadConstraints:
-      {{- with .Values.percona.database.topologySpreadConstraints }}
-          {{- toYaml . | nindent 6 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.percona.database.affinity }}
     affinity:
-      {{- with .Values.percona.database.affinity }}
-          {{- toYaml . | nindent 6 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.percona.database.nodeSelector }}
     nodeSelector:
-      {{- with .Values.percona.database.nodeSelector }}
-          {{- toYaml . | nindent 6 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.percona.database.annotations }}
     annotations:
-      {{- with .Values.percona.database.annotations }}
-          {{- toYaml . | nindent 6 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.percona.database.serviceAnnotations }}
     serviceAnnotations:
-      {{- with .Values.percona.database.serviceAnnotations }}
-        {{- toYaml . | nindent 6 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.percona.database.resources }}
     resources:
-      {{- with .Values.percona.database.resources }}
-        {{- toYaml . | nindent 6 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
+    {{- end }}
     volumeSpec:
       persistentVolumeClaim:
-        storageClassName: {{ .Values.percona.database.storageClassName | default "" }}
+        {{- with .Values.percona.database.storageClassName }}
+        storageClassName: {{ . | quote }}
+        {{- end }}
         resources:
           requests:
             storage: {{ .Values.percona.database.storageSize | default "8Gi" | quote }}
@@ -57,34 +59,36 @@ spec:
     enabled: {{ .Values.percona.proxy.enabled | default false }}
     image: percona/percona-xtradb-cluster-operator:{{ .Values.percona.version }}-proxysql
     size: {{ .Values.percona.proxy.size | default 1 }}
+    {{- with .Values.percona.proxy.topologySpreadConstraints }}
     topologySpreadConstraints:
-      {{- with .Values.percona.proxy.topologySpreadConstraints }}
-          {{- toYaml . | nindent 6 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.percona.proxy.affinity }}
     affinity:
-      {{- with .Values.percona.proxy.affinity }}
-          {{- toYaml . | nindent 6 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.percona.proxy.nodeSelector }}
     nodeSelector:
-      {{- with .Values.percona.proxy.nodeSelector }}
-          {{- toYaml . | nindent 6 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.percona.proxy.annotations }}
     annotations:
-      {{- with .Values.percona.proxy.annotations }}
-          {{- toYaml . | nindent 6 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.percona.proxy.serviceAnnotations }}
     serviceAnnotations:
-      {{- with .Values.percona.proxy.serviceAnnotations }}
-        {{- toYaml . | nindent 6 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.percona.proxy.resources }}
     resources:
-      {{- with .Values.percona.proxy.resources }}
-        {{- toYaml . | nindent 6 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
+    {{- end }}
     
     volumeSpec:
       persistentVolumeClaim:
-        storageClassName: {{ .Values.percona.proxy.storageClassName | default "" | quote}}
+        {{- with .Values.percona.proxy.storageClassName }}
+        storageClassName: {{ . | quote }}
+        {{- end }}
         resources:
           requests:
             storage: {{ .Values.percona.proxy.storageSize | default "10G" | quote }}

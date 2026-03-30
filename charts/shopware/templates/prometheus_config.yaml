@@ -24,7 +24,6 @@ data:
         enable_compression: true
         follow_redirects: true
         enable_http2: true
-        http_headers: null
         relabel_configs:
         - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
           separator: ;
@@ -96,7 +95,6 @@ data:
           kubeconfig_file: ""
           follow_redirects: true
           enable_http2: true
-          http_headers: null
           namespaces:
             names:
             - {{ .Release.Namespace }}

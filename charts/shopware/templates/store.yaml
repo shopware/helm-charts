@@ -119,10 +119,10 @@ spec:
     processManagement: "dynamic"
     {{- end }}
 
+  {{- with .Values.store.horizontalPodAutoscaler }}
   horizontalPodAutoscaler:
-    {{- with .Values.store.horizontalPodAutoscaler }}
-      {{- toYaml . | nindent 4 }}
-    {{- end }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 
   {{- if hasKey .Values.store "setupScript" }}
   setupScript: {{ .Values.store.setupScript | toYaml | indent 2 }}
@@ -172,10 +172,12 @@ spec:
     hosts:
       - {{ .Values.store.host }}
     {{- else }}
+    {{- with .Values.store.network.hosts }}
     hosts:
-      {{- with .Values.store.network.hosts }}
-        {{- toYaml . | nindent 6 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
+    {{- else }}
+    hosts: []
+    {{- end }}
     appURLHost: {{ .Values.store.network.appURLHost }}
     {{- end}}
 
@@ -188,33 +190,39 @@ spec:
     ingressClassName: {{ .Values.store.network.ingressClassName | default "" }}
 
     {{- if hasKey .Values.store.network "annotations" }}
+    {{- with .Values.store.network.annotations }}
     ingressAnnotations:
-      {{- with .Values.store.network.annotations }}
-        {{- toYaml . | nindent 6 }}
-      {{- end }}
-    {{- else }}
-    ingressAnnotations:
-      {{- with .Values.store.network.ingressAnnotations }}
-        {{- toYaml . | nindent 6 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
     {{- end }}
+    {{- else }}
+    {{- with .Values.store.network.ingressAnnotations }}
+    ingressAnnotations:
+{{ toYaml . | nindent 6 }}
+    {{- end }}
+    {{- end }}
+    {{- with .Values.store.network.ingressLabels }}
     ingressLabels:
-      {{- with .Values.store.network.ingressLabels }}
-        {{- toYaml . | nindent 6 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
+    {{- end }}
 
     enabledGateway: {{ .Values.store.network.enabledGateway | default false }}
-    gatewayName: {{ .Values.store.network.gatewayName | default "" }}
-    gatewaySectionName: {{ .Values.store.network.gatewaySectionName | default "" }}
-    gatewayNamespace: {{ .Values.store.network.gatewayNamespace | default "" }}
+    {{- with .Values.store.network.gatewayName }}
+    gatewayName: {{ . | quote }}
+    {{- end }}
+    {{- with .Values.store.network.gatewaySectionName }}
+    gatewaySectionName: {{ . | quote }}
+    {{- end }}
+    {{- with .Values.store.network.gatewayNamespace }}
+    gatewayNamespace: {{ . | quote }}
+    {{- end }}
+    {{- with .Values.store.network.httpRouteAnnotations }}
     gatewayAnnotations:
-      {{- with .Values.store.network.httpRouteAnnotations }}
-        {{- toYaml . | nindent 6 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.store.network.httpRouteLabels }}
     gatewayLabels:
-      {{- with .Values.store.network.httpRouteLabels }}
-        {{- toYaml . | nindent 6 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
+    {{- end }}
     {{- end }}
 
   container:
@@ -237,35 +245,35 @@ spec:
         name: logs
       {{- end}}
 
+    {{- with .Values.store.container.imagePullSecrets }}
     imagePullSecrets:
-      {{- with .Values.store.container.imagePullSecrets }}
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
+    {{- end }}
 
+    {{- with .Values.store.container.topologySpreadConstraints }}
     topologySpreadConstraints:
-      {{- with .Values.store.container.topologySpreadConstraints }}
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
+    {{- end }}
 
+    {{- with .Values.store.container.nodeSelector }}
     nodeSelector:
-      {{- with .Values.store.container.nodeSelector }}
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
+    {{- end }}
 
+    {{- with .Values.store.container.affinity }}
     affinity:
-      {{- with .Values.store.container.affinity }}
-          {{- toYaml . | nindent 8 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
+    {{- end }}
 
+    {{- with .Values.store.container.labels }}
     labels:
-      {{- with .Values.store.container.labels }}
-          {{- toYaml . | nindent 8 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
+    {{- end }}
 
+    {{- with .Values.store.container.annotations }}
     annotations:
-      {{- with .Values.store.container.annotations }}
-          {{- toYaml . | nindent 8 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
+    {{- end }}
 
     {{- if or .Values.store.container.initContainers (hasKey .Values.store "sidecarLogging") }}
     initContainers:
@@ -319,7 +327,7 @@ spec:
       {{- end }}
     {{- end }}
 
-    {{- if or .Values.store.container.extraContainers (and (hasKey .Values.store "fpm") (ne .Values.store.fpm.processManagement "dynamic")) }}
+    {{- if or .Values.store.container.extraContainers (and (hasKey .Values.store "fpm") (ne (.Values.store.fpm.processManagement | default "dynamic") "dynamic")) }}
     extraContainers:
       {{- with .Values.store.container.extraContainers }}
           {{- toYaml . | nindent 8 }}
@@ -348,10 +356,12 @@ spec:
       {{- end }}
     {{- end }}
 
+    {{- with .Values.store.container.resources }}
     resources:
       {{- with .Values.store.container.resources }}
           {{- toYaml . | nindent 6 }}
       {{- end }}
+    {{- end }}
     {{- with .Values.store.container.extraEnvs }}
     extraEnvs:
       {{- toYaml . | nindent 6 }}
