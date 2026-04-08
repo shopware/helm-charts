@@ -45,6 +45,9 @@ spec:
             spec:
               description: StoreDebugInstanceSpec defines the desired state of StoreDebugInstance.
               properties:
+                customImage:
+                  description: CustomImage allows overriding the container image from the store
+                  type: string
                 duration:
                   default: 1h
                   description: |-
@@ -96,6 +99,9 @@ spec:
                     type: string
                   description: ExtraLabels is the extra labels to add to the debug instance
                   type: object
+                ignoreStoreStatus:
+                  description: IgnoreStoreStatus allows the debug instance to start even if the store is not ready
+                  type: boolean
                 storeRef:
                   description: StoreRef is the reference to the store to debug
                   type: string

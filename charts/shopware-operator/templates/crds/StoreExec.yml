@@ -931,6 +931,9 @@ spec:
                       additionalProperties:
                         type: string
                       type: object
+                    enableServiceLinks:
+                      default: false
+                      type: boolean
                     extraContainers:
                       items:
                         description: A single application container that you want to run within a pod.
