@@ -55,7 +55,7 @@ spec:
               properties:
                 container:
                   default:
-                    image: ghcr.io/shopware/shopware-operator-snapshot:0.0.78
+                    image: ghcr.io/shopware/shopware-operator-snapshot:0.0.80
                     terminationGracePeriodSeconds: 30
                   description: The Image gets replaces with the tag of the crd
                   properties:
@@ -936,6 +936,9 @@ spec:
                       additionalProperties:
                         type: string
                       type: object
+                    enableServiceLinks:
+                      default: false
+                      type: boolean
                     extraContainers:
                       items:
                         description: A single application container that you want to run within a pod.

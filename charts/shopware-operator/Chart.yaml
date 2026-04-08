@@ -1,10 +1,10 @@
 apiVersion: v2
 name: operator
-description: A Helm chart for installing the Shopware Operator CRDs and deployment on Kubernetes. Does not deploy a shop itself, use the Shopware chart for that.
+description: A Helm chart for Kubernetes
 type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 0.0.78
+version: 0.0.80
 # This value is equal to the used shopware operator image.
-appVersion: "0.0.78"
+appVersion: "0.0.80"
