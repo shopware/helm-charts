@@ -19155,6 +19155,10 @@ spec:
                     - schedule
                     - timeZone
                   type: object
+                scheduledTaskLabels:
+                  additionalProperties:
+                    type: string
+                  type: object
                 secretName:
                   default: store-secret
                   type: string
