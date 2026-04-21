@@ -99,6 +99,10 @@ spec:
   scheduledTask:
     {{- toYaml . | nindent 4 }}
   {{- end }}
+  {{- with .Values.store.scheduledTaskLabels }}
+  scheduledTaskLabels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 
   fpm:
     {{- if hasKey .Values.store "fpm" }}
