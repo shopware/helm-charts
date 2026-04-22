@@ -64,6 +64,10 @@ spec:
                   type: string
                 domainFilterRegex:
                   type: string
+                firstByteTimeout:
+                  default: 10000
+                  description: FirstByteTimeout defines how long to wait in milliseconds for the first byte from the origin.
+                  type: integer
                 originSSLHostname:
                   minLength: 1
                   type: string
@@ -132,12 +136,13 @@ spec:
                         BetweenBytesTimeout *int
                         Comment             *string
                       type: integer
-                    healthCheck:
+                    firstByteTimeout:
                       description: |-
                         CreatedAt      time.Time
                         DeletedAt           *time.Time
                         ErrorThreshold      *int
-                        FirstByteTimeout    *int
+                      type: integer
+                    healthCheck:
                       type: string
                     hostname:
                       type: string
