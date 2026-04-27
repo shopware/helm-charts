@@ -12283,6 +12283,7 @@ spec:
                     processManagement:
                       default: static
                       enum:
+                        - operator
                         - static
                         - dynamic
                         - ondemand
