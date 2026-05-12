@@ -12286,6 +12286,7 @@ spec:
                         - static
                         - dynamic
                         - ondemand
+                        - operator
                       type: string
                     scrapeURI:
                       default: tcp://127.0.0.1:9000/status
