@@ -99,6 +99,7 @@ rules:
 - apiGroups:
   - fastly.shopware.com
   resources:
+  - fastlyngwafassociations
   - fastlyservices
   - fastlytlses
   - fastlytokens
@@ -113,6 +114,7 @@ rules:
 - apiGroups:
   - fastly.shopware.com
   resources:
+  - fastlyngwafassociations/finalizers
   - fastlyservices/finalizers
   - fastlytlses/finalizers
   - fastlytokens/finalizers
@@ -121,6 +123,7 @@ rules:
 - apiGroups:
   - fastly.shopware.com
   resources:
+  - fastlyngwafassociations/status
   - fastlyservices/status
   - fastlytlses/status
   - fastlytokens/status
