@@ -10,6 +10,7 @@ This repository contains Helm charts for the following components.
 
 * [Shopware](/charts/shopware/README.md)
 * [Shopware Operator](/charts/shopware-operator/README.md)
+* [Composable Frontends](/charts/composable-frontends/README.md)
 
 Useful links:
 

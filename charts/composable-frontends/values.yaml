@@ -1,0 +1,100 @@
+# Default values for composable-frontends.
+# This is a YAML-formatted file.
+# Declare variables that will be passed into your templates.
+
+image:
+  repository: ghcr.io/shopware/frontends
+  # if not set appVersion field from Chart.yaml is used
+  tag: ""
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+replicaCount: 1
+
+labels: {}
+podLabels: {}
+podAnnotations: {}
+
+serviceAccount:
+  # Whether to create a ServiceAccount for the deployment
+  create: true
+  # ServiceAccount name. If empty, '{{ .Release.Name }}-composable-frontends' is used.
+  name: ""
+  annotations: {}
+  automountServiceAccountToken: false
+
+service:
+  type: ClusterIP
+  port: 80
+
+container:
+  # Port the storefront listens on inside the container
+  port: 3000
+  resources: {}
+    # limits:
+    #   cpu: 500m
+    #   memory: 512Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+  extraEnvs: []
+    # - name: NUXT_PUBLIC_SHOPWARE_ENDPOINT
+    #   value: https://api.example.com
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+  readinessProbe:
+    httpGet:
+      path: /
+      port: http
+
+# HTTPRoute (gateway.networking.k8s.io/v1) configuration.
+# Annotations are propagated onto the HTTPRoute and are picked up by
+# fastly-operator (when configured) to provision the corresponding
+# Fastly Service / TLS resources.
+# When rules is empty, a default rule routing `/` to this chart's Service
+# is rendered. Supply rules explicitly to override (e.g. for filters,
+# header matchers, or multiple backendRefs).
+httpRoute:
+  enabled: false
+  annotations: {}
+  labels: {}
+  parentRefs: []
+    # - name: gateway
+    #   sectionName: http
+    #   namespace: gateway-system
+  hostnames: []
+    # - example.com
+  rules: []
+    # - matches:
+    #     - path:
+    #         type: PathPrefix
+    #         value: /
+    #   backendRefs:
+    #     - name: my-release-composable-frontends
+    #       port: 80
+
+pdb:
+  enabled: false
+  # Use either minAvailable or maxUnavailable (not both).
+  # minAvailable: 1
+  # maxUnavailable: 1
+
+tolerations: []
+nodeSelector: {}
+# affinity:
+#   nodeAffinity:
+#     requiredDuringSchedulingIgnoredDuringExecution:
+#       nodeSelectorTerms:
+#       - matchExpressions:
+#         - key: kubernetes.io/arch
+#           operator: In
+#           values:
+#           - amd64
+#           - arm64
+#         - key: kubernetes.io/os
+#           operator: In
+#           values:
+#           - linux
