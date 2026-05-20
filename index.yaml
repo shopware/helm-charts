@@ -3,6 +3,16 @@ entries:
   composable-frontends:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2026-05-20T11:24:16.444327866Z"
+    description: A Helm chart for shopware/frontends
+    digest: a47da627aac814e9ab3b1cc3f8fff7fa7a38ccef7e7b84b6671a5ec98083b03f
+    name: composable-frontends
+    type: application
+    urls:
+    - https://github.com/shopware/helm-charts/releases/download/composable-frontends-0.1.1/composable-frontends-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2026-05-20T09:33:16.287423552Z"
     description: A Helm chart for shopware/frontends
     digest: c83e64740f1efb2a1c5c1b2eceec596c14a774969eeb5ae5e9a9f38ed54f250c
@@ -4444,4 +4454,4 @@ entries:
     urls:
     - https://github.com/shopware/helm-charts/releases/download/shopware-0.0.3/shopware-0.0.3.tgz
     version: 0.0.3
-generated: "2026-05-20T09:33:16.287848052Z"
+generated: "2026-05-20T11:24:16.444684764Z"
