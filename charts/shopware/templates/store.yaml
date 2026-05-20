@@ -222,7 +222,7 @@ spec:
     replicas: {{ .Values.store.container.replicas | default 2 }}
     progressDeadlineSeconds: {{ .Values.store.container.progressDeadlineSeconds | default 30 }}
     imagePullPolicy: {{ .Values.store.container.imagePullPolicy | default "IfNotPresent" }}
-    restartPolicy: {{ .Values.store.container.imagePullPolicy | default "Always" }}
+    restartPolicy: {{ .Values.store.container.restartPolicy | default "Always" }}
     terminationGracePeriodSeconds: {{ .Values.store.container.terminationGracePeriodSeconds | default 30 }}
     volumeMounts:
       - mountPath: /etc/caddy
