@@ -1135,6 +1135,71 @@ entries:
     version: 0.0.1
   shopware:
   - apiVersion: v2
+    appVersion: 0.0.59
+    created: "2026-05-20T12:42:32.456914838Z"
+    dependencies:
+    - condition: percona.enabled
+      name: pxc-operator
+      repository: https://percona.github.io/percona-helm-charts/
+      version: 1.14.0
+    - condition: rustfs.enabled
+      name: rustfs
+      repository: https://rustfs.github.io/helm
+      version: 0.0.73
+    - alias: valkeyapp
+      condition: valkeyapp.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 1.0.1
+    - alias: valkeysession
+      condition: valkeysession.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 1.0.1
+    - alias: valkeyworker
+      condition: valkeyworker.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 1.0.1
+    - alias: redisapp
+      condition: redisapp.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 19.1.2
+    - alias: redissession
+      condition: redissession.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 19.1.2
+    - alias: redisworker
+      condition: redisworker.enabled
+      name: redis
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 19.1.2
+    - alias: grafana
+      condition: grafana.enabled
+      name: grafana
+      repository: https://grafana.github.io/helm-charts
+      version: 8.5.0
+    - alias: prometheus
+      condition: prometheus.enabled
+      name: prometheus
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 25.24.1
+    - alias: otel-collector
+      condition: otel-collector.enabled
+      name: opentelemetry-collector
+      repository: https://open-telemetry.github.io/opentelemetry-helm-charts
+      version: 0.108.0
+    description: A Helm chart for deploying a Shopware shop on Kubernetes. Requires
+      the Shopware Operator chart to be installed.
+    digest: 7dd240c08816a324433b5876752ffca74c60adbbac7663ccc4478024da53485f
+    name: shopware
+    type: application
+    urls:
+    - https://github.com/shopware/helm-charts/releases/download/shopware-0.0.59/shopware-0.0.59.tgz
+    version: 0.0.59
+  - apiVersion: v2
     appVersion: 0.0.58
     created: "2026-04-21T12:51:14.781248204Z"
     dependencies:
@@ -4454,4 +4519,4 @@ entries:
     urls:
     - https://github.com/shopware/helm-charts/releases/download/shopware-0.0.3/shopware-0.0.3.tgz
     version: 0.0.3
-generated: "2026-05-20T11:24:16.444684764Z"
+generated: "2026-05-20T12:42:32.45731642Z"
