@@ -31,6 +31,15 @@ service:
 container:
   # Port the storefront listens on inside the container
   port: 3000
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: false
+  volumeMounts: []
+    # - mountPath: /app/tmp
+    #   name: cache-volume
   resources: {}
     # limits:
     #   cpu: 500m
@@ -49,6 +58,11 @@ container:
     httpGet:
       path: /
       port: http
+
+volumes: []
+  # - name: cache-volume
+  #   emptyDir:
+  #     sizeLimit: 1Gi
 
 # HTTPRoute (gateway.networking.k8s.io/v1) configuration.
 # Annotations are propagated onto the HTTPRoute and are picked up by
