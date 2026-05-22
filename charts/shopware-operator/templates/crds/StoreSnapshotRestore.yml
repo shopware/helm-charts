@@ -55,7 +55,7 @@ spec:
               properties:
                 container:
                   default:
-                    image: ghcr.io/shopware/shopware-operator-snapshot:0.0.82
+                    image: ghcr.io/shopware/shopware-operator-snapshot:0.0.83
                     terminationGracePeriodSeconds: 30
                   description: The Image gets replaces with the tag of the crd
                   properties:
@@ -3822,6 +3822,13 @@ spec:
                         type: string
                       type: object
                     podSecurityContext:
+                      default:
+                        fsGroup: 82
+                        runAsGroup: 82
+                        runAsNonRoot: true
+                        runAsUser: 82
+                        seccompProfile:
+                          type: RuntimeDefault
                       description: |-
                         PodSecurityContext holds pod-level security attributes and common container settings.
                         Some fields are also present in container.securityContext.  Field values of
