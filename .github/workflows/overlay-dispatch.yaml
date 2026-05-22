@@ -20,14 +20,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           fetch-depth: 0
           ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Authenticate to overlays repository
         id: octo-sts
-        uses: octo-sts/action@v1.1.1
+        uses: octo-sts/action@f603d3be9d8dd9871a265776e625a27b00effe05 # v1.1.1
         with:
           scope: shopware-redstone/paas-backend-overlays
           identity: "shopware-helm-charts-dispatch"
