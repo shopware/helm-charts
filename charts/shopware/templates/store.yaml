@@ -198,23 +198,29 @@ spec:
         {{- toYaml . | nindent 6 }}
       {{- end }}
     {{- end }}
+    {{- with .Values.store.network.ingressLabels }}
     ingressLabels:
-      {{- with .Values.store.network.ingressLabels }}
-        {{- toYaml . | nindent 6 }}
-      {{- end }}
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
 
     enabledGateway: {{ .Values.store.network.enabledGateway | default false }}
-    gatewayName: {{ .Values.store.network.gatewayName | default "" }}
-    gatewaySectionName: {{ .Values.store.network.gatewaySectionName | default "" }}
-    gatewayNamespace: {{ .Values.store.network.gatewayNamespace | default "" }}
+    {{- with .Values.store.network.gatewayName }}
+    gatewayName: {{ . }}
+    {{- end }}
+    {{- with .Values.store.network.gatewaySectionName }}
+    gatewaySectionName: {{ . }}
+    {{- end }}
+    {{- with .Values.store.network.gatewayNamespace }}
+    gatewayNamespace: {{ . }}
+    {{- end }}
+    {{- with .Values.store.network.httpRouteAnnotations }}
     gatewayAnnotations:
-      {{- with .Values.store.network.httpRouteAnnotations }}
-        {{- toYaml . | nindent 6 }}
-      {{- end }}
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.store.network.httpRouteLabels }}
     gatewayLabels:
-      {{- with .Values.store.network.httpRouteLabels }}
-        {{- toYaml . | nindent 6 }}
-      {{- end }}
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
     {{- end }}
 
   container:
@@ -237,35 +243,35 @@ spec:
         name: logs
       {{- end}}
 
+    {{- with .Values.store.container.imagePullSecrets }}
     imagePullSecrets:
-      {{- with .Values.store.container.imagePullSecrets }}
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+      {{- toYaml . | nindent 8 }}
+    {{- end }}
 
+    {{- with .Values.store.container.topologySpreadConstraints }}
     topologySpreadConstraints:
-      {{- with .Values.store.container.topologySpreadConstraints }}
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+      {{- toYaml . | nindent 8 }}
+    {{- end }}
 
+    {{- with .Values.store.container.nodeSelector }}
     nodeSelector:
-      {{- with .Values.store.container.nodeSelector }}
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+      {{- toYaml . | nindent 8 }}
+    {{- end }}
 
+    {{- with .Values.store.container.affinity }}
     affinity:
-      {{- with .Values.store.container.affinity }}
-          {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
 
+    {{- with .Values.store.container.labels }}
     labels:
-      {{- with .Values.store.container.labels }}
-          {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
 
+    {{- with .Values.store.container.annotations }}
     annotations:
-      {{- with .Values.store.container.annotations }}
-          {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
 
     {{- if or .Values.store.container.initContainers (hasKey .Values.store "sidecarLogging") }}
     initContainers:
