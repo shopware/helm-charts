@@ -1,5 +1,5 @@
 {{- define "composable-frontends.fullname" -}}
-{{- printf "%s-composable-frontends" .Release.Name -}}
+{{- printf .Release.Name -}}
 {{- end -}}
 
 {{- define "composable-frontends.serviceAccountName" -}}
