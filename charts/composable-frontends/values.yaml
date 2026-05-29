@@ -12,6 +12,35 @@ imagePullSecrets: []
 
 replicaCount: 1
 
+horizontalPodAutoscaler:
+  enabled: false
+  # minReplicas: 1
+  # maxReplicas: 10
+  # behavior:
+  #   scaleDown:
+  #     policies:
+  #       - type: Pods
+  #         value: 1
+  #         periodSeconds: 60
+  # metrics:
+  #   - type: Resource
+  #     resource:
+  #       name: cpu
+  #       target:
+  #         type: Utilization
+  #         averageUtilization: 80
+
+verticalPodAutoscaler:
+  enabled: false
+  # updatePolicy:
+  #   updateMode: Auto
+  # resourcePolicy:
+  #   containerPolicies:
+  #     - containerName: composable-frontends
+  #       controlledResources:
+  #         - cpu
+  #         - memory
+
 labels: {}
 podLabels: {}
 podAnnotations: {}
