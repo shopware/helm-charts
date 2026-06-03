@@ -34,6 +34,12 @@ spec:
         - jsonPath: .status.activeVersion
           name: ActiveVersion
           type: string
+        - jsonPath: .status.domainReady
+          name: Domains
+          type: string
+        - jsonPath: .status.snippetReady
+          name: Snippets
+          type: string
         - jsonPath: .metadata.creationTimestamp
           name: Age
           type: date
@@ -197,6 +203,8 @@ spec:
                     state:
                       type: string
                   type: object
+                domainReady:
+                  type: string
                 domains:
                   additionalProperties:
                     properties:
@@ -213,6 +221,8 @@ spec:
                 ready:
                   type: string
                 serviceID:
+                  type: string
+                snippetReady:
                   type: string
                 sourceNotFoundTime:
                   format: date-time
