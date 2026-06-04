@@ -2,6 +2,13 @@
 useIstio: true
 region: eu-central-1
 
+istio:
+  virtualService:
+    retries:
+      attempts: 3
+      perTryTimeout: 5s
+      retryOn: reset,connect-failure,refused-stream,unavailable,gateway-error,503
+
 percona:
   # You can disable Percona and use your own database. Just modify the storage database
   # part in this file.

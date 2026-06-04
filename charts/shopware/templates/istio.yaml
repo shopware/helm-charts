@@ -40,6 +40,10 @@ spec:
             request:
               set:
                 Host: {{ .Values.applicationName}}.{{ .Values.projectName }}.{{ .Values.organizationName }}.{{ .Values.baseDomain }}
+      {{- with .Values.istio.virtualService.retries }}
+      retries:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
 ---
 apiVersion: networking.istio.io/v1beta1
 kind: DestinationRule
