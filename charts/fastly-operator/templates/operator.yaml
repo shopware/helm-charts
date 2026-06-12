@@ -101,6 +101,7 @@ rules:
   resources:
   - fastlyddosprotections
   - fastlyngwafassociations
+  - fastlypurgerequests
   - fastlyservices
   - fastlytlses
   - fastlytokens
@@ -127,6 +128,7 @@ rules:
   resources:
   - fastlyddosprotections/status
   - fastlyngwafassociations/status
+  - fastlypurgerequests/status
   - fastlyservices/status
   - fastlytlses/status
   - fastlytokens/status
