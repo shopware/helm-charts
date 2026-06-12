@@ -194,34 +194,28 @@ spec:
     ingressAnnotations:
 {{ toYaml . | nindent 6 }}
     {{- end }}
-    {{- else }}
-    {{- with .Values.store.network.ingressAnnotations }}
-    ingressAnnotations:
-{{ toYaml . | nindent 6 }}
-    {{- end }}
-    {{- end }}
     {{- with .Values.store.network.ingressLabels }}
     ingressLabels:
-{{ toYaml . | nindent 6 }}
+      {{- toYaml . | nindent 6 }}
     {{- end }}
 
     enabledGateway: {{ .Values.store.network.enabledGateway | default false }}
     {{- with .Values.store.network.gatewayName }}
-    gatewayName: {{ . | quote }}
+    gatewayName: {{ . }}
     {{- end }}
     {{- with .Values.store.network.gatewaySectionName }}
-    gatewaySectionName: {{ . | quote }}
+    gatewaySectionName: {{ . }}
     {{- end }}
     {{- with .Values.store.network.gatewayNamespace }}
-    gatewayNamespace: {{ . | quote }}
+    gatewayNamespace: {{ . }}
     {{- end }}
     {{- with .Values.store.network.httpRouteAnnotations }}
     gatewayAnnotations:
-{{ toYaml . | nindent 6 }}
+      {{- toYaml . | nindent 6 }}
     {{- end }}
     {{- with .Values.store.network.httpRouteLabels }}
     gatewayLabels:
-{{ toYaml . | nindent 6 }}
+      {{- toYaml . | nindent 6 }}
     {{- end }}
     {{- end }}
 
@@ -247,32 +241,32 @@ spec:
 
     {{- with .Values.store.container.imagePullSecrets }}
     imagePullSecrets:
-{{ toYaml . | nindent 6 }}
+      {{- toYaml . | nindent 8 }}
     {{- end }}
 
     {{- with .Values.store.container.topologySpreadConstraints }}
     topologySpreadConstraints:
-{{ toYaml . | nindent 6 }}
+      {{- toYaml . | nindent 8 }}
     {{- end }}
 
     {{- with .Values.store.container.nodeSelector }}
     nodeSelector:
-{{ toYaml . | nindent 6 }}
+      {{- toYaml . | nindent 8 }}
     {{- end }}
 
     {{- with .Values.store.container.affinity }}
     affinity:
-{{ toYaml . | nindent 6 }}
+        {{- toYaml . | nindent 8 }}
     {{- end }}
 
     {{- with .Values.store.container.labels }}
     labels:
-{{ toYaml . | nindent 6 }}
+        {{- toYaml . | nindent 8 }}
     {{- end }}
 
     {{- with .Values.store.container.annotations }}
     annotations:
-{{ toYaml . | nindent 6 }}
+        {{- toYaml . | nindent 8 }}
     {{- end }}
 
     {{- if or .Values.store.container.initContainers (hasKey .Values.store "sidecarLogging") }}
