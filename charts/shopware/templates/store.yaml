@@ -119,10 +119,10 @@ spec:
     processManagement: "dynamic"
     {{- end }}
 
+  {{- with .Values.store.horizontalPodAutoscaler }}
   horizontalPodAutoscaler:
-    {{- with .Values.store.horizontalPodAutoscaler }}
-      {{- toYaml . | nindent 4 }}
-    {{- end }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 
   {{- if hasKey .Values.store "setupScript" }}
   setupScript: {{ .Values.store.setupScript | toYaml | indent 2 }}
@@ -172,10 +172,12 @@ spec:
     hosts:
       - {{ .Values.store.host }}
     {{- else }}
+    {{- with .Values.store.network.hosts }}
     hosts:
-      {{- with .Values.store.network.hosts }}
-        {{- toYaml . | nindent 6 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
+    {{- else }}
+    hosts: []
+    {{- end }}
     appURLHost: {{ .Values.store.network.appURLHost }}
     {{- end}}
 
@@ -188,15 +190,9 @@ spec:
     ingressClassName: {{ .Values.store.network.ingressClassName | default "" }}
 
     {{- if hasKey .Values.store.network "annotations" }}
+    {{- with .Values.store.network.annotations }}
     ingressAnnotations:
-      {{- with .Values.store.network.annotations }}
-        {{- toYaml . | nindent 6 }}
-      {{- end }}
-    {{- else }}
-    ingressAnnotations:
-      {{- with .Values.store.network.ingressAnnotations }}
-        {{- toYaml . | nindent 6 }}
-      {{- end }}
+{{ toYaml . | nindent 6 }}
     {{- end }}
     {{- with .Values.store.network.ingressLabels }}
     ingressLabels:
@@ -325,7 +321,7 @@ spec:
       {{- end }}
     {{- end }}
 
-    {{- if or .Values.store.container.extraContainers (and (hasKey .Values.store "fpm") (ne .Values.store.fpm.processManagement "dynamic")) }}
+    {{- if or .Values.store.container.extraContainers (and (hasKey .Values.store "fpm") (ne (.Values.store.fpm.processManagement | default "dynamic") "dynamic")) }}
     extraContainers:
       {{- with .Values.store.container.extraContainers }}
           {{- toYaml . | nindent 8 }}
@@ -354,10 +350,12 @@ spec:
       {{- end }}
     {{- end }}
 
+    {{- with .Values.store.container.resources }}
     resources:
       {{- with .Values.store.container.resources }}
           {{- toYaml . | nindent 6 }}
       {{- end }}
+    {{- end }}
     {{- with .Values.store.container.extraEnvs }}
     extraEnvs:
       {{- toYaml . | nindent 6 }}

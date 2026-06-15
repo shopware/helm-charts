@@ -31,10 +31,10 @@ spec:
             value: {{ .Values.blackfire.serverToken }}
           ports:
           - containerPort: {{ .Values.blackfire.port | default 8307 }}
+          {{- with .Values.blackfire.resources }}
           resources:
-            {{- with .Values.blackfire.resources }}
-                {{- toYaml . | nindent 12 }}
-            {{- end }}
+{{ toYaml . | nindent 12 }}
+          {{- end }}
 ---
 # Service for blackfire
 apiVersion: v1
