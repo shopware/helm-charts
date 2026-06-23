@@ -62,6 +62,23 @@ jobs:
       - name: helm lint
         run: |
           helm lint charts/shopware
+      - name: Check for null values in rendered templates
+        run: |
+          helm repo add percona https://percona.github.io/percona-helm-charts
+          helm repo add grafana https://grafana.github.io/helm-charts
+          helm repo add prometheus https://prometheus-community.github.io/helm-charts
+          helm repo add opentelemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+          helm repo add rustfs https://rustfs.github.io/helm
+          helm dependency build charts/shopware
+          helm template test charts/shopware > rendered.yaml
+          awk '
+            BEGIN { RS="---\n"; ORS="---\n" }
+            /^# Source: shopware\/templates\// { print }
+          ' rendered.yaml > rendered-shopware.yaml
+          if grep -n ': null$' rendered-shopware.yaml; then
+            echo "::error::Rendered templates contain 'null' values. Wrap optional fields in {{- with }} blocks to omit them when unset."
+            exit 1
+          fi
 
   test-on-cluster:
     name: Cluster E2E Test
@@ -70,19 +87,33 @@ jobs:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
+      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # v4.0.1
+        id: filter
+        with:
+          filters: |
+            chart:
+              - 'charts/shopware/**/*.yaml'
+              - 'charts/shopware/**/*.yml'
+              - 'charts/shopware/**/*.tpl'
+              - 'charts/shopware/Chart.lock'
+
       - name: Set up Helm
         uses: azure/setup-helm@fe7b79cd5ee1e45176fcad797de68ecaf3ca4814 # v4.2.0
+        if: steps.filter.outputs.chart == 'true'
         with:
           version: v3.16.4
 
       - name: Create k8s Kind Cluster
         uses: helm/kind-action@ef37e7f390d99f746eb8b610417061a60e82a6cc # v1.14.0
+        if: steps.filter.outputs.chart == 'true'
 
       - name: Run chart-testing (install)
+        if: steps.filter.outputs.chart == 'true'
         run: |
           kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/standard-install.yaml
           kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/baremetal/deploy.yaml
           kubectl create namespace test
+          kubectl create namespace test-template
           kubectl rollout status --namespace ingress-nginx deployment/ingress-nginx-controller --timeout=60s
 
           helm repo add percona https://percona.github.io/percona-helm-charts
@@ -95,7 +126,36 @@ jobs:
 
           helm template charts/shopware-operator --set crds.installOnly=true | kubectl apply --server-side -f -
           helm template op charts/shopware-operator --namespace test --set crds.installOnly=false --set crds.install=false | kubectl apply -f -
+          helm template template charts/shopware-operator --namespace test-template --set crds.installOnly=false --set crds.install=false | kubectl apply -f -
 
+          tar -xOf charts/shopware/charts/pxc-operator-*.tgz pxc-operator/crds/crd.yaml | kubectl apply --server-side -f -
+          for crd in \
+            perconaxtradbclusters.pxc.percona.com \
+            perconaxtradbclusterbackups.pxc.percona.com \
+            perconaxtradbclusterrestores.pxc.percona.com; do
+            established=""
+            for i in $(seq 1 30); do
+              established=$(kubectl get crd "$crd" -o jsonpath='{range .status.conditions[?(@.type=="Established")]}{.status}{end}' 2>/dev/null || true)
+              if [ "$established" = "True" ]; then
+                break
+              fi
+              sleep 2
+            done
+            if [ "$established" != "True" ]; then
+              kubectl get crd "$crd" -o yaml
+              exit 1
+            fi
+          done
+
+          kubectl wait --namespace test --for=condition=Available --timeout=60s deployment/op-shopware-operator || {
+            kubectl get deployment/op-shopware-operator --namespace test -o json && exit 2
+          }
+          kubectl wait --namespace test-template --for=condition=Available --timeout=60s deployment/template-shopware-operator || {
+            kubectl get deployment/template-shopware-operator --namespace test-template -o json && exit 3
+          }
+
+      - name: Run helm install
+        run: |
           helm install test --namespace test charts/shopware \
             --set rustfs.storageclass.dataStorageSize=100Mi \
             --set rustfs.storageclass.logStorageSize=100Mi \
@@ -103,9 +163,6 @@ jobs:
             --set valkeysession.master.resources.requests.cpu=200m \
             --set valkeyworker.master.resources.requests.cpu=200m
 
-          kubectl wait --namespace test --for=condition=Available --timeout=60s deployment/op-shopware-operator || {
-            kubectl get deployment/op-shopware-operator --namespace test -o json && exit 2
-          }
           kubectl wait --namespace test store/test --for='jsonpath={.status.state}'=setup --timeout=1m
 
           sleep 10
@@ -123,3 +180,34 @@ jobs:
           }
 
           kubectl get pods --namespace test -o wide
+          helm uninstall test --namespace test
+          kubectl wait --namespace test --for=delete store/test --timeout=2m
+          kubectl wait --namespace test --for=delete ingress/test-rustfs-s3-api --timeout=2m || true
+          kubectl wait --namespace test --for=delete ingress/test-rustfs --timeout=2m || true
+
+      - name: Run helm template
+        run: |
+          helm template template charts/shopware --namespace test-template \
+            --set rustfs.storageclass.dataStorageSize=100Mi \
+            --set rustfs.storageclass.logStorageSize=100Mi \
+            --set valkeyapp.master.resources.requests.cpu=200m \
+            --set valkeysession.master.resources.requests.cpu=200m \
+            --set valkeyworker.master.resources.requests.cpu=200m | kubectl apply -n test-template -f -
+
+          kubectl wait --namespace test-template store/template --for='jsonpath={.status.state}'=setup --timeout=1m
+
+          sleep 10
+
+          kubectl wait --namespace test-template jobs/template-setup --timeout=8m --for=condition=complete || {
+            kubectl get job/template-setup --namespace test-template -o json; \
+            kubectl get job --namespace test-template -o wide; \
+            kubectl get pods --namespace test-template -o wide; \
+            LATEST_POD=$(kubectl get pods --sort-by=.metadata.creationTimestamp -n test-template -o jsonpath='{.items[-1].metadata.name}')
+            kubectl logs $LATEST_POD -n test-template && exit 6
+          }
+
+          kubectl wait --namespace test-template store/template --for='jsonpath={.status.state}'=ready --timeout=1m || {
+            kubectl get store/template --namespace test-template -o json && exit 7
+          }
+
+          kubectl get pods --namespace test-template -o wide

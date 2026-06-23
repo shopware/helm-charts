@@ -2,6 +2,18 @@
 # example see `examples/values_istio.yaml`.
 #useIstio: false
 
+# Istio-specific configuration. Only used when useIstio is true.
+istio:
+  virtualService:
+    # Optional retry policy applied to the store-shopware VirtualService route.
+    # Leave empty (default) to omit the retries block entirely.
+    # Example:
+    #   retries:
+    #     attempts: 3
+    #     perTryTimeout: 5s
+    #     retryOn: reset,connect-failure,refused-stream,unavailable,gateway-error,503
+    retries: {}
+
 percona:
   # You can disable Percona and use your own database. Just modify the storage database
   # part in this file.
