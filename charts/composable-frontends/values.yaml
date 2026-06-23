@@ -93,6 +93,15 @@ volumes: []
   #   emptyDir:
   #     sizeLimit: 1Gi
 
+# Array of extra Kubernetes manifests to deploy.
+extraObjects: []
+  # - apiVersion: v1
+  #   kind: ConfigMap
+  #   metadata:
+  #     name: "{{ .Release.Name }}-extra-config"
+  #   data:
+  #     example: value
+
 # HTTPRoute (gateway.networking.k8s.io/v1) configuration.
 # Annotations are propagated onto the HTTPRoute and are picked up by
 # fastly-operator (when configured) to provision the corresponding
