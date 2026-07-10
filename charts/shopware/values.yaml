@@ -249,6 +249,15 @@ store:
     #     value: SomeStringValue
     #   - name: FPM_PM
     #     value: static
+    # volumes:
+    #   - name: additional-volume
+    #     secret:
+    #       secretName: additional-secret
+    # volumeMounts:
+    #   - name: additional-volume
+    #     mountPath: /path/to/file
+    #     subPath: file
+    #     readOnly: true
 
   #scheduledTask:
   #  command: bin/console scheduled-task:run -v -n --no-wait

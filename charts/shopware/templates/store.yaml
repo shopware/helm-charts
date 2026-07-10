@@ -242,6 +242,9 @@ spec:
       - mountPath: {{ .Values.store.sidecarLogging.logFolder | default "/var/log" }}
         name: logs
       {{- end}}
+      {{- with .Values.store.container.volumeMounts }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
 
     {{- with .Values.store.container.imagePullSecrets }}
     imagePullSecrets:
@@ -381,6 +384,9 @@ spec:
           name: {{ template "getFluentBitName" . }}
           defaultMode: 420
       {{- end}}
+      {{- with .Values.store.container.volumes }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
 
   {{- with .Values.store.adminDeploymentContainer }}
   adminDeploymentContainer:
