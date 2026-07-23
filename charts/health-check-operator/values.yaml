@@ -1,0 +1,95 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/shopware/health-check-operator
+  pullPolicy: IfNotPresent
+  # Defaults to the chart appVersion, which the release pipeline sets to the release tag.
+  tag: ""
+  # When set, digest takes precedence over tag and renders repository@digest.
+  digest: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+rbac:
+  create: true
+  # Required when secure metrics are enabled and Kubernetes performs authn/authz for /metrics.
+  metricsAuth:
+    enabled: true
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 128Mi
+  requests:
+    cpu: 10m
+    memory: 64Mi
+
+leaderElection:
+  enabled: true
+
+customResourceCheck:
+  # Must be digest-pinned (repository@sha256:...); rendering fails otherwise.
+  # CustomResourceCheck resources cannot override this image.
+  luaRunnerImage: ""
+
+metrics:
+  # When false, the manager starts with --metrics-bind-address=0 and no metrics Service is rendered.
+  enabled: true
+  # The container port is derived from this address.
+  bindAddress: ":8443"
+  secure: true
+  service:
+    type: ClusterIP
+    port: 8443
+    annotations: {}
+
+healthProbe:
+  # The container port is derived from this address.
+  bindAddress: ":8081"
+
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: health
+  initialDelaySeconds: 15
+  periodSeconds: 20
+
+readinessProbe:
+  httpGet:
+    path: /readyz
+    port: health
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+# Escape hatches for environment-specific deployment needs.
+extraArgs: []
+extraEnv: []
+extraVolumeMounts: []
+extraVolumes: []
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
