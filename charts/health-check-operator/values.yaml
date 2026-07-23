@@ -12,6 +12,13 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+## Custom resource configuration
+crds:
+  # Install and upgrade CRDs
+  install: true
+  # This will install only the crd's
+  installOnly: false
+
 serviceAccount:
   create: true
   automount: true
