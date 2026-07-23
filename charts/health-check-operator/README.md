@@ -2,12 +2,12 @@
 
 This chart deploys the Health Check Operator and installs its CRDs.
 
-## Local Paas Install
+## Local Install
 
 Build and push the image to the local Zot registry:
 
 ```sh
-IMG=zot.local.shopware.beer/paas/health-check-operator-local:local
+IMG=your-local-registry/shopware/health-check-operator:local
 
 docker buildx build \
   --output=type=registry,registry.insecure=true \
@@ -22,7 +22,7 @@ Install or upgrade the chart:
 helm upgrade --install health-check-operator ./chart \
   --namespace health-check-operator-system \
   --create-namespace \
-  --set image.repository=zot.local.shopware.beer/paas/health-check-operator-local \
+  --set image.repository=your-local-registry/shopware/health-check-operator \
   --set image.tag=local
 ```
 
@@ -56,7 +56,7 @@ For local NATS publishing, create a Secret in the namespace where the `NATSTrigg
 
 ```sh
 kubectl create secret generic health-check-operator-nats-creds \
-  --from-file=CREDS=/home/anne/codespace/paas-local/paas-backend/local-setup/.tokens/health-check-operator.creds
+  --from-file=CREDS=your-local-nats-creds-file
 ```
 
 Then reference it from the trigger:
@@ -165,6 +165,18 @@ helm uninstall health-check-operator -n health-check-operator-system
 ```
 
 CRDs are rendered as regular chart templates from `chart/templates/crds`, so `helm upgrade` applies CRD changes. They carry the `helm.sh/resource-policy: keep` annotation and are therefore not removed by `helm uninstall`; delete them manually if you really want them gone (this deletes all HttpCheck/CustomResourceCheck/NatsTrigger resources).
+
+CRD rendering can be controlled via values (same contract as the shopware-operator chart):
+
+```yaml
+crds:
+  # Install and upgrade CRDs
+  install: true
+  # This will install only the crd's
+  installOnly: false
+```
+
+Use `crds.installOnly=true` for a CRDs-only release (e.g. a bootstrap/GitOps application that manages CRDs separately), and `crds.install=false` to skip CRDs entirely when they are managed out of band.
 
 Note for installs that predate this layout (CRDs from the former `chart/crds` directory): Helm refuses to adopt existing unmanaged resources. Re-label them once before upgrading:
 

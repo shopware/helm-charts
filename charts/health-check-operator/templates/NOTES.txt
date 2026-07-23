@@ -1,3 +1,7 @@
+{{- if .Values.crds.installOnly }}
+Health Check Operator CRDs have been installed (crds.installOnly is set,
+no operator resources were rendered).
+{{- else }}
 Health Check Operator has been installed.
 
 Namespace:
@@ -8,6 +12,12 @@ Controller:
 
 Logs:
   kubectl logs -n {{ .Release.Namespace }} deploy/{{ include "health-check-operator.fullname" . }}-controller-manager -c manager -f
+{{- end }}
+{{- if .Values.crds.install }}
 
 CRDs are rendered as chart templates, so `helm upgrade` keeps them up to date.
 They are annotated with helm.sh/resource-policy: keep and survive `helm uninstall`.
+{{- else }}
+
+CRD installation is disabled (crds.install=false); manage the CRDs out of band.
+{{- end }}
