@@ -522,6 +522,17 @@ entries:
     urls:
     - https://github.com/shopware/helm-charts/releases/download/fastly-operator-0.0.3/fastly-operator-0.0.3.tgz
     version: 0.0.3
+  health-check-operator:
+  - apiVersion: v2
+    appVersion: 0.2.0
+    created: "2026-07-23T15:08:21.245301943Z"
+    description: A Helm chart for deploying the Health Check Operator.
+    digest: 581015abd5827a9e0adc80081ec2bed08da28db2610957f479b237a798bdefd7
+    name: health-check-operator
+    type: application
+    urls:
+    - https://github.com/shopware/helm-charts/releases/download/health-check-operator-0.2.0/health-check-operator-0.2.0.tgz
+    version: 0.2.0
   operator:
   - apiVersion: v2
     appVersion: 1.2.0
@@ -4879,4 +4890,4 @@ entries:
     urls:
     - https://github.com/shopware/helm-charts/releases/download/shopware-0.0.3/shopware-0.0.3.tgz
     version: 0.0.3
-generated: "2026-07-10T09:02:11.026005053Z"
+generated: "2026-07-23T15:08:21.245710421Z"
