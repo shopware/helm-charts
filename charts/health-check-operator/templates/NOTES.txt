@@ -1,0 +1,13 @@
+Health Check Operator has been installed.
+
+Namespace:
+  {{ .Release.Namespace }}
+
+Controller:
+  kubectl get pods -n {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }}
+
+Logs:
+  kubectl logs -n {{ .Release.Namespace }} deploy/{{ include "health-check-operator.fullname" . }}-controller-manager -c manager -f
+
+CRDs are rendered as chart templates, so `helm upgrade` keeps them up to date.
+They are annotated with helm.sh/resource-policy: keep and survive `helm uninstall`.

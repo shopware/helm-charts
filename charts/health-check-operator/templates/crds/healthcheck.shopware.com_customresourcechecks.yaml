@@ -1,0 +1,228 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.19.0
+    helm.sh/resource-policy: keep
+  name: customresourcechecks.healthcheck.shopware.com
+spec:
+  group: healthcheck.shopware.com
+  names:
+    kind: CustomResourceCheck
+    listKind: CustomResourceCheckList
+    plural: customresourcechecks
+    singular: customresourcecheck
+  scope: Namespaced
+  versions:
+    - additionalPrinterColumns:
+        - description: Kind of the observed resource
+          jsonPath: .spec.resourceRef.kind
+          name: Kind
+          type: string
+        - description: Name of the observed resource
+          jsonPath: .spec.resourceRef.name
+          name: Resource
+          type: string
+        - description: Check interval
+          jsonPath: .spec.interval
+          name: Interval
+          type: string
+        - description: Last Lua health result
+          jsonPath: .status.lastResult
+          name: Last Result
+          type: string
+        - jsonPath: .metadata.creationTimestamp
+          name: Age
+          type: date
+      name: v1alpha1
+      schema:
+        openAPIV3Schema:
+          description: |-
+            CustomResourceCheck is the top-level Kubernetes object users create with kind: CustomResourceCheck.
+            It watches another resource's status and runs Lua in a Job whenever that status changes.
+          properties:
+            apiVersion:
+              description: |-
+                APIVersion defines the versioned schema of this representation of an object.
+                Servers should convert recognized schemas to the latest internal value, and
+                may reject unrecognized values.
+                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+              type: string
+            kind:
+              description: |-
+                Kind is a string value representing the REST resource this object represents.
+                Servers may infer this from the endpoint the client submits requests to.
+                Cannot be updated.
+                In CamelCase.
+                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: spec is what the user wants the operator to watch and run.
+              properties:
+                interval:
+                  default: 60s
+                  description: interval is how long the operator waits between status checks.
+                  type: string
+                luaJobResources:
+                  description: |-
+                    luaJobResources configures the compute resources used by the Lua runner Job container.
+                    Values are merged with the controller defaults when only some requests or limits are set.
+                  properties:
+                    limits:
+                      additionalProperties:
+                        anyOf:
+                          - type: integer
+                          - type: string
+                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                        x-kubernetes-int-or-string: true
+                      description: limits describes the maximum amount of compute resources allowed for the Lua runner container.
+                      type: object
+                    requests:
+                      additionalProperties:
+                        anyOf:
+                          - type: integer
+                          - type: string
+                        pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                        x-kubernetes-int-or-string: true
+                      description: requests describes the minimum amount of compute resources required for the Lua runner container.
+                      type: object
+                  type: object
+                luaScript:
+                  description: |-
+                    luaScript is the Lua code executed when the observed status changes.
+                    The script receives the status JSON in the RESOURCE_STATUS global variable.
+                    It must return "healthy", "pending", or "failed".
+                  maxLength: 8192
+                  minLength: 1
+                  type: string
+                resourceRef:
+                  description: resourceRef identifies the Kubernetes resource whose status should be watched.
+                  properties:
+                    apiVersion:
+                      description: apiVersion is the API version of the target resource, for example "apps/v1".
+                      minLength: 1
+                      type: string
+                    kind:
+                      description: kind is the kind of the target resource, for example "Deployment".
+                      minLength: 1
+                      type: string
+                    name:
+                      description: name is the Kubernetes name of the target resource.
+                      minLength: 1
+                      type: string
+                    namespace:
+                      description: |-
+                        namespace is the namespace of the target resource.
+                        If empty, the controller uses the CustomResourceCheck namespace.
+                        For security, cross-namespace references are rejected by the controller.
+                      type: string
+                  required:
+                    - apiVersion
+                    - kind
+                    - name
+                  type: object
+              required:
+                - luaScript
+                - resourceRef
+              type: object
+            status:
+              description: status is what the controller has observed and done so far.
+              properties:
+                conditions:
+                  description: |-
+                    conditions are standard Kubernetes status entries for humans and tools.
+                    Condition types: "ResourceFound", "JobCreated"
+                  items:
+                    description: Condition contains details for one aspect of the current state of this API Resource.
+                    properties:
+                      lastTransitionTime:
+                        description: |-
+                          lastTransitionTime is the last time the condition transitioned from one status to another.
+                          This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.
+                        format: date-time
+                        type: string
+                      message:
+                        description: |-
+                          message is a human readable message indicating details about the transition.
+                          This may be an empty string.
+                        maxLength: 32768
+                        type: string
+                      observedGeneration:
+                        description: |-
+                          observedGeneration represents the .metadata.generation that the condition was set based upon.
+                          For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+                          with respect to the current state of the instance.
+                        format: int64
+                        minimum: 0
+                        type: integer
+                      reason:
+                        description: |-
+                          reason contains a programmatic identifier indicating the reason for the condition's last transition.
+                          Producers of specific condition types may define expected values and meanings for this field,
+                          and whether the values are considered a guaranteed API.
+                          The value should be a CamelCase string.
+                          This field may not be empty.
+                        maxLength: 1024
+                        minLength: 1
+                        pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
+                        type: string
+                      status:
+                        description: status of the condition, one of True, False, Unknown.
+                        enum:
+                          - "True"
+                          - "False"
+                          - Unknown
+                        type: string
+                      type:
+                        description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                        maxLength: 316
+                        pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
+                        type: string
+                    required:
+                      - lastTransitionTime
+                      - message
+                      - reason
+                      - status
+                      - type
+                    type: object
+                  type: array
+                  x-kubernetes-list-map-keys:
+                    - type
+                  x-kubernetes-list-type: map
+                lastCheckTime:
+                  description: lastCheckTime is when the controller last read the referenced resource.
+                  format: date-time
+                  type: string
+                lastPublishedTransitionHash:
+                  description: lastPublishedTransitionHash is the status transition whose Lua result was last published.
+                  type: string
+                lastResult:
+                  description: |-
+                    lastResult is the latest health result returned by the Lua script.
+                    Values are "healthy", "pending", and "failed".
+                  type: string
+                lastRunResult:
+                  description: |-
+                    lastRunResult summarizes the latest Lua runner Job state.
+                    Values include "JobCreated", "JobRunning", "JobSucceeded", and "JobFailed".
+                  type: string
+                lastStatusHash:
+                  description: |-
+                    lastStatusHash is a short SHA-256 hash of the last observed resource status.
+                    A change in hash triggers a new Lua runner Job.
+                  type: string
+                observedGeneration:
+                  description: observedGeneration is the latest spec generation the controller has processed.
+                  format: int64
+                  type: integer
+              type: object
+          required:
+            - spec
+          type: object
+      served: true
+      storage: true
+      subresources:
+        status: {}

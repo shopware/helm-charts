@@ -1,0 +1,307 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.19.0
+    helm.sh/resource-policy: keep
+  name: natstriggers.healthcheck.shopware.com
+spec:
+  group: healthcheck.shopware.com
+  names:
+    kind: NATSTrigger
+    listKind: NATSTriggerList
+    plural: natstriggers
+    singular: natstrigger
+  scope: Namespaced
+  versions:
+    - additionalPrinterColumns:
+        - description: NATS server URL
+          jsonPath: .spec.url
+          name: URL
+          type: string
+        - description: NATS subject
+          jsonPath: .spec.subject
+          name: Subject
+          type: string
+        - description: Ready status
+          jsonPath: .status.conditions[?(@.type=='Ready')].status
+          name: Ready
+          type: string
+        - jsonPath: .metadata.creationTimestamp
+          name: Age
+          type: date
+      name: v1alpha1
+      schema:
+        openAPIV3Schema:
+          description: |-
+            NATSTrigger is the top-level Kubernetes object users create with kind: NATSTrigger.
+            It defines where matching health check results should be published in NATS.
+          properties:
+            apiVersion:
+              description: |-
+                APIVersion defines the versioned schema of this representation of an object.
+                Servers should convert recognized schemas to the latest internal value, and
+                may reject unrecognized values.
+                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+              type: string
+            kind:
+              description: |-
+                Kind is a string value representing the REST resource this object represents.
+                Servers may infer this from the endpoint the client submits requests to.
+                Cannot be updated.
+                In CamelCase.
+                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: spec is what the user wants the operator to connect to and publish.
+              properties:
+                checkSelector:
+                  description: |-
+                    checkSelector selects which health checks this trigger observes by matching their labels.
+                    If not set, results from all health checks are published.
+                  properties:
+                    matchExpressions:
+                      description: matchExpressions is a list of label selector requirements. The requirements are ANDed.
+                      items:
+                        description: |-
+                          A label selector requirement is a selector that contains values, a key, and an operator that
+                          relates the key and values.
+                        properties:
+                          key:
+                            description: key is the label key that the selector applies to.
+                            type: string
+                          operator:
+                            description: |-
+                              operator represents a key's relationship to a set of values.
+                              Valid operators are In, NotIn, Exists and DoesNotExist.
+                            type: string
+                          values:
+                            description: |-
+                              values is an array of string values. If the operator is In or NotIn,
+                              the values array must be non-empty. If the operator is Exists or DoesNotExist,
+                              the values array must be empty. This array is replaced during a strategic
+                              merge patch.
+                            items:
+                              type: string
+                            type: array
+                            x-kubernetes-list-type: atomic
+                        required:
+                          - key
+                          - operator
+                        type: object
+                      type: array
+                      x-kubernetes-list-type: atomic
+                    matchLabels:
+                      additionalProperties:
+                        type: string
+                      description: |-
+                        matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
+                        map is equivalent to an element of matchExpressions, whose key field is "key", the
+                        operator is "In", and the values array contains only "value". The requirements are ANDed.
+                      type: object
+                  type: object
+                  x-kubernetes-map-type: atomic
+                credentialsSecretRef:
+                  description: |-
+                    credentialsSecretRef points to a Secret containing a NATS user credentials file.
+                    The referenced Secret key must contain a NATS .creds file as returned by nats-account-manager.
+                    Mutually exclusive with tokenSecretRef, usernamePasswordSecretRef, nkeySecretRef, and tlsSecretRef.
+                    If all auth references are omitted, the trigger connects without authentication.
+                  properties:
+                    key:
+                      default: CREDS
+                      description: key is the Secret data key containing the NATS .creds file.
+                      type: string
+                    name:
+                      description: name is the name of the Secret in the NATSTrigger namespace.
+                      minLength: 1
+                      type: string
+                  required:
+                    - name
+                  type: object
+                nkeySecretRef:
+                  description: |-
+                    nkeySecretRef points to a Secret containing a NATS user NKey seed.
+                    Mutually exclusive with tokenSecretRef, usernamePasswordSecretRef, credentialsSecretRef, and tlsSecretRef.
+                    If all auth references are omitted, the trigger connects without authentication.
+                  properties:
+                    key:
+                      default: NKEY
+                      description: key is the Secret data key containing the NATS user NKey seed.
+                      type: string
+                    name:
+                      description: name is the name of the Secret in the NATSTrigger namespace.
+                      minLength: 1
+                      type: string
+                  required:
+                    - name
+                  type: object
+                subject:
+                  description: |-
+                    subject is the static NATS subject health check results are published to.
+                    The published payload is the JSON-serialized check result.
+                    To route different checks to different subjects, create one NATSTrigger per
+                    subject and scope it with checkSelector.
+                    Example: "healthchecks.production"
+                  minLength: 1
+                  type: string
+                tlsSecretRef:
+                  description: |-
+                    tlsSecretRef points to a Secret containing TLS client certificate material.
+                    Mutually exclusive with tokenSecretRef, usernamePasswordSecretRef, credentialsSecretRef, and nkeySecretRef.
+                    If all auth references are omitted, the trigger connects without authentication.
+                  properties:
+                    caKey:
+                      default: ca.crt
+                      description: caKey is the optional Secret data key containing the trusted CA certificate PEM for server verification.
+                      type: string
+                    certKey:
+                      default: tls.crt
+                      description: certKey is the Secret data key containing the TLS client certificate PEM.
+                      type: string
+                    keyKey:
+                      default: tls.key
+                      description: keyKey is the Secret data key containing the TLS client private key PEM.
+                      type: string
+                    name:
+                      description: name is the name of the Secret in the NATSTrigger namespace.
+                      minLength: 1
+                      type: string
+                  required:
+                    - name
+                  type: object
+                tokenSecretRef:
+                  description: |-
+                    tokenSecretRef points to a Secret in the same namespace that contains a NATS bearer token.
+                    Mutually exclusive with usernamePasswordSecretRef, credentialsSecretRef, nkeySecretRef, and tlsSecretRef.
+                    If all auth references are omitted, the trigger connects without authentication.
+                  properties:
+                    key:
+                      default: TOKEN
+                      description: key is the Secret data key containing the NATS token.
+                      type: string
+                    name:
+                      description: name is the name of the Secret in the NATSTrigger namespace.
+                      minLength: 1
+                      type: string
+                  required:
+                    - name
+                  type: object
+                url:
+                  description: |-
+                    url is the NATS server URL, for example "nats://nats.default.svc:4222".
+                    WebSocket URLs ("ws://", "wss://") are supported for clusters that expose NATS over WebSocket.
+                  pattern: ^(nats|tls|ws|wss)://.*$
+                  type: string
+                usernamePasswordSecretRef:
+                  description: |-
+                    usernamePasswordSecretRef points to a Secret containing NATS username/password credentials.
+                    This is the client-side configuration for both plain username/password auth and server-side bcrypt password verification.
+                    Mutually exclusive with tokenSecretRef, credentialsSecretRef, nkeySecretRef, and tlsSecretRef.
+                    If all auth references are omitted, the trigger connects without authentication.
+                  properties:
+                    name:
+                      description: name is the name of the Secret in the NATSTrigger namespace.
+                      minLength: 1
+                      type: string
+                    passwordKey:
+                      default: password
+                      description: passwordKey is the Secret data key containing the NATS password.
+                      type: string
+                    usernameKey:
+                      default: username
+                      description: usernameKey is the Secret data key containing the NATS username.
+                      type: string
+                  required:
+                    - name
+                  type: object
+              required:
+                - subject
+                - url
+              type: object
+              x-kubernetes-validations:
+                - message: only one NATS authentication Secret reference may be set
+                  rule: '(has(self.tokenSecretRef) ? 1 : 0) + (has(self.usernamePasswordSecretRef) ? 1 : 0) + (has(self.credentialsSecretRef) ? 1 : 0) + (has(self.nkeySecretRef) ? 1 : 0) + (has(self.tlsSecretRef) ? 1 : 0) <= 1'
+            status:
+              description: status is what the controller has observed about the NATS connection.
+              properties:
+                conditions:
+                  description: |-
+                    conditions are standard Kubernetes status entries for humans and tools.
+                    Condition types: "Ready", "Connected"
+                  items:
+                    description: Condition contains details for one aspect of the current state of this API Resource.
+                    properties:
+                      lastTransitionTime:
+                        description: |-
+                          lastTransitionTime is the last time the condition transitioned from one status to another.
+                          This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.
+                        format: date-time
+                        type: string
+                      message:
+                        description: |-
+                          message is a human readable message indicating details about the transition.
+                          This may be an empty string.
+                        maxLength: 32768
+                        type: string
+                      observedGeneration:
+                        description: |-
+                          observedGeneration represents the .metadata.generation that the condition was set based upon.
+                          For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+                          with respect to the current state of the instance.
+                        format: int64
+                        minimum: 0
+                        type: integer
+                      reason:
+                        description: |-
+                          reason contains a programmatic identifier indicating the reason for the condition's last transition.
+                          Producers of specific condition types may define expected values and meanings for this field,
+                          and whether the values are considered a guaranteed API.
+                          The value should be a CamelCase string.
+                          This field may not be empty.
+                        maxLength: 1024
+                        minLength: 1
+                        pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
+                        type: string
+                      status:
+                        description: status of the condition, one of True, False, Unknown.
+                        enum:
+                          - "True"
+                          - "False"
+                          - Unknown
+                        type: string
+                      type:
+                        description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                        maxLength: 316
+                        pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
+                        type: string
+                    required:
+                      - lastTransitionTime
+                      - message
+                      - reason
+                      - status
+                      - type
+                    type: object
+                  type: array
+                  x-kubernetes-list-map-keys:
+                    - type
+                  x-kubernetes-list-type: map
+                connectedAt:
+                  description: connectedAt is when the controller last connected to NATS successfully.
+                  format: date-time
+                  type: string
+                observedGeneration:
+                  description: observedGeneration is the latest spec generation the controller has processed.
+                  format: int64
+                  type: integer
+              type: object
+          required:
+            - spec
+          type: object
+      served: true
+      storage: true
+      subresources:
+        status: {}
