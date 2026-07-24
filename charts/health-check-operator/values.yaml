@@ -97,6 +97,25 @@ extraEnv: []
 extraVolumeMounts: []
 extraVolumes: []
 
+# Additional Kubernetes objects rendered with the release. Entries can be
+# plain objects or strings; strings are passed through tpl, so Helm
+# templating (e.g. {{ .Release.Namespace }}) works inside them.
+extraObjects: []
+# extraObjects:
+#   - apiVersion: v1
+#     kind: ConfigMap
+#     metadata:
+#       name: my-extra-config
+#     data:
+#       key: value
+#   - |
+#     apiVersion: v1
+#     kind: Secret
+#     metadata:
+#       name: {{ include "health-check-operator.fullname" . }}-extra
+#     stringData:
+#       key: value
+
 nodeSelector: {}
 tolerations: []
 affinity: {}
