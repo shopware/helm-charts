@@ -13,7 +13,7 @@ data:
         }
       }
     }
-    :8000
+    :8000 {
 {{- if hasKey .Values.store "sidecarLogging" }}
     log {
       output stdout
@@ -47,4 +47,18 @@ data:
       }
       encode gzip
       file_server
+      }
+    }
+
+    :8001 {
+      handle /-/fpm/status {
+        # Prometheus encodes query strings in scrape paths. PHP-FPM requires
+        # openmetrics format, so append query here instead.
+        rewrite * /-/fpm/status?openmetrics
+        reverse_proxy unix//tmp/php-fpm.sock {
+          transport fastcgi {
+            env SCRIPT_NAME /-/fpm/status
+          }
+        }
+      }
     }
