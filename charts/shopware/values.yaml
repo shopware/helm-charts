@@ -220,8 +220,8 @@ store:
     #     cpu: 1000m
     #
 
-    # You can add side-car containers as you wish. Note that the PHP fpm exporter is
-    # already attached, if you are not using `dynamic` in the fpm configuration.
+    # You can add side-car containers as you wish. php-fpm metrics are exposed natively
+    # in OpenMetrics format via the Caddy status endpoint, so no exporter side-car is needed.
     # extraContainers:
     #   - name: some-side-pod
     #     env:
