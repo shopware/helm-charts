@@ -1,8 +1,13 @@
 {{- if and .Values.rbac.create (not .Values.crds.installOnly) -}}
+{{- /* With clusterScoped=false the operator watches only the release
+       namespace (WATCH_NAMESPACE), so a namespace-scoped Role is enough. */}}
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+kind: {{ .Values.clusterScoped | ternary "ClusterRole" "Role" }}
 metadata:
   name: {{ include "health-check-operator.fullname" . }}-manager-role
+  {{- if not .Values.clusterScoped }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
   labels:
     {{- include "health-check-operator.labels" . | nindent 4 }}
 rules:
@@ -25,13 +30,15 @@ rules:
       - ""
     resources:
       - pods
+      - secrets
     verbs:
+      - get
       - list
+      - watch
   - apiGroups:
       - ""
     resources:
       - pods/log
-      - secrets
     verbs:
       - get
   - apiGroups:
@@ -68,14 +75,17 @@ rules:
       - update
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: {{ .Values.clusterScoped | ternary "ClusterRoleBinding" "RoleBinding" }}
 metadata:
   name: {{ include "health-check-operator.fullname" . }}-manager-rolebinding
+  {{- if not .Values.clusterScoped }}
+  namespace: {{ .Release.Namespace }}
+  {{- end }}
   labels:
     {{- include "health-check-operator.labels" . | nindent 4 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
+  kind: {{ .Values.clusterScoped | ternary "ClusterRole" "Role" }}
   name: {{ include "health-check-operator.fullname" . }}-manager-role
 subjects:
   - kind: ServiceAccount

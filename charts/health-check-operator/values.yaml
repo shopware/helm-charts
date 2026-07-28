@@ -19,6 +19,12 @@ crds:
   # This will install only the crd's
   installOnly: false
 
+# When false (default), the operator only watches its own namespace: the
+# Deployment sets WATCH_NAMESPACE to the release namespace and RBAC is rendered
+# as a namespace-scoped Role/RoleBinding. Set to true to watch all namespaces,
+# which renders a ClusterRole/ClusterRoleBinding instead.
+clusterScoped: false
+
 serviceAccount:
   create: true
   automount: true
