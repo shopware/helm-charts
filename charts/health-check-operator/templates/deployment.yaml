@@ -57,9 +57,17 @@ spec:
             {{- with .Values.extraArgs }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
-          {{- if .Values.extraEnv }}
+          {{- if or (not .Values.clusterScoped) .Values.extraEnv }}
           env:
-            {{- toYaml .Values.extraEnv | nindent 12 }}
+            {{- if not .Values.clusterScoped }}
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            {{- end }}
+            {{- with .Values.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
           {{- end }}
           ports:
             - name: health
