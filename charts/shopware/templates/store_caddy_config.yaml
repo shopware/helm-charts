@@ -61,4 +61,14 @@ data:
           }
         }
       }
+      # php-fpm ping, answered by the fpm master (no app bootstrap, no DB). Used
+      # by the operator storefront liveness/startup probes so DB slowness never
+      # restarts pods.
+      handle /-/fpm/ping {
+        reverse_proxy unix//tmp/php-fpm.sock {
+          transport fastcgi {
+            env SCRIPT_NAME /-/fpm/ping
+          }
+        }
+      }
     }
