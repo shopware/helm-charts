@@ -65,6 +65,17 @@ Metrics service name. Keep this short enough for Kubernetes' 63-character DNS la
 {{- end -}}
 
 {{/*
+Suffix for cluster-scoped RBAC resources. Namespace-scoped releases share the
+cluster with other releases of this chart, so the release namespace is appended
+to keep the cluster-wide names unique per installation.
+*/}}
+{{- define "health-check-operator.clusterRBACSuffix" -}}
+{{- if not .Values.clusterScoped -}}
+{{- printf "-%s" .Release.Namespace -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Container port derived from the health probe bind address, so the two cannot drift apart.
 */}}
 {{- define "health-check-operator.healthPort" -}}

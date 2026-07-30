@@ -21,8 +21,10 @@ crds:
 
 # When false (default), the operator only watches its own namespace: the
 # Deployment sets WATCH_NAMESPACE to the release namespace and RBAC is rendered
-# as a namespace-scoped Role/RoleBinding. Set to true to watch all namespaces,
-# which renders a ClusterRole/ClusterRoleBinding instead.
+# as a namespace-scoped Role/RoleBinding. The metrics RBAC objects must stay
+# cluster-scoped, so their names get the release namespace appended to keep
+# multiple installations on one cluster from colliding. Set to true to watch
+# all namespaces, which renders a ClusterRole/ClusterRoleBinding instead.
 clusterScoped: false
 
 serviceAccount:
