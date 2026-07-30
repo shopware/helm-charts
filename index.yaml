@@ -524,6 +524,16 @@ entries:
     version: 0.0.3
   health-check-operator:
   - apiVersion: v2
+    appVersion: 0.4.2
+    created: "2026-07-30T15:20:24.05610323Z"
+    description: A Helm chart for deploying the Health Check Operator.
+    digest: 683c69d078a9951b63ea0350442170f20b8552f90c8c25e6ead3186fb9b1f604
+    name: health-check-operator
+    type: application
+    urls:
+    - https://github.com/shopware/helm-charts/releases/download/health-check-operator-0.4.2/health-check-operator-0.4.2.tgz
+    version: 0.4.2
+  - apiVersion: v2
     appVersion: 0.4.1
     created: "2026-07-28T13:15:38.329222984Z"
     description: A Helm chart for deploying the Health Check Operator.
@@ -4940,4 +4950,4 @@ entries:
     urls:
     - https://github.com/shopware/helm-charts/releases/download/shopware-0.0.3/shopware-0.0.3.tgz
     version: 0.0.3
-generated: "2026-07-30T14:04:36.330229099Z"
+generated: "2026-07-30T15:20:24.056601272Z"
