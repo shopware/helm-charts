@@ -165,6 +165,10 @@ spec:
     version: {{ .Values.store.database.version | default "8" | quote }}
     port: {{ .Values.store.database.port | default 3306 }}
     name: {{ .Values.store.database.name | default "shopware" }}
+    {{- with .Values.store.database.tls }}
+    tls:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
   network:
     {{- if hasKey .Values.store "host" }}
     host: {{ .Values.store.host }}
