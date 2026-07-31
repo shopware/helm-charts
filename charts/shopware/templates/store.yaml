@@ -52,6 +52,18 @@ spec:
     adapter: builtin
     {{- end }}
 
+  # set lock redis to the session valkey for now
+  lock:
+    {{- if .Values.valkeysessionSentinel.enabled }}
+    adapter: redis
+    redisDsn: 'redis:?host[{{ .Values.valkeysessionSentinel.host }}:{{ .Values.valkeysessionSentinel.port | default 26379 }}]&redis_sentinel=mymaster&dbindex={{ .Values.valkeysessionSentinel.dbindex | default 0 }}'
+    {{- else if or .Values.valkeysession.enabled .Values.redissession.enabled }}
+    adapter: redis
+    redisHost: {{ template "getSessionCacheMasterService" . }}
+    {{- else }}
+    adapter: builtin
+    {{- end }}
+
   appCache:
     {{- if or .Values.valkeyapp.enabled .Values.redisapp.enabled }}
     adapter: redis
@@ -332,33 +344,9 @@ spec:
       {{- end }}
     {{- end }}
 
-    {{- if or .Values.store.container.extraContainers (and (hasKey .Values.store "fpm") (ne .Values.store.fpm.processManagement "dynamic")) }}
+    {{- with .Values.store.container.extraContainers }}
     extraContainers:
-      {{- with .Values.store.container.extraContainers }}
-          {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- if hasKey .Values.store "fpm" }}
-      {{- if ne .Values.store.fpm.processManagement "dynamic" }}
-      - name: php-fpm-exporter
-        env:
-        - name: PHP_FPM_SCRAPE_URI
-          value: {{ .Values.store.fpm.scrapeURI | default "tcp://127.0.0.1:9000/status" }}
-        image: hipages/php-fpm_exporter
-        imagePullPolicy: IfNotPresent
-        ports:
-        - containerPort: 9253
-          protocol: TCP
-        resources:
-          limits:
-            cpu: 30m
-            memory: 32Mi
-          requests:
-            cpu: 10m
-            memory: 10Mi
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
-      {{- end }}
-      {{- end }}
+      {{- toYaml . | nindent 8 }}
     {{- end }}
 
     resources:
