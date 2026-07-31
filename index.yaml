@@ -575,6 +575,16 @@ entries:
     version: 0.2.0
   operator:
   - apiVersion: v2
+    appVersion: 1.5.2
+    created: "2026-07-31T10:00:36.953188725Z"
+    description: A Helm chart for Kubernetes
+    digest: b60b7f550306d5f6960567e09a606cfd13d3c3e37f60eb16e1b138e0198b31ac
+    name: operator
+    type: application
+    urls:
+    - https://github.com/shopware/helm-charts/releases/download/operator-1.5.2/operator-1.5.2.tgz
+    version: 1.5.2
+  - apiVersion: v2
     appVersion: 1.4.1
     created: "2026-07-30T14:04:36.329879835Z"
     description: A Helm chart for Kubernetes
@@ -5015,4 +5025,4 @@ entries:
     urls:
     - https://github.com/shopware/helm-charts/releases/download/shopware-0.0.3/shopware-0.0.3.tgz
     version: 0.0.3
-generated: "2026-07-31T06:36:25.62048821Z"
+generated: "2026-07-31T10:00:36.953590341Z"
