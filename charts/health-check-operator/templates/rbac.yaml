@@ -136,11 +136,13 @@ subjects:
     name: {{ include "health-check-operator.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 {{- if and .Values.metrics.enabled .Values.metrics.secure .Values.rbac.metricsAuth.enabled }}
+{{- /* TokenReview/SubjectAccessReview and nonResourceURLs only exist cluster-scoped,
+       so these stay ClusterRoles even for namespace-scoped releases. */}}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ include "health-check-operator.fullname" . }}-metrics-auth-role
+  name: {{ include "health-check-operator.fullname" . }}-metrics-auth-role{{ include "health-check-operator.clusterRBACSuffix" . }}
   labels:
     {{- include "health-check-operator.labels" . | nindent 4 }}
 rules:
@@ -160,13 +162,13 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ include "health-check-operator.fullname" . }}-metrics-auth-rolebinding
+  name: {{ include "health-check-operator.fullname" . }}-metrics-auth-rolebinding{{ include "health-check-operator.clusterRBACSuffix" . }}
   labels:
     {{- include "health-check-operator.labels" . | nindent 4 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: {{ include "health-check-operator.fullname" . }}-metrics-auth-role
+  name: {{ include "health-check-operator.fullname" . }}-metrics-auth-role{{ include "health-check-operator.clusterRBACSuffix" . }}
 subjects:
   - kind: ServiceAccount
     name: {{ include "health-check-operator.serviceAccountName" . }}
@@ -175,7 +177,7 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ include "health-check-operator.fullname" . }}-metrics-reader
+  name: {{ include "health-check-operator.fullname" . }}-metrics-reader{{ include "health-check-operator.clusterRBACSuffix" . }}
   labels:
     {{- include "health-check-operator.labels" . | nindent 4 }}
 rules:

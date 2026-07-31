@@ -164,6 +164,13 @@ store:
     #   name: percona-secrets
     #   key: root
 
+    # Configure TLS for the database connection. The referenced secret must contain
+    # ca.crt, and additionally tls.crt plus tls.key when clientCertificate is true.
+    # tls:
+    #   secretName: database-tls
+    #   clientCertificate: false
+    #   dontVerifyServerCertificate: false
+
   # You can define a Monolog configuration here.
   # Please refer to the official Monolog documentation for details.
   # This configuration will be mounted in the deployment as a ConfigMap.
