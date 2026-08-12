@@ -134,6 +134,12 @@ store:
   # adminCredentials:
   #   username: admin
   #   password: <if empty it will be generated>
+  #   usernameSecretRef:
+  #     name: admin-credentials
+  #     key: username
+  #   passwordSecretRef:
+  #     name: admin-credentials
+  #     key: password
 
   # blackfire:
   #   enabled: false
