@@ -140,6 +140,7 @@ rules:
   - httproutes
   verbs:
   - create
+  - delete
   - get
   - list
   - patch
@@ -150,6 +151,7 @@ rules:
   - ingresses
   verbs:
   - create
+  - delete
   - get
   - list
   - patch
