@@ -7208,9 +7208,12 @@ spec:
                     usageDataConsent: allowed
                   properties:
                     currency:
+                      default: EUR
                       type: string
                     fastly:
                       properties:
+                        disableOnSetupMigration:
+                          type: boolean
                         serviceRef:
                           properties:
                             key:
@@ -7237,8 +7240,10 @@ spec:
                           type: object
                       type: object
                     locale:
+                      default: en-GB
                       type: string
                     usageDataConsent:
+                      default: allowed
                       enum:
                         - revoked
                         - allowed
@@ -7246,7 +7251,6 @@ spec:
                   required:
                     - currency
                     - locale
-                    - usageDataConsent
                   type: object
                 storefrontDeploymentContainer:
                   default: {}
