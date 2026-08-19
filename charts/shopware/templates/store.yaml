@@ -146,7 +146,17 @@ spec:
   {{- if hasKey .Values.store "adminCredentials" }}
   adminCredentials:
     username: {{ .Values.store.adminCredentials.username | default "admin" }}
+    {{- if hasKey .Values.store.adminCredentials "password" }}
     password: {{ .Values.store.adminCredentials.password | default "" }}
+    {{- end }}
+    {{- with .Values.store.adminCredentials.usernameSecretRef }}
+    usernameSecretRef:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.store.adminCredentials.passwordSecretRef }}
+    passwordSecretRef:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
   {{- end }}
 
   database:
