@@ -1,6 +1,4 @@
-{{ if hasKey .Values "blackfire" }}
-{{ if hasKey .Values.blackfire "serverID" }}
-{{ if hasKey .Values.blackfire "serverToken" }}
+{{ if eq (include "blackfireExistingSecret" .) "true" }}
 {{ if hasKey .Values.store "blackfire" }}
 {{ if .Values.store.blackfire.enabled | default false }}
 ---
@@ -26,9 +24,15 @@ spec:
           image: {{ .Values.blackfire.image | default "blackfire/blackfire:2" | quote }}
           env:
           - name: BLACKFIRE_SERVER_ID
-            value: {{ .Values.blackfire.serverID }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.blackfire.existingSecret.name }}
+                key: {{ .Values.blackfire.existingSecret.serverIDKey | default "server-id" }}
           - name: BLACKFIRE_SERVER_TOKEN
-            value: {{ .Values.blackfire.serverToken }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.blackfire.existingSecret.name }}
+                key: {{ .Values.blackfire.existingSecret.serverTokenKey | default "server-token" }}
           ports:
           - containerPort: {{ .Values.blackfire.port | default 8307 }}
           resources:
@@ -52,8 +56,6 @@ spec:
       port: {{ .Values.blackfire.port | default 8307 }}
       targetPort: {{ .Values.blackfire.port | default 8307 }}
       appProtocol: tcp
-{{ end }}
-{{ end }}
 {{ end }}
 {{ end }}
 {{ end }}

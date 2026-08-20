@@ -87,6 +87,14 @@ secretAccessKeyRef:
 {{ "blackfire" }}
 {{- end -}}
 
+{{ define "blackfireExistingSecret" -}}
+{{- if hasKey .Values "blackfire" -}}
+{{- if hasKey .Values.blackfire "existingSecret" -}}
+true
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
 # Defined by the operator itself
 {{ define "getStoreDeploymentName" -}}
 {{ printf "%s-store" .Release.Name }}

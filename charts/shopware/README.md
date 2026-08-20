@@ -322,3 +322,49 @@ store:
       name: aws-credentials
       key: secret_key
 ```
+
+### Blackfire
+
+The chart can deploy a [Blackfire](https://www.blackfire.io/) agent alongside the store for profiling PHP requests.
+
+Two values are required. `store.blackfire.enabled` writes the agent address into the `Store` resource, so the operator injects `BLACKFIRE_AGENT_SOCKET` into the storefront, admin and worker containers. `blackfire.existingSecret` points at a Secret holding the agent credentials:
+
+```yaml
+store:
+  blackfire:
+    enabled: true
+
+blackfire:
+  existingSecret:
+    name: blackfire-credentials
+    serverIDKey: server-id
+    serverTokenKey: server-token
+```
+
+**The Secret is not created by this chart.** Create it beforehand, using the Server ID and Server Token from your Blackfire account:
+
+```bash
+kubectl -n <namespace> create secret generic blackfire-credentials \
+  --from-literal=server-id=<server-id> \
+  --from-literal=server-token=<server-token>
+```
+
+`serverIDKey` and `serverTokenKey` default to `server-id` and `server-token` and can be omitted when the Secret uses those names.
+
+**Optional values:**
+- `blackfire.image` — agent image, defaults to `blackfire/blackfire:2`
+- `blackfire.port` — agent port, defaults to `8307`
+- `blackfire.resources` — resource requests and limits for the agent container
+
+The agent is deployed as `shopware-blackfire` and exposed as a Service named `blackfire`.
+
+> [!WARNING]
+> The Blackfire probe (the `blackfire` PHP extension) must already be present in your Shopware image.
+> This chart configures where the probe sends its data, it does not install the probe itself.
+
+> [!NOTE]
+> Blackfire and OpenTelemetry tracing are not supported at the same time. Enable one or the other.
+
+**Service mesh:** if the namespace enforces a default-deny authorization policy, allow ingress to the agent on port `8307`. Without it the connection is accepted and then immediately closed, and the probe reports `Error reading on socket : EOF` while the agent logs nothing at all.
+
+**CDN:** profiling requests must reach PHP. A response served from cache never runs the probe, and Blackfire reports that the probe could not be found. Configure the CDN to bypass its cache for any request carrying an `X-Blackfire-Query` header.

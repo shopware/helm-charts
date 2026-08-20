@@ -30,15 +30,11 @@ spec:
   serviceAccountName: {{ .Values.store.serviceAccountName }}
   {{- end }}
 
-  {{- if hasKey .Values "blackfire" }}
-  {{- if hasKey .Values.blackfire "serverID" }}
-  {{- if hasKey .Values.blackfire "serverToken" }}
+  {{- if eq (include "blackfireExistingSecret" .) "true" }}
   blackfire:
     enabled: true
     host: {{ template "getBlackfireServiceName" . }}
     port: {{ .Values.blackfire.port | default 8307 }}
-  {{- end }}
-  {{- end }}
   {{- end }}
 
   sessionCache:
