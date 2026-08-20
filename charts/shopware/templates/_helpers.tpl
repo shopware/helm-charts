@@ -87,6 +87,14 @@ secretAccessKeyRef:
 {{ "blackfire" }}
 {{- end -}}
 
+{{ define "blackfireCredentialsRef" -}}
+{{- if hasKey .Values "blackfire" -}}
+{{- if and (hasKey .Values.blackfire "serverIDRef") (hasKey .Values.blackfire "serverTokenRef") -}}
+true
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
 # Defined by the operator itself
 {{ define "getStoreDeploymentName" -}}
 {{ printf "%s-store" .Release.Name }}

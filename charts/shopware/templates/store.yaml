@@ -30,15 +30,17 @@ spec:
   serviceAccountName: {{ .Values.store.serviceAccountName }}
   {{- end }}
 
-  {{- if hasKey .Values "blackfire" }}
-  {{- if hasKey .Values.blackfire "serverID" }}
-  {{- if hasKey .Values.blackfire "serverToken" }}
+  {{- if and (eq (include "blackfireCredentialsRef" .) "true") (hasKey .Values.store "otel") }}
+  {{- if hasKey .Values.store.otel "exporterEndpoint" }}
+  {{- fail "Blackfire and OpenTelemetry tracing are not supported at the same time. Enable one or the other." }}
+  {{- end }}
+  {{- end }}
+
+  {{- if eq (include "blackfireCredentialsRef" .) "true" }}
   blackfire:
     enabled: true
     host: {{ template "getBlackfireServiceName" . }}
     port: {{ .Values.blackfire.port | default 8307 }}
-  {{- end }}
-  {{- end }}
   {{- end }}
 
   sessionCache:
