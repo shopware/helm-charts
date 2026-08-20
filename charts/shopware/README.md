@@ -327,7 +327,7 @@ store:
 
 The chart can deploy a [Blackfire](https://www.blackfire.io/) agent alongside the store for profiling PHP requests.
 
-Two values are required. `store.blackfire.enabled` writes the agent address into the `Store` resource, so the operator injects `BLACKFIRE_AGENT_SOCKET` into the storefront, admin and worker containers. `blackfire.existingSecret` points at a Secret holding the agent credentials:
+Two values are required. `store.blackfire.enabled` writes the agent address into the `Store` resource, so the operator injects `BLACKFIRE_AGENT_SOCKET` into the storefront, admin and worker containers. `blackfire.serverIDRef` and `blackfire.serverTokenRef` reference the Secret keys holding the agent credentials:
 
 ```yaml
 store:
@@ -335,10 +335,12 @@ store:
     enabled: true
 
 blackfire:
-  existingSecret:
+  serverIDRef:
     name: blackfire-credentials
-    serverIDKey: server-id
-    serverTokenKey: server-token
+    key: server-id
+  serverTokenRef:
+    name: blackfire-credentials
+    key: server-token
 ```
 
 **The Secret is not created by this chart.** Create it beforehand, using the Server ID and Server Token from your Blackfire account:
@@ -349,7 +351,7 @@ kubectl -n <namespace> create secret generic blackfire-credentials \
   --from-literal=server-token=<server-token>
 ```
 
-`serverIDKey` and `serverTokenKey` default to `server-id` and `server-token` and can be omitted when the Secret uses those names.
+Both references carry their own `name` and `key`, so the two values may live in separate Secrets if needed.
 
 **Optional values:**
 - `blackfire.image` — agent image, defaults to `blackfire/blackfire:2`
@@ -363,7 +365,8 @@ The agent is deployed as `shopware-blackfire` and exposed as a Service named `bl
 > This chart configures where the probe sends its data, it does not install the probe itself.
 
 > [!NOTE]
-> Blackfire and OpenTelemetry tracing are not supported at the same time. Enable one or the other.
+> Blackfire and OpenTelemetry tracing are not supported at the same time. Configuring both makes
+> template rendering fail with an explicit error.
 
 **Service mesh:** if the namespace enforces a default-deny authorization policy, allow ingress to the agent on port `8307`. Without it the connection is accepted and then immediately closed, and the probe reports `Error reading on socket : EOF` while the agent logs nothing at all.
 

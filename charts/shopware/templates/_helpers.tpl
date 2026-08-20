@@ -87,9 +87,9 @@ secretAccessKeyRef:
 {{ "blackfire" }}
 {{- end -}}
 
-{{ define "blackfireExistingSecret" -}}
+{{ define "blackfireCredentialsRef" -}}
 {{- if hasKey .Values "blackfire" -}}
-{{- if hasKey .Values.blackfire "existingSecret" -}}
+{{- if and (hasKey .Values.blackfire "serverIDRef") (hasKey .Values.blackfire "serverTokenRef") -}}
 true
 {{- end -}}
 {{- end -}}

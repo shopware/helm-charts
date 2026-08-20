@@ -1,4 +1,4 @@
-{{ if eq (include "blackfireExistingSecret" .) "true" }}
+{{ if eq (include "blackfireCredentialsRef" .) "true" }}
 {{ if hasKey .Values.store "blackfire" }}
 {{ if .Values.store.blackfire.enabled | default false }}
 ---
@@ -26,13 +26,15 @@ spec:
           - name: BLACKFIRE_SERVER_ID
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.blackfire.existingSecret.name }}
-                key: {{ .Values.blackfire.existingSecret.serverIDKey | default "server-id" }}
+                {{- with .Values.blackfire.serverIDRef }}
+                {{- toYaml . | nindent 16 }}
+                {{- end }}
           - name: BLACKFIRE_SERVER_TOKEN
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.blackfire.existingSecret.name }}
-                key: {{ .Values.blackfire.existingSecret.serverTokenKey | default "server-token" }}
+                {{- with .Values.blackfire.serverTokenRef }}
+                {{- toYaml . | nindent 16 }}
+                {{- end }}
           ports:
           - containerPort: {{ .Values.blackfire.port | default 8307 }}
           resources:

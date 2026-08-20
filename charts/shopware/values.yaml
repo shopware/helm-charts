@@ -138,7 +138,7 @@ store:
   # blackfire:
   #   enabled: false
   #   host: blackfire
-  #   port: 8707
+  #   port: 8307
 
   # If you want to use tracing with otel make sure to disable blackfire.
   # It is not possible to use both.
@@ -568,17 +568,21 @@ redisworker:
   #   enabled: false
 
 # blackfire:
-# serverID: <your id>
-# serverToken: <your token>
-# image: blackfire/blackfire:2
-# port: 8307
-# resources:
-#   requests:
-#     memory: 100Mi
-#     cpu: 100m
-#   limits:
-#     memory: 100Mi
-#     cpu: 100m
+#   serverIDRef:
+#     name: blackfire-credentials
+#     key: server-id
+#   serverTokenRef:
+#     name: blackfire-credentials
+#     key: server-token
+#   image: blackfire/blackfire:2
+#   port: 8307
+#   resources:
+#     requests:
+#       memory: 100Mi
+#       cpu: 100m
+#     limits:
+#       memory: 100Mi
+#       cpu: 100m
 
 # This controls the Shopware operator helm chart which can be found here:
 # DEPRECATED: This has moved because the seperated crd installation.
