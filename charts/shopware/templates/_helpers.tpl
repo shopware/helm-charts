@@ -95,6 +95,18 @@ true
 {{- end -}}
 {{- end -}}
 
+{{ define "getTidewaysServiceName" -}}
+{{ "tideways" }}
+{{- end -}}
+
+{{ define "tidewaysCredentialsRef" -}}
+{{- if hasKey .Values "tideways" -}}
+{{- if hasKey .Values.tideways "apiKeyRef" -}}
+true
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
 # Defined by the operator itself
 {{ define "getStoreDeploymentName" -}}
 {{ printf "%s-store" .Release.Name }}

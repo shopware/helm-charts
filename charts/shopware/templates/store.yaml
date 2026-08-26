@@ -43,6 +43,26 @@ spec:
     port: {{ .Values.blackfire.port | default 8307 }}
   {{- end }}
 
+  {{- if and (eq (include "tidewaysCredentialsRef" .) "true") (hasKey .Values.store "otel") }}
+  {{- if hasKey .Values.store.otel "exporterEndpoint" }}
+  {{- fail "Tideways and OpenTelemetry tracing are not supported at the same time. Enable one or the other." }}
+  {{- end }}
+  {{- end }}
+
+  {{- if and (eq (include "blackfireCredentialsRef" .) "true") (eq (include "tidewaysCredentialsRef" .) "true") }}
+  {{- fail "Blackfire and Tideways are not supported at the same time. Enable one or the other." }}
+  {{- end }}
+
+  {{- if eq (include "tidewaysCredentialsRef" .) "true" }}
+  tideways:
+    enabled: true
+    host: {{ template "getTidewaysServiceName" . }}
+    port: {{ .Values.tideways.port | default 9135 }}
+    service: {{ .Values.tideways.service | default "shopware" }}
+    apiKeyRef:
+      {{- toYaml .Values.tideways.apiKeyRef | nindent 6 }}
+  {{- end }}
+
   sessionCache:
     {{- if .Values.valkeysessionSentinel.enabled }}
     adapter: redis

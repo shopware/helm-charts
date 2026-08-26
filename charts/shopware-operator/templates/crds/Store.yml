@@ -7255,6 +7255,33 @@ spec:
                 storefrontDeploymentContainer:
                   default: {}
                   x-kubernetes-preserve-unknown-fields: true
+                tideways:
+                  properties:
+                    apiKeyRef:
+                      properties:
+                        key:
+                          minLength: 1
+                          type: string
+                        name:
+                          minLength: 1
+                          type: string
+                      required:
+                      - key
+                      - name
+                      type: object
+                    enabled:
+                      default: false
+                      type: boolean
+                    host:
+                      default: tideways
+                      type: string
+                    port:
+                      default: 9135
+                      type: integer
+                    service:
+                      default: shopware
+                      type: string
+                  type: object
                 worker:
                   default:
                     adapter: builtin

@@ -371,3 +371,46 @@ The agent is deployed as `shopware-blackfire` and exposed as a Service named `bl
 **Service mesh:** if the namespace enforces a default-deny authorization policy, allow ingress to the agent on port `8307`. Without it the connection is accepted and then immediately closed, and the probe reports `Error reading on socket : EOF` while the agent logs nothing at all.
 
 **CDN:** profiling requests must reach PHP. A response served from cache never runs the probe, and Blackfire reports that the probe could not be found. Configure the CDN to bypass its cache for any request carrying an `X-Blackfire-Query` header.
+
+### Tideways
+
+The chart can deploy a [Tideways](https://tideways.com/) daemon alongside the store for profiling and monitoring PHP requests.
+
+Two values are required. `store.tideways.enabled` writes the daemon address into the `Store` resource, so the operator injects `TIDEWAYS_CONNECTION`, `TIDEWAYS_SERVICE` and `TIDEWAYS_APIKEY` into the storefront, admin and worker containers. `tideways.apiKeyRef` references the Secret key holding the API key:
+
+```yaml
+store:
+  tideways:
+    enabled: true
+
+tideways:
+  apiKeyRef:
+    name: tideways-credentials
+    key: api-key
+```
+
+**The Secret is not created by this chart.** Create it beforehand, using the API key from your Tideways organisation:
+
+```bash
+kubectl -n <namespace> create secret generic tideways-credentials \
+  --from-literal=api-key=<api-key>
+```
+
+**Optional values:**
+- `tideways.image` — daemon image, defaults to `tideways/daemon:latest`
+- `tideways.port` — daemon port, defaults to `9135`
+- `tideways.service` — service name reported to Tideways, defaults to `shopware`
+- `tideways.environment` — environment name passed to the daemon as `--env`
+- `tideways.resources` — resource requests and limits for the daemon container
+
+The daemon is deployed as `shopware-tideways` and exposed as a Service named `tideways`.
+
+> [!WARNING]
+> The Tideways probe (the `tideways` PHP extension) must already be present in your Shopware image.
+> This chart configures where the probe sends its data, it does not install the probe itself.
+
+> [!NOTE]
+> Tideways and OpenTelemetry tracing are not supported at the same time, and neither are Tideways
+> and Blackfire. Configuring both makes template rendering fail with an explicit error.
+
+**Service mesh:** if the namespace enforces a default-deny authorization policy, allow ingress to the daemon on port `9135`.

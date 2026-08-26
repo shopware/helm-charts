@@ -1,0 +1,54 @@
+{{ if eq (include "tidewaysCredentialsRef" .) "true" }}
+{{ if hasKey .Values.store "tideways" }}
+{{ if .Values.store.tideways.enabled | default false }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shopware-tideways
+  namespace: '{{ .Release.Namespace }}'
+  labels:
+    app: tideways
+spec:
+  replicas: 1
+  selector:
+      matchLabels:
+        app: tideways
+  template:
+      metadata:
+        labels:
+          app: tideways
+      spec:
+        containers:
+        - name: tideways
+          image: {{ .Values.tideways.image | default "tideways/daemon:latest" | quote }}
+          args:
+          - --address=0.0.0.0:{{ .Values.tideways.port | default 9135 }}
+          {{- with .Values.tideways.environment }}
+          - --env={{ . }}
+          {{- end }}
+          ports:
+          - containerPort: {{ .Values.tideways.port | default 9135 }}
+          resources:
+            {{- with .Values.tideways.resources }}
+                {{- toYaml . | nindent 12 }}
+            {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "getTidewaysServiceName" . }}
+  namespace: '{{ .Release.Namespace }}'
+  annotations:
+    sidecar.istio.io/inject: "false"
+spec:
+  selector:
+    app: tideways
+  ports:
+    - protocol: TCP
+      port: {{ .Values.tideways.port | default 9135 }}
+      targetPort: {{ .Values.tideways.port | default 9135 }}
+      appProtocol: tcp
+{{ end }}
+{{ end }}
+{{ end }}

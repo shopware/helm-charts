@@ -140,8 +140,17 @@ store:
   #   host: blackfire
   #   port: 8307
 
-  # If you want to use tracing with otel make sure to disable blackfire.
-  # It is not possible to use both.
+  # tideways:
+  #   enabled: false
+  #   host: tideways
+  #   port: 9135
+  #   service: shopware
+  #   apiKeyRef:
+  #     name: tideways-credentials
+  #     key: api-key
+
+  # If you want to use tracing with otel make sure to disable blackfire and tideways.
+  # It is not possible to use both. Blackfire and tideways cannot be combined either.
   # otel:
   #   enabled: false
   #   exporterEndpoint: http://opentelemetry-collector.opentelemetry-collector.svc.cluster.local:4317
@@ -576,6 +585,22 @@ redisworker:
 #     key: server-token
 #   image: blackfire/blackfire:2
 #   port: 8307
+#   resources:
+#     requests:
+#       memory: 100Mi
+#       cpu: 100m
+#     limits:
+#       memory: 100Mi
+#       cpu: 100m
+
+# tideways:
+#   apiKeyRef:
+#     name: tideways-credentials
+#     key: api-key
+#   image: tideways/daemon:latest
+#   port: 9135
+#   service: shopware
+#   environment: production
 #   resources:
 #     requests:
 #       memory: 100Mi
