@@ -346,9 +346,33 @@ spec:
       {{- end }}
     {{- end }}
 
-    {{- with .Values.store.container.extraContainers }}
+    {{- if or .Values.store.container.extraContainers (and (hasKey .Values.store "fpm") (ne (default "" .Values.store.fpm.processManagement) "frankenphp") (ne (default "" .Values.store.fpm.processManagement) "dynamic")) }}
     extraContainers:
-      {{- toYaml . | nindent 8 }}
+      {{- with .Values.store.container.extraContainers }}
+          {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if hasKey .Values.store "fpm" }}
+      {{- if and (ne .Values.store.fpm.processManagement "dynamic") (ne .Values.store.fpm.processManagement "frankenphp") }}
+      - name: php-fpm-exporter
+        env:
+        - name: PHP_FPM_SCRAPE_URI
+          value: {{ .Values.store.fpm.scrapeURI | default "tcp://127.0.0.1:9000/status" }}
+        image: hipages/php-fpm_exporter
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9253
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 30m
+            memory: 32Mi
+          requests:
+            cpu: 10m
+            memory: 10Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      {{- end }}
+      {{- end }}
     {{- end }}
 
     resources:
