@@ -10,7 +10,6 @@
 
 This Helm chart can be installed locally or within an existing Kubernetes cluster, using tools like ArgoCD.
 This guide focuses on a simple local installation to help you get started.
-For advanced configurations, please refer to the [Istio example](examples/values_istio.yaml).
 
 This Helm chart installs the Percona Operator along with a MySQL database and RustFS for S3-compatible object storage.
 For more information on Percona, visit [Percona's website](https://www.percona.com/).
@@ -64,19 +63,23 @@ kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/re
 RustFS is automatically installed as part of the Shopware chart and provides S3-compatible object storage.
 
 **Default Credentials:**
+
 - Access Key: `rustfsadmin`
 - Secret Key: `rustfsadmin`
 
 **Access URLs:**
-- S3 API: https://s3.traefik.me
-- Console UI: https://s3-console.traefik.me
+
+- S3 API: <https://s3.traefik.me>
+- Console UI: <https://s3-console.traefik.me>
 
 **Buckets:**
+
 - `shopware-private` - Private files (automatic)
 - `shopware-public` - Public assets (automatic, read-only access)
 
 **Customizing Credentials:**
 Set in `values.yaml`:
+
 ```yaml
 rustfs:
   secret:
@@ -251,35 +254,12 @@ This configuration will download the required certificates, create a Kubernetes 
 > [!WARNING]
 > This configuration is not recommended for use in a production environment, as it does not provide secure traffic for your shop.
 
-## Installation With Istio
-
-For a more complex setup with additional prerequisites, you can install this Helm chart with Istio support:
-
-```sh
-kubectl create namespace shopware
-kubectl label namespace shopware istio-injection=enabled
-
-# Step 1: Install CRDs first
-helm template shopware/operator --set crds.installOnly=true | kubectl apply --server-side -f -
-
-# Step 2: Install the operator
-helm template op shopware/operator --namespace shopware --create-namespace --set crds.installOnly=false --set crds.install=false | kubectl apply -f -
-
-# Step 3: Install Shopware with Istio configuration
-helm install my-shop shopware/shopware --namespace shopware --values examples/values_istio.yaml
-```
-
-> [!NOTE]
-> This process does not include the installation or configuration of Istio itself.
-> It assumes that Istio is already set up and configured in your environment.
-
-# Information
-
 ### Operator
 
 As the operator is still in beta, we advise against using it at the cluster level.
 
 The operator installation requires a two-step process:
+
 1. **Install CRDs first**: Custom Resource Definitions (CRDs) must be installed separately using server-side apply to ensure proper resource management
 2. **Install the operator**: After CRDs are in place, the operator itself can be installed
 
@@ -293,18 +273,21 @@ Docker images and override the default image in the Helm chart using a values fi
 ### RustFS S3 Storage
 
 **Default Setup:**
+
 - **Mode**: Standalone (1 pod)
 - **Storage Class**: `standard`
 - **Credentials**: `rustfsadmin` / `rustfsadmin`
-- **S3 API**: https://s3.traefik.me (port 9000)
-- **Console**: https://s3-console.traefik.me (port 9001)
+- **S3 API**: <https://s3.traefik.me> (port 9000)
+- **Console**: <https://s3-console.traefik.me> (port 9001)
 
 **Important:**
+
 - Buckets (`shopware-private`, `shopware-public`) are created automatically
 - Internal cluster communication uses: `http://<release>-rustfs-svc.<namespace>.svc.cluster.local:9000`
 - Public CDN URL: `https://s3.traefik.me/shopware-public`
 
 **Switching to AWS S3:**
+
 ```yaml
 rustfs:
   enabled: false
@@ -354,6 +337,7 @@ kubectl -n <namespace> create secret generic blackfire-credentials \
 Both references carry their own `name` and `key`, so the two values may live in separate Secrets if needed.
 
 **Optional values:**
+
 - `blackfire.image` — agent image, defaults to `blackfire/blackfire:2`
 - `blackfire.port` — agent port, defaults to `8307`
 - `blackfire.resources` — resource requests and limits for the agent container
