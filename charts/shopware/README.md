@@ -58,36 +58,6 @@ kind create cluster --config kind-config.yaml
 kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/standard-install.yaml
 ```
 
-### RustFS for S3-Compatible Storage
-
-RustFS is automatically installed as part of the Shopware chart and provides S3-compatible object storage.
-
-**Default Credentials:**
-
-- Access Key: `rustfsadmin`
-- Secret Key: `rustfsadmin`
-
-**Access URLs:**
-
-- S3 API: <https://s3.traefik.me>
-- Console UI: <https://s3-console.traefik.me>
-
-**Buckets:**
-
-- `shopware-private` - Private files (automatic)
-- `shopware-public` - Public assets (automatic, read-only access)
-
-**Customizing Credentials:**
-Set in `values.yaml`:
-
-```yaml
-rustfs:
-  secret:
-    rustfs:
-      access_key: your-access-key
-      secret_key: your-secret-key
-```
-
 ### Install Ingress in Kind
 
 Ingress is a Kubernetes resource that manages external access to services in a cluster, providing load balancing, SSL termination, and name-based virtual hosting.
@@ -272,6 +242,18 @@ Docker images and override the default image in the Helm chart using a values fi
 
 ### RustFS S3 Storage
 
+RustFS is automatically installed as part of the Shopware chart and provides S3-compatible object storage.
+
+**Default Credentials:**
+
+- Access Key: `rustfsadmin`
+- Secret Key: `rustfsadmin`
+
+**Access URLs:**
+
+- S3 API: <https://s3.traefik.me>
+- Console UI: <https://s3-console.traefik.me>
+
 **Default Setup:**
 
 - **Mode**: Standalone (1 pod)
@@ -304,6 +286,17 @@ store:
     secretAccessKeyRef:
       name: aws-credentials
       key: secret_key
+```
+
+**Customizing Credentials:**
+Set in `values.yaml`:
+
+```yaml
+rustfs:
+  secret:
+    rustfs:
+      access_key: your-access-key
+      secret_key: your-secret-key
 ```
 
 ### Blackfire
