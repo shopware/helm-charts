@@ -21,7 +21,7 @@ spec:
       spec:
         containers:
         - name: tideways
-          image: {{ .Values.tideways.image | default "tideways/daemon:latest" | quote }}
+          image: {{ .Values.tideways.image | default "ghcr.io/tideways/daemon" | quote }}
           args:
           - --address=0.0.0.0:{{ .Values.tideways.port | default 9135 }}
           {{- with .Values.tideways.environment }}
