@@ -40,7 +40,9 @@ spec:
     {{- end }}
     volumeSpec:
       persistentVolumeClaim:
-        storageClassName: {{ .Values.percona.database.storageClassName | default "standard" }}
+        {{- with .Values.percona.database.storageClassName }}
+        storageClassName: {{ . | quote }}
+        {{- end }}
         resources:
           requests:
             storage: {{ .Values.percona.database.storageSize | default "8Gi" | quote }}
@@ -84,7 +86,9 @@ spec:
 
     volumeSpec:
       persistentVolumeClaim:
-        storageClassName: {{ .Values.percona.proxy.storageClassName | default "" | quote}}
+        {{- with .Values.percona.proxy.storageClassName }}
+        storageClassName: {{ . | quote }}
+        {{- end }}
         resources:
           requests:
             storage: {{ .Values.percona.proxy.storageSize | default "10G" | quote }}
