@@ -52,36 +52,6 @@ dependencies:
     repository: oci://registry-1.docker.io/bitnamicharts
     condition: valkeyworker.enabled
 
-  - name: redis
-    alias: redisapp
-    version: 19.1.2
-    repository: oci://registry-1.docker.io/bitnamicharts
-    condition: redisapp.enabled
-
-  - name: redis
-    alias: redissession
-    version: 19.1.2
-    repository: oci://registry-1.docker.io/bitnamicharts
-    condition: redissession.enabled
-
-  - name: redis
-    alias: redisworker
-    version: 19.1.2
-    repository: oci://registry-1.docker.io/bitnamicharts
-    condition: redisworker.enabled
-
-  - name: grafana
-    alias: grafana
-    version: 8.5.0
-    repository: https://grafana.github.io/helm-charts
-    condition: grafana.enabled
-
-  - name: prometheus
-    alias: prometheus
-    version: 25.24.1
-    repository: https://prometheus-community.github.io/helm-charts
-    condition: prometheus.enabled
-
   - name: opentelemetry-collector
     alias: otel-collector
     version: 0.108.0

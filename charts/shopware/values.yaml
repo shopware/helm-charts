@@ -58,10 +58,6 @@ percona:
 serviceAccountAnnotations: {}
 
 store:
-  # DEPRECATED, please use appURLHost in the network settings. With the next miner version this setting will be gone.
-  # The host will overwrite the network.appURLHost. Check appURLHost for more information.
-  # host: localhost.traefik.me
-
   # annotations:
   # labels:
 
@@ -502,54 +498,6 @@ valkeyworker:
   auth:
     enabled: false
 
-redisapp:
-  enabled: false
-  # architecture: standalone
-  # replica:
-  #   replicaCount: 1
-  # master:
-  #   resources:
-  #     requests:
-  #       memory: 500Mi
-  #       cpu: 1000m
-  #     limits:
-  #       memory: 1Gi
-  #       cpu: 1000m
-  # auth:
-  #   enabled: false
-
-redissession:
-  enabled: false
-  # architecture: standalone
-  # replica:
-  #   replicaCount: 1
-  # master:
-  #   resources:
-  #     requests:
-  #       memory: 500Mi
-  #       cpu: 1000m
-  #     limits:
-  #       memory: 1Gi
-  #       cpu: 1000m
-  # auth:
-  #   enabled: false
-
-redisworker:
-  enabled: false
-  # architecture: standalone
-  # replica:
-  #   replicaCount: 1
-  # master:
-  #   resources:
-  #     requests:
-  #       memory: 500Mi
-  #       cpu: 1000m
-  #     limits:
-  #       memory: 1Gi
-  #       cpu: 2000m
-  # auth:
-  #   enabled: false
-
 # blackfire:
 #   serverIDRef:
 #     name: blackfire-credentials
@@ -566,14 +514,6 @@ redisworker:
 #     limits:
 #       memory: 100Mi
 #       cpu: 100m
-
-# This controls the Shopware operator helm chart which can be found here:
-# DEPRECATED: This has moved because the seperated crd installation.
-# shopware-operator:
-#   # Disabling makes sense if you want to test the Operator itself
-#   enabled: true
-#   crds:
-#     install: true
 
 otel-collector:
   enabled: false
@@ -679,21 +619,6 @@ otel-collector:
       servicePort: 8888
       protocol: TCP
 
-prometheus:
-  enabled: false
-  prometheus-node-exporter:
-    enabled: false
-  alertmanager:
-    enabled: false
-  kube-state-metrics:
-    enabled: false
-  # This configuration excludes Prometheus from scraping the Kubernetes API.
-  # To collect additional metrics beyond those provided by Shopware, either uncomment this section or apply a different configuration.
-  rbac:
-    create: true
-  server:
-    configMapOverrideName: "prometheus-config"
-    releaseNamespace: true
 # additional kubernetes objects
 # extraObjects:
 #   - apiVersion: v1
