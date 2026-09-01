@@ -133,10 +133,10 @@ spec:
     processManagement: "dynamic"
     {{- end }}
 
+  {{- with .Values.store.horizontalPodAutoscaler }}
   horizontalPodAutoscaler:
-    {{- with .Values.store.horizontalPodAutoscaler }}
-      {{- toYaml . | nindent 4 }}
-    {{- end }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 
   {{- if hasKey .Values.store "setupScript" }}
   setupScript: {{ .Values.store.setupScript | toYaml | indent 2 }}
@@ -206,15 +206,15 @@ spec:
     ingressClassName: {{ .Values.store.network.ingressClassName | default "" }}
 
     {{- if hasKey .Values.store.network "annotations" }}
+    {{- with .Values.store.network.annotations }}
     ingressAnnotations:
-      {{- with .Values.store.network.annotations }}
-        {{- toYaml . | nindent 6 }}
-      {{- end }}
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
     {{- else }}
+    {{- with .Values.store.network.ingressAnnotations }}
     ingressAnnotations:
-      {{- with .Values.store.network.ingressAnnotations }}
-        {{- toYaml . | nindent 6 }}
-      {{- end }}
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
     {{- end }}
     {{- with .Values.store.network.ingressLabels }}
     ingressLabels:
@@ -351,10 +351,10 @@ spec:
       {{- toYaml . | nindent 8 }}
     {{- end }}
 
+    {{- with .Values.store.container.resources }}
     resources:
-      {{- with .Values.store.container.resources }}
-          {{- toYaml . | nindent 6 }}
-      {{- end }}
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
     {{- with .Values.store.container.extraEnvs }}
     extraEnvs:
       {{- toYaml . | nindent 6 }}
