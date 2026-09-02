@@ -47,7 +47,7 @@ spec:
     {{- if .Values.valkeysessionSentinel.enabled }}
     adapter: redis
     redisDsn: 'redis:?host[{{ .Values.valkeysessionSentinel.host }}:{{ .Values.valkeysessionSentinel.port | default 26379 }}]&redis_sentinel=mymaster&dbindex={{ .Values.valkeysessionSentinel.dbindex | default 0 }}'
-    {{- else if or .Values.valkeysession.enabled .Values.redissession.enabled }}
+    {{- else if .Values.valkeysession.enabled }}
     adapter: redis
     redisHost: {{ template "getSessionCacheMasterService" . }}
     {{- else }}
@@ -59,7 +59,7 @@ spec:
     {{- if .Values.valkeysessionSentinel.enabled }}
     adapter: redis
     redisDsn: 'redis:?host[{{ .Values.valkeysessionSentinel.host }}:{{ .Values.valkeysessionSentinel.port | default 26379 }}]&redis_sentinel=mymaster&dbindex={{ .Values.valkeysessionSentinel.dbindex | default 0 }}'
-    {{- else if or .Values.valkeysession.enabled .Values.redissession.enabled }}
+    {{- else if .Values.valkeysession.enabled }}
     adapter: redis
     redisHost: {{ template "getSessionCacheMasterService" . }}
     {{- else }}
@@ -67,7 +67,7 @@ spec:
     {{- end }}
 
   appCache:
-    {{- if or .Values.valkeyapp.enabled .Values.redisapp.enabled }}
+    {{- if .Values.valkeyapp.enabled }}
     adapter: redis
     redisHost: {{ template "getAppCacheMasterService" . }}
     {{- else }}
@@ -78,7 +78,7 @@ spec:
     {{- if .Values.valkeyworkerSentinel.enabled }}
     adapter: redis
     redisDsn: 'redis:?host[{{ .Values.valkeyworkerSentinel.host }}:{{ .Values.valkeyworkerSentinel.port | default 26379 }}]&redis_sentinel=mymaster&dbindex={{ .Values.valkeyworkerSentinel.dbindex | default 0 }}'
-    {{- else if or .Values.valkeyworker.enabled .Values.redisworker.enabled}}
+    {{- else if .Values.valkeyworker.enabled }}
     adapter: redis
     redisHost: {{ template "getWorkerMasterService" . }}
     {{- else }}
@@ -133,10 +133,10 @@ spec:
     processManagement: "dynamic"
     {{- end }}
 
+  {{- with .Values.store.horizontalPodAutoscaler }}
   horizontalPodAutoscaler:
-    {{- with .Values.store.horizontalPodAutoscaler }}
-      {{- toYaml . | nindent 4 }}
-    {{- end }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 
   {{- if hasKey .Values.store "setupScript" }}
   setupScript: {{ .Values.store.setupScript | toYaml | indent 2 }}
@@ -206,15 +206,15 @@ spec:
     ingressClassName: {{ .Values.store.network.ingressClassName | default "" }}
 
     {{- if hasKey .Values.store.network "annotations" }}
+    {{- with .Values.store.network.annotations }}
     ingressAnnotations:
-      {{- with .Values.store.network.annotations }}
-        {{- toYaml . | nindent 6 }}
-      {{- end }}
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
     {{- else }}
+    {{- with .Values.store.network.ingressAnnotations }}
     ingressAnnotations:
-      {{- with .Values.store.network.ingressAnnotations }}
-        {{- toYaml . | nindent 6 }}
-      {{- end }}
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
     {{- end }}
     {{- with .Values.store.network.ingressLabels }}
     ingressLabels:
@@ -351,10 +351,10 @@ spec:
       {{- toYaml . | nindent 8 }}
     {{- end }}
 
+    {{- with .Values.store.container.resources }}
     resources:
-      {{- with .Values.store.container.resources }}
-          {{- toYaml . | nindent 6 }}
-      {{- end }}
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
     {{- with .Values.store.container.extraEnvs }}
     extraEnvs:
       {{- toYaml . | nindent 6 }}

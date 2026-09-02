@@ -15,18 +15,18 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 2.0.1
+version: 3.0.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
-appVersion: "2.0.1"
+appVersion: "3.0.0"
 
 dependencies:
   - name: pxc-operator
     condition: percona.enabled
-    version: 1.14.0
+    version: 1.20.0
     repository: https://percona.github.io/percona-helm-charts/
 
   - name: rustfs
@@ -51,36 +51,6 @@ dependencies:
     version: 1.0.1
     repository: oci://registry-1.docker.io/bitnamicharts
     condition: valkeyworker.enabled
-
-  - name: redis
-    alias: redisapp
-    version: 19.1.2
-    repository: oci://registry-1.docker.io/bitnamicharts
-    condition: redisapp.enabled
-
-  - name: redis
-    alias: redissession
-    version: 19.1.2
-    repository: oci://registry-1.docker.io/bitnamicharts
-    condition: redissession.enabled
-
-  - name: redis
-    alias: redisworker
-    version: 19.1.2
-    repository: oci://registry-1.docker.io/bitnamicharts
-    condition: redisworker.enabled
-
-  - name: grafana
-    alias: grafana
-    version: 8.5.0
-    repository: https://grafana.github.io/helm-charts
-    condition: grafana.enabled
-
-  - name: prometheus
-    alias: prometheus
-    version: 25.24.1
-    repository: https://prometheus-community.github.io/helm-charts
-    condition: prometheus.enabled
 
   - name: opentelemetry-collector
     alias: otel-collector

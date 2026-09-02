@@ -1,7 +1,7 @@
 dependencies:
 - name: pxc-operator
   repository: https://percona.github.io/percona-helm-charts/
-  version: 1.14.0
+  version: 1.20.0
 - name: rustfs
   repository: https://rustfs.github.io/helm
   version: 0.0.73
@@ -14,23 +14,8 @@ dependencies:
 - name: valkey
   repository: oci://registry-1.docker.io/bitnamicharts
   version: 1.0.1
-- name: redis
-  repository: oci://registry-1.docker.io/bitnamicharts
-  version: 19.1.2
-- name: redis
-  repository: oci://registry-1.docker.io/bitnamicharts
-  version: 19.1.2
-- name: redis
-  repository: oci://registry-1.docker.io/bitnamicharts
-  version: 19.1.2
-- name: grafana
-  repository: https://grafana.github.io/helm-charts
-  version: 8.5.0
-- name: prometheus
-  repository: https://prometheus-community.github.io/helm-charts
-  version: 25.24.1
 - name: opentelemetry-collector
   repository: https://open-telemetry.github.io/opentelemetry-helm-charts
   version: 0.108.0
-digest: sha256:3f56477e18ff648a3265b867a1366417c138c279c9f171271f9a0f5e392c0db1
-generated: "2025-12-16T09:53:35.716552+01:00"
+digest: sha256:f1014cf92bf94b4c53b33e1e4ac34bd5832580c40190d145e4875a4b1a479637
+generated: "2026-09-02T09:28:27.407498624+02:00"
