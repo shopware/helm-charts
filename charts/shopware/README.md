@@ -38,7 +38,7 @@ If you have an existing cluster make sure the prerequisites are installed and go
 
 ### Prerequisites
 
-- [Kind 0.23.0+](https://kind.sigs.k8s.io/docs/user/quick-start)
+- [Kind 0.32.0+](https://kind.sigs.k8s.io/docs/user/quick-start)
 - [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 - [Helm v3](https://helm.sh/docs/intro/install/)
 
@@ -55,7 +55,7 @@ To properly set up the network configuration, we provide a baseline [config](kin
 kind create cluster --config kind-config.yaml
 
 # Install Gateway API CRDs
-kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/standard-install.yaml
+kubectl apply --server-side -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.6.1/standard-install.yaml
 ```
 
 ### Install Ingress in Kind
@@ -76,30 +76,6 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main
 >  --selector=app.kubernetes.io/component=controller \
 >  --timeout=90s
 > ```
-
-### ImagePullSecrets
-
-This is only required if your Docker image is not locally available and is behind authentication.
-To pull your image from GitHub, create a `docker-registry` secret.
-Alternatively, you can avoid this step by pulling your image into your local Docker registry or [building](#Usage#Create Docker Image) it locally.
-
-For instructions on loading images into the Kind cluster, see [Loading an Image into Your Cluster](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster).
-
-To create the secret for GitHub, use:
-
-```sh
-kubectl create secret docker-registry regcred --docker-server=ghcr.io --docker-username=<your-username> \
-  --docker-password=<your-package-read-token> --docker-email=<your-email> --namespace <your-namespace>
-```
-
-To use image pull secrets, update the values in this Helm chart as follows:
-
-```sh
-store:
-  container:
-    imagePullSecrets:
-      - name: <secret-name>
-```
 
 ### Load local Images into your cluster
 
@@ -128,73 +104,98 @@ For a minimal installation, run:
 
 ```sh
 helm repo add shopware https://shopware.github.io/helm-charts/
-
-# Step 1: Create the namespace
-kubectl create namespace shopware
-
-# Step 2: Install CRDs first
-helm template shopware/operator --set crds.installOnly=true | kubectl apply --server-side -f -
-
-# Step 3: Install the operator
-helm template op shopware/operator --namespace shopware --create-namespace --set crds.installOnly=false --set crds.install=false | kubectl apply -f -
-
-# Step 4: Install Shopware
-helm install my-shop shopware/shopware --namespace shopware
+helm install operator shopware/operator --namespace shopware --create-namespace
+helm install my-shop shopware/shopware --namespace shopware --create-namespace
 ```
 
 If you want to use your own image use:
 
 ```sh
 helm repo add shopware https://shopware.github.io/helm-charts/
-
-# Step 1: Install CRDs first
-helm template shopware/operator --set crds.installOnly=true | kubectl apply --server-side -f -
-
-# Step 2: Install the operator
-helm template op shopware/operator --namespace shopware --create-namespace --set crds.installOnly=false --set crds.install=false | kubectl apply -f -
-
-# Step 3: Install Shopware with custom image
-helm install my-shop shopware/shopware --namespace shopware --set store.container.image=<image-name>
+helm install operator shopware/operator --namespace shopware --create-namespace
+helm install my-shop shopware/shopware --namespace shopware --create-namespace --set store.container.image=<image-name>
 ```
 
 > [!WARNING]
 > While a default image is provided with this Helm chart, it is recommended that you do not use it. Instead,
 > [create your own custom Docker images](#create-docker-image) and override the default image in the Helm chart.
 
+After applying the Helm chart, you can monitor the status of the store resource using:
+
+```sh
+kubectl get stores -n shopware --watch
+```
+
 > [!NOTE]
-> The RustFS storage and database setup may take a few seconds.
+> The RustFS storage and database setup may take a few seconds, that's why you can run into setup errors.
 
 Once the setup job in your cluster is complete and your store is in the ready state, you can access the shop at <https://localhost.traefik.me/>
 If needed, you can modify the domain by updating the values.yaml file.
 
-### Create Docker image
+### Create Docker image shopware-cli
 
-To create a new Shopware project, execute the following command:
-
-```sh
-composer create-project shopware/production test
-```
-
-Including the Docker configuration at this stage is optional; it will be added in the next step.
-
-Next, navigate to your project directory and configure Shopware to use the appropriate environment variables
-by installing the necessary Shopware packages:
+For shopware running in a docker container we have a new way of supporting this.
+You can find the starting documentation in our [docs](https://developer.shopware.com/docs/guides/hosting/installation-updates/docker.html).
 
 ```sh
+shopware-cli project create test -n --docker --version 6.7.13.1
 cd test
-composer require shopware/k8s-meta shopware/docker
+composer require shopware/k8s-meta --ignore-platform-reqs
 ```
 
-After completing the configuration, build the Docker image:
+Currently we also need to update the Dockerfile manually, make sure that
+you use `-otel` for the base-image and add the extension enabled to your line.
 
 ```sh
-docker build -t test -f docker/Dockerfile .
+printf '%s' '#syntax=docker/dockerfile:1.4
+ARG PHP_VERSION=8.4
+# We use otel in kubernetes so make sure we set this also in this image.
+FROM ghcr.io/shopware/docker-base:$PHP_VERSION-caddy-otel AS base-image
+FROM ghcr.io/shopware/shopware-cli:latest-php-$PHP_VERSION AS shopware-cli
+
+FROM shopware-cli AS build
+ 
+# We need open telemetry for the build process, so we need to enable it here.
+RUN docker-php-ext-enable opentelemetry
+
+ADD . /src
+WORKDIR /src
+
+RUN /usr/local/bin/entrypoint.sh shopware-cli project ci /src
+
+FROM base-image AS final
+
+COPY --from=build --chown=82 --link /src /var/www/html
+' > Dockerfile
 ```
 
-Finally, load the image into your container registry for the cluster. If you're using Kind, use the following command:
+After adding the Dockerfile create two tagged versions for the repository like this:
 
 ```sh
-kind load docker-image test
+docker build -t test:v1 -f Dockerfile .
+docker build -t test:v2 -f Dockerfile .
+```
+
+Then, load the images into your container registry for the cluster. If you're using Kind, use the following command:
+
+```sh
+kind load docker-image test:v1
+kind load docker-image test:v2
+```
+
+Finally, patch the current installation or install it from base and patch the `values.yaml` file with the docker image:
+
+```sh
+helm upgrade my-shop shopware/shopware --namespace shopware --set store.container.image=test:v1
+kubectl get stores -n shopware --watch
+```
+
+If you now patch the image again you can see a migration happening in the shopware-operator. Image updates with a new different image
+always triggers a new update and a migration job to happen. This will then use the deployment-helper under the hood.
+
+```sh
+helm upgrade my-shop shopware/shopware --namespace shopware --set store.container.image=test:v2
+kubectl get stores -n shopware --watch
 ```
 
 ### TLS with Nginx controller
@@ -228,12 +229,18 @@ This configuration will download the required certificates, create a Kubernetes 
 
 As the operator is still in beta, we advise against using it at the cluster level.
 
-The operator installation requires a two-step process:
+The operator chart renders its Custom Resource Definitions (CRDs) as regular templates, so `helm install` and `helm upgrade`
+install and update the CRDs together with the operator. No separate CRD installation step is required.
 
-1. **Install CRDs first**: Custom Resource Definitions (CRDs) must be installed separately using server-side apply to ensure proper resource management
-2. **Install the operator**: After CRDs are in place, the operator itself can be installed
+If you prefer to manage the CRD lifecycle yourself, you can still split the installation into two steps:
 
-This approach provides better control over CRD lifecycle management and prevents conflicts during upgrades.
+```sh
+# Step 1: Install only the CRDs
+helm template shopware/operator --set crds.installOnly=true | kubectl apply --server-side -f -
+
+# Step 2: Install the operator without CRDs
+helm install operator shopware/operator --namespace shopware --create-namespace --set crds.install=false
+```
 
 ### Shopware Image
 

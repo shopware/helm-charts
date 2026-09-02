@@ -4,12 +4,13 @@ percona:
   enabled: true
 
   # The version for Percona to use. This is also the image version for the percona-xtradb-cluster
-  version: 1.14.0
-  # Allows only one database and allows to overwrite the topologySpreadConstraints
-  allowUnsafeConfigurations: false
+  version: 1.20.0
+  # Allows only one database so it runs local in a small way
+  allowUnsafeConfigurations: true
 
   database:
-    version: "8.0"
+    #version: "8.0"
+    version: "8.4"
     # These are the default values for the data
     # size: 1
 
@@ -187,7 +188,7 @@ store:
     image: ghcr.io/shopware/shopware-kubernetes:latest
     # imagePullPolicy: IfNotPresent
     # restartPolicy: Always
-    # replicas: 2
+    replicas: 1
     # progressDeadlineSeconds: 30
     # topologySpreadConstraints:
     # affinity:
