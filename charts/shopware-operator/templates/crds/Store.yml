@@ -7266,8 +7266,8 @@ spec:
                           minLength: 1
                           type: string
                       required:
-                      - key
-                      - name
+                        - key
+                        - name
                       type: object
                     enabled:
                       default: false
