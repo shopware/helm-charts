@@ -27,6 +27,7 @@ jobs:
       - name: add repos for shopware helm chart
         run: |
           helm repo add percona https://percona.github.io/percona-helm-charts
+          helm repo add mariadb https://mariadb-operator.github.io/mariadb-operator
           helm repo add grafana https://grafana.github.io/helm-charts
           helm repo add prometheus https://prometheus-community.github.io/helm-charts
           helm repo add shopware https://shopware.github.io/helm-charts

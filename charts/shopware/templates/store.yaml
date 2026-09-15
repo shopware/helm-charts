@@ -185,6 +185,11 @@ spec:
     passwordSecretRef:
       name: {{ template "getPerconaSecrets" . }}
       key: root
+    {{- else if .Values.mariadb.enabled }}
+    host: {{ template "getMariaDBHost" . }}
+    passwordSecretRef:
+      name: {{ template "getMariaDBSecretName" . }}
+      key: password
     {{- else if hasKey .Values.store.database "host" }}
     host: {{ .Values.store.database.host }}
     passwordSecretRef:
@@ -201,7 +206,7 @@ spec:
         {{- toYaml . | nindent 6 }}
       {{- end }}
     {{- else }}
-    {{- fail "value for .Values.store.database must have host or hostRef when percona is disabled" }}
+    {{- fail "value for .Values.store.database must have host or hostRef when neither percona nor mariadb is enabled" }}
     {{- end }}
     user: {{ .Values.store.database.user }}
     version: {{ .Values.store.database.version | default "8" | quote }}

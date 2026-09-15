@@ -1,0 +1,47 @@
+{{ if hasKey .Values "mariadb" }}
+{{ if .Values.mariadb.enabled | default false }}
+{{- if .Values.percona.enabled }}
+{{- fail "enable only one of .Values.percona.enabled / .Values.mariadb.enabled" }}
+{{- end }}
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: MariaDB
+metadata:
+  name: {{ .Release.Name | quote }}
+  namespace: '{{ .Release.Namespace }}'
+spec:
+  image: "{{ .Values.mariadb.image.repository }}:{{ .Values.mariadb.image.tag }}"
+  port: {{ .Values.store.database.port | default 3306 }}
+  database: {{ .Values.store.database.name | default "shopware" | quote }}
+
+  # rootPasswordSecretKeyRef intentionally omitted: the operator defaults it to
+  # "<release>-root" / key "password" with generate:true, which is what
+  # getMariaDBSecretName in _helpers.tpl mirrors.
+
+  storage:
+    size: {{ .Values.mariadb.persistence.size | default "8Gi" | quote }}
+    {{- with .Values.mariadb.persistence.storageClassName }}
+    storageClassName: {{ . }}
+    {{- end }}
+
+  {{- with .Values.mariadb.resources }}
+  resources:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  {{- with .Values.mariadb.nodeSelector }}
+  nodeSelector:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  {{- with .Values.mariadb.affinity }}
+  affinity:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  # https://developer.shopware.com/docs/guides/hosting/performance/performance-tweaks.html
+  {{- with .Values.mariadb.config }}
+  myCnf: |
+    {{- . | nindent 4 }}
+  {{- end }}
+{{ end }}
+{{ end }}
