@@ -72,6 +72,56 @@ percona:
     # storageClassName:
     # storageSize: 10Gi
 
+mariadb:
+  # Alternative to Percona: a single-node MariaDB per application via mariadb-operator,
+  # with no Galera/replication overhead. Enable exactly one of percona.enabled / mariadb.enabled.
+  enabled: false
+
+  # Whether this chart should bundle its own mariadb-operator. Defaults to false: the
+  # Chart.yaml dependency condition is `mariadb.deployOperator` alone (not `mariadb.enabled`),
+  # so a default-true here would install a mariadb-operator on every release, including
+  # Percona-only ones. Standalone users with no pre-existing operator in the cluster must
+  # explicitly set this to true, and should also set mariadb-operator.crds.enabled to true
+  # (see below) so the operator has its CRDs registered. Leave both false if a
+  # mariadb-operator is already installed cluster-wide (e.g. by local-setup) - deploying
+  # a second one per store is redundant idle overhead, not a functional problem.
+  deployOperator: false
+
+  image:
+    repository: mariadb
+    tag: "12.3" # current MariaDB LTS
+
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 250m
+    limits:
+      memory: 1Gi
+      cpu: 1000m
+
+  persistence:
+    storageClassName: ""
+    size: 8Gi
+
+  # nodeSelector: {}
+  # affinity: {}
+
+  # https://developer.shopware.com/docs/guides/hosting/performance/performance-tweaks.html
+  config: |
+    [mariadb]
+    group_concat_max_len = 320000
+    character-set-server = utf8mb4
+    collation-server = utf8mb4_unicode_ci
+    sql_mode = ""
+    default-time-zone = +00:00
+
+mariadb-operator:
+  crds:
+    # Assumes an operator+CRDs already exist in the cluster (e.g. installed cluster-wide
+    # by local-setup). Standalone users with no pre-existing operator should set this true
+    # alongside mariadb.deployOperator=true, otherwise the operator has no CRDs to watch.
+    enabled: false
+
 serviceAccountAnnotations: {}
 
 store:
@@ -168,9 +218,9 @@ store:
     # name: 'shopware'
 
     # You need to set a host or a hostRef for the database to work. Otherwise the shopware Operator will
-    # return an error. Default is the host of percona if percona is enabled.
-    # If you don't want to use percona you need to specify the host or hostRef and the passwordSecretRef.
-    # This will be set automatically if you use percona.
+    # return an error. Default is the host of percona (or mariadb) if one of them is enabled.
+    # If you don't want to use percona or mariadb you need to specify the host or hostRef and the passwordSecretRef.
+    # This will be set automatically if you use percona or mariadb.
     #host: ""
     # hostRef:
     #   name: some-secret-name

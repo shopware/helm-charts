@@ -2,6 +2,9 @@ dependencies:
 - name: pxc-operator
   repository: https://percona.github.io/percona-helm-charts/
   version: 1.14.0
+- name: mariadb-operator
+  repository: https://mariadb-operator.github.io/mariadb-operator
+  version: 26.6.0
 - name: rustfs
   repository: https://rustfs.github.io/helm
   version: 0.0.73
@@ -32,5 +35,5 @@ dependencies:
 - name: opentelemetry-collector
   repository: https://open-telemetry.github.io/opentelemetry-helm-charts
   version: 0.108.0
-digest: sha256:3f56477e18ff648a3265b867a1366417c138c279c9f171271f9a0f5e392c0db1
-generated: "2025-12-16T09:53:35.716552+01:00"
+digest: sha256:911969527fd5cfd53c9e20c364c1aa0ce0c0193bca527811ac59c9141b49d1d2
+generated: "2026-09-03T15:51:12.889551777+02:00"
