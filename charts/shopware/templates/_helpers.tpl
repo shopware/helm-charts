@@ -83,6 +83,14 @@ secretAccessKeyRef:
 {{ "percona-secrets" }}
 {{- end -}}
 
+{{ define "getMariaDBHost" -}}
+{{- .Release.Name }}
+{{- end -}}
+
+{{ define "getMariaDBSecretName" -}}
+{{- printf "%s-root" .Release.Name }}
+{{- end -}}
+
 {{ define "getBlackfireServiceName" -}}
 {{ "blackfire" }}
 {{- end -}}
