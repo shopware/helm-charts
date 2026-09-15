@@ -53,6 +53,16 @@ entries:
     version: 0.1.0
   fastly-operator:
   - apiVersion: v2
+    appVersion: 1.11.0
+    created: "2026-09-15T11:31:44.350528718Z"
+    description: A Helm chart for shopware/fastly-operator
+    digest: d5c60854194ba0a24954240164ac81bb1500c1dd9522cbfb341fa7aaa7c519cc
+    name: fastly-operator
+    type: application
+    urls:
+    - https://github.com/shopware/helm-charts/releases/download/fastly-operator-1.11.0/fastly-operator-1.11.0.tgz
+    version: 1.11.0
+  - apiVersion: v2
     appVersion: 1.10.4
     created: "2026-08-17T12:52:48.418079447Z"
     description: A Helm chart for shopware/fastly-operator
@@ -5424,4 +5434,4 @@ entries:
     urls:
     - https://github.com/shopware/helm-charts/releases/download/shopware-0.0.3/shopware-0.0.3.tgz
     version: 0.0.3
-generated: "2026-09-15T11:18:55.320413028Z"
+generated: "2026-09-15T11:31:44.351170573Z"
