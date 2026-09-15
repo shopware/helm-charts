@@ -94,6 +94,10 @@ store:
   automountServiceAccountToken: false
 
   caddy:
+    # The PHP runtime mode for the Caddy web server.
+    # "php-fpm" (default): Traditional PHP-FPM with php_fastcgi directive
+    # "frankenphp": FrankenPHP with embedded PHP (uses `php` directive)
+    runtime: php-fpm
     # This is the read timeout for the caddy server. Default is 60s.
     readTimeout: 60s
     # This is the write timeout for the caddy server. Default is 60s.
