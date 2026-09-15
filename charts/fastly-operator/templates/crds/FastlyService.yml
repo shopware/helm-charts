@@ -229,6 +229,12 @@ spec:
                   type: string
                 state:
                   type: string
+                vclSnippetErrorHash:
+                  type: string
+                vclSnippetErrorMessage:
+                  type: string
+                vclSnippetState:
+                  type: string
                 vclSnippetsStatus:
                   additionalProperties:
                     properties:
@@ -236,12 +242,8 @@ spec:
                         type: string
                       errorMessage:
                         type: string
-                      main:
-                        type: boolean
                       state:
                         type: string
-                    required:
-                      - main
                     type: object
                   type: object
               type: object
