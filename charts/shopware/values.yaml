@@ -254,7 +254,7 @@ store:
   container:
     # This image is used for the setup job and the deployment. If you want to migrate to a new
     # version just update this and the operator makes sure to handle the migrations.
-    image: ghcr.io/shopware/shopware-kubernetes:latest
+    image: ghcr.io/shopware/shopware-kubernetes:6.7.13.1
     # imagePullPolicy: IfNotPresent
     # restartPolicy: Always
     replicas: 1
