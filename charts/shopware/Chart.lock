@@ -1,7 +1,7 @@
 dependencies:
 - name: pxc-operator
   repository: https://percona.github.io/percona-helm-charts/
-  version: 1.14.0
+  version: 1.20.0
 - name: mariadb-operator
   repository: https://mariadb-operator.github.io/mariadb-operator
   version: 26.6.0

@@ -1,16 +1,16 @@
 percona:
   # You can disable Percona and use your own database. Just modify the storage database
   # part in this file.
-  # TODO: Not tested yet, database part is not variable
   enabled: true
 
   # The version for Percona to use. This is also the image version for the percona-xtradb-cluster
-  version: 1.14.0
-  # Allows only one database and allows to overwrite the topologySpreadConstraints
+  version: 1.20.0
+  # Allows only one database so it runs local in a small way
   allowUnsafeConfigurations: true
 
   database:
-    version: "8.0"
+    #version: "8.0"
+    version: "8.4"
     # These are the default values for the data
     # size: 1
 
@@ -31,7 +31,7 @@ percona:
     # storageSize: 8Gi
 
     # We overwrite the topologySpreadConstraints for this to schedule only one database
-    topologySpreadConstraints:
+    # topologySpreadConstraints:
 
   # This is only useful if you want more performance since the sql-proxy is using connection-pooling.
   proxy:
