@@ -257,7 +257,7 @@ store:
     image: ghcr.io/shopware/shopware-kubernetes:latest
     # imagePullPolicy: IfNotPresent
     # restartPolicy: Always
-    # replicas: 2
+    replicas: 1
     # progressDeadlineSeconds: 30
     # topologySpreadConstraints:
     # affinity:
