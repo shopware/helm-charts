@@ -482,6 +482,14 @@ rustfs:
       nginx.ingress.kubernetes.io/session-cookie-name: rustfs
     # tls: []
 
+  # Post-install/upgrade job that creates the shopware-private and shopware-public
+  # buckets and sets the public read policy. Uses the AWS CLI against the RustFS S3 API.
+  # This is managed by the Shopware chart, not the rustfs subchart
+  bucketInit:
+    image:
+      repository: amazon/aws-cli
+      tag: 2.36.44
+
   # S3 API endpoint ingress (port 9000)
   # This is managed by the Shopware chart, not the rustfs subchart
   s3Ingress:
