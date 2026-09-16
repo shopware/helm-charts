@@ -104,6 +104,12 @@ spec:
     {{- else }}
     adapter: builtin
     {{- end }}
+    {{- if and (hasKey .Values.store "worker") .Values.store.worker.enableKedaScaling }}
+    enableKedaScaling: true
+    {{- with omit .Values.store.worker "enableKedaScaling" }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- end }}
 
   {{- if hasKey .Values.store "otel" }}
   {{- if hasKey .Values.store.otel "exporterEndpoint" }}

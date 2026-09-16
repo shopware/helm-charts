@@ -410,6 +410,29 @@ store:
   #   minReplicas: 1
   #   maxReplicas: 10
 
+  # Worker autoscaling with KEDA has to be enabled in two places: in the operator chart
+  # (keda.enabled together with metrics.enabled) and here for the store.
+  # - Disabled (default): the operator creates a single worker deployment that consumes all
+  #   queues with the replica count from store.container.replicas or
+  #   store.workerDeploymentContainer.replicas.
+  # - Enabled: the operator creates one worker deployment per queue and a KEDA ScaledObject for
+  #   each of them, scaling based on the queue length. The KEDA operator and its CRDs must be
+  #   installed in the cluster: https://keda.sh/docs/latest/deploy/
+  # The remaining fields only take effect with enableKedaScaling: true. They are commented out
+  # here, so the defaults of the Store resource are used.
+  worker:
+    enableKedaScaling: false
+    # MaxReplicas which are spawned per queue. Minimum 1.
+    # maxReplicas: 3
+    # MinReplicas which are spawned per queue. Minimum 0, so a queue can scale to zero.
+    # minReplicas: 0
+    # Seconds keda waits after the last trigger before scaling down to minReplicas. Minimum 0.
+    # cooldownPeriod: 30
+    # Seconds between keda queue length checks. Minimum 1.
+    # pollingInterval: 10
+    # Queue length per worker replica keda scales towards. Minimum 1.
+    # targetQueueLength: 100
+
   # You can overwrite the default store.container values for each deployment and job. This is useful if you want to
   # add labels or other values to the containers.
   # adminDeploymentContainer:
