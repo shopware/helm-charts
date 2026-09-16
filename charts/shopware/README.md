@@ -10,7 +10,6 @@
 
 This Helm chart can be installed locally or within an existing Kubernetes cluster, using tools like ArgoCD.
 This guide focuses on a simple local installation to help you get started.
-For advanced configurations, please refer to the [Istio example](examples/values_istio.yaml).
 
 This Helm chart installs the Percona Operator along with a MySQL database and RustFS for S3-compatible object storage.
 For more information on Percona, visit [Percona's website](https://www.percona.com/).
