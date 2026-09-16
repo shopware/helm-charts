@@ -38,7 +38,7 @@ If you have an existing cluster make sure the prerequisites are installed and go
 
 ### Prerequisites
 
-- [Kind 0.23.0+](https://kind.sigs.k8s.io/docs/user/quick-start)
+- [Kind 0.32.0+](https://kind.sigs.k8s.io/docs/user/quick-start)
 - [Kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 - [Helm v3](https://helm.sh/docs/intro/install/)
 
