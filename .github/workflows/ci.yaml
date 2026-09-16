@@ -66,8 +66,6 @@ jobs:
         run: |
           helm repo add percona https://percona.github.io/percona-helm-charts
           helm repo add mariadb https://mariadb-operator.github.io/mariadb-operator
-          helm repo add grafana https://grafana.github.io/helm-charts
-          helm repo add prometheus https://prometheus-community.github.io/helm-charts
           helm repo add opentelemetry https://open-telemetry.github.io/opentelemetry-helm-charts
           helm repo add rustfs https://rustfs.github.io/helm
           helm dependency build charts/shopware
@@ -127,8 +125,6 @@ jobs:
 
           helm repo add percona https://percona.github.io/percona-helm-charts
           helm repo add mariadb https://mariadb-operator.github.io/mariadb-operator
-          helm repo add grafana https://grafana.github.io/helm-charts
-          helm repo add prometheus https://prometheus-community.github.io/helm-charts
           helm repo add shopware https://shopware.github.io/helm-charts
           helm repo add opentelemetry https://open-telemetry.github.io/opentelemetry-helm-charts
           helm repo add rustfs https://rustfs.github.io/helm

@@ -17,23 +17,8 @@ dependencies:
 - name: valkey
   repository: oci://registry-1.docker.io/bitnamicharts
   version: 1.0.1
-- name: redis
-  repository: oci://registry-1.docker.io/bitnamicharts
-  version: 19.1.2
-- name: redis
-  repository: oci://registry-1.docker.io/bitnamicharts
-  version: 19.1.2
-- name: redis
-  repository: oci://registry-1.docker.io/bitnamicharts
-  version: 19.1.2
-- name: grafana
-  repository: https://grafana.github.io/helm-charts
-  version: 8.5.0
-- name: prometheus
-  repository: https://prometheus-community.github.io/helm-charts
-  version: 25.24.1
 - name: opentelemetry-collector
   repository: https://open-telemetry.github.io/opentelemetry-helm-charts
   version: 0.108.0
-digest: sha256:911969527fd5cfd53c9e20c364c1aa0ce0c0193bca527811ac59c9141b49d1d2
-generated: "2026-09-03T15:51:12.889551777+02:00"
+digest: sha256:455c706b88c5c16312752385172baa1440da3df6a048f022b1e39b43fa34a666
+generated: "2026-09-15T13:24:40.979195782+02:00"

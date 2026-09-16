@@ -568,54 +568,6 @@ valkeyworker:
   auth:
     enabled: false
 
-redisapp:
-  enabled: false
-  # architecture: standalone
-  # replica:
-  #   replicaCount: 1
-  # master:
-  #   resources:
-  #     requests:
-  #       memory: 500Mi
-  #       cpu: 1000m
-  #     limits:
-  #       memory: 1Gi
-  #       cpu: 1000m
-  # auth:
-  #   enabled: false
-
-redissession:
-  enabled: false
-  # architecture: standalone
-  # replica:
-  #   replicaCount: 1
-  # master:
-  #   resources:
-  #     requests:
-  #       memory: 500Mi
-  #       cpu: 1000m
-  #     limits:
-  #       memory: 1Gi
-  #       cpu: 1000m
-  # auth:
-  #   enabled: false
-
-redisworker:
-  enabled: false
-  # architecture: standalone
-  # replica:
-  #   replicaCount: 1
-  # master:
-  #   resources:
-  #     requests:
-  #       memory: 500Mi
-  #       cpu: 1000m
-  #     limits:
-  #       memory: 1Gi
-  #       cpu: 2000m
-  # auth:
-  #   enabled: false
-
 # blackfire:
 #   serverIDRef:
 #     name: blackfire-credentials
@@ -761,48 +713,6 @@ otel-collector:
       servicePort: 8888
       protocol: TCP
 
-grafana:
-  enabled: false
-  podAnnotations:
-    sidecar.istio.io/inject: "false"
-  datasources:
-    datasources.yaml:
-      apiVersion: 1
-      datasources:
-        - name: Prometheus
-          type: prometheus
-          uid: prometheus
-          url: http://{{ .Release.Name }}-prometheus-server.{{ .Release.Namespace }}.svc.cluster.local
-        - name: Loki
-          type: loki
-          url: http://loki-gateway.loki.svc.cluster.local
-          jsonData:
-            httpHeaderName1: "X-Scope-OrgID"
-          secureJsonData:
-            httpHeaderValue1: tenant-{{ .Release.Namespace }}
-        - name: Tempo
-          type: tempo
-          url: http://tempo.tempo.svc.cluster.local
-          jsonData:
-            httpHeaderName1: "X-Scope-OrgID"
-          secureJsonData:
-            httpHeaderValue1: tenant-{{ .Release.Namespace }}
-
-prometheus:
-  enabled: false
-  prometheus-node-exporter:
-    enabled: false
-  alertmanager:
-    enabled: false
-  kube-state-metrics:
-    enabled: false
-  # This configuration excludes Prometheus from scraping the Kubernetes API.
-  # To collect additional metrics beyond those provided by Shopware, either uncomment this section or apply a different configuration.
-  rbac:
-    create: true
-  server:
-    configMapOverrideName: "prometheus-config"
-    releaseNamespace: true
 # additional kubernetes objects
 # extraObjects:
 #   - apiVersion: v1
