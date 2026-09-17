@@ -130,7 +130,8 @@ jobs:
           helm repo add rustfs https://rustfs.github.io/helm
           helm dependency build charts/shopware
 
-          helm install op charts/shopware-operator --set webhook.enabled=true --set metrics.enabled=true
+          helm install op charts/shopware-operator --namespace test --set webhook.enabled=true --set metrics.enabled=true --wait
+          helm install template charts/shopware-operator --namespace test-template --set crds.install=false --set webhook.enabled=true --set metrics.enabled=true --wait
 
           tar -xOf charts/shopware/charts/pxc-operator-*.tgz pxc-operator/crds/crd.yaml | kubectl apply --server-side -f -
           for crd in \
@@ -182,7 +183,9 @@ jobs:
             sleep 5
           done
 
-          kubectl wait --namespace test store/test --for='jsonpath={.status.state}'=setup --timeout=1m
+          kubectl wait --namespace test store/test --for='jsonpath={.status.state}'=setup --timeout=1m || {
+            kubectl get store/test --namespace test -o json && exit 7
+          }
 
           sleep 10
 
