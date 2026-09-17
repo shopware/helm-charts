@@ -23,35 +23,60 @@ spec:
       restartPolicy: OnFailure
       containers:
       - name: create-buckets
-        image: minio/mc:latest
+        image: {{ .Values.rustfs.bucketInit.image.repository }}:{{ .Values.rustfs.bucketInit.image.tag }}
         command: ["sh", "-c"]
         args:
         - |
           set -e
+          aws configure set default.s3.addressing_style path
+
           echo "Waiting for RustFS to be ready..."
-          until mc alias set rustfs http://{{ .Release.Name }}-rustfs-svc.{{ .Release.Namespace }}.svc.cluster.local:9000 $RUSTFS_ACCESS_KEY $RUSTFS_SECRET_KEY; do
+          until aws s3api list-buckets > /dev/null 2>&1; do
             echo "RustFS not ready yet, waiting..."
             sleep 5
           done
 
-          echo "Creating shopware-private bucket..."
-          mc mb --ignore-existing rustfs/shopware-private
-
-          echo "Creating shopware-public bucket..."
-          mc mb --ignore-existing rustfs/shopware-public
+          for bucket in shopware-private shopware-public; do
+            if aws s3api head-bucket --bucket "$bucket" > /dev/null 2>&1; then
+              echo "Bucket $bucket already exists"
+            else
+              echo "Creating bucket $bucket..."
+              aws s3api create-bucket --bucket "$bucket"
+            fi
+          done
 
           echo "Setting public read policy on shopware-public bucket..."
-          mc anonymous set download rustfs/shopware-public
+          aws s3api put-bucket-policy --bucket shopware-public --policy '{
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Principal": {"AWS": ["*"]},
+                "Action": ["s3:GetBucketLocation", "s3:ListBucket"],
+                "Resource": ["arn:aws:s3:::shopware-public"]
+              },
+              {
+                "Effect": "Allow",
+                "Principal": {"AWS": ["*"]},
+                "Action": ["s3:GetObject"],
+                "Resource": ["arn:aws:s3:::shopware-public/*"]
+              }
+            ]
+          }'
 
           echo "Buckets created successfully!"
-          mc ls rustfs
+          aws s3api list-buckets
         env:
-        - name: RUSTFS_ACCESS_KEY
+        - name: AWS_ENDPOINT_URL
+          value: http://{{ .Release.Name }}-rustfs-svc.{{ .Release.Namespace }}.svc.cluster.local:9000
+        - name: AWS_DEFAULT_REGION
+          value: us-east-1
+        - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
               name: {{ .Release.Name }}-rustfs-secret
               key: RUSTFS_ACCESS_KEY
-        - name: RUSTFS_SECRET_KEY
+        - name: AWS_SECRET_ACCESS_KEY
           valueFrom:
             secretKeyRef:
               name: {{ .Release.Name }}-rustfs-secret
