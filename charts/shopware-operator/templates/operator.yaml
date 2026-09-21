@@ -85,6 +85,12 @@ rules:
 - apiGroups:
   - ""
   resources:
+  - pods/exec
+  verbs:
+  - create
+- apiGroups:
+  - ""
+  resources:
   - secrets
   verbs:
   - create
@@ -109,6 +115,7 @@ rules:
   - deployments
   verbs:
   - create
+  - delete
   - get
   - list
   - patch
@@ -138,6 +145,17 @@ rules:
   - gateway.networking.k8s.io
   resources:
   - httproutes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - watch
+- apiGroups:
+  - keda.sh
+  resources:
+  - scaledobjects
   verbs:
   - create
   - delete
