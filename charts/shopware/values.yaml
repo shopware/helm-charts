@@ -410,7 +410,10 @@ store:
   #   minReplicas: 1
   #   maxReplicas: 10
 
-  # Worker autoscaling with KEDA has to be enabled in two places: in the operator chart
+  # Worker autoscaling with KEDA requires shopware-operator 1.9.0 or newer. On older operator
+  # versions the Store CRD has no KEDA fields, so the API server prunes them and the settings
+  # below have no effect.
+  # KEDA has to be enabled in two places: in the operator chart
   # (keda.enabled together with metrics.enabled) and here for the store.
   # - Disabled (default): the operator creates a single worker deployment that consumes all
   #   queues with the replica count from store.container.replicas or

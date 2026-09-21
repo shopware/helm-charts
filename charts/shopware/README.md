@@ -32,6 +32,7 @@ However, you can modify the configuration to your needs.
 - [Helm v3](https://helm.sh/docs/intro/install/)
 - S3 based api ([More Details](https://developer.shopware.com/docs/guides/hosting/infrastructure/filesystem.html#amazon-s3))
 - Optional: [KEDA](https://keda.sh/) operator and CRDs, if you want the worker deployments to scale on queue length ([More Details](#worker-autoscaling-with-keda))
+- Optional: [cert-manager](https://cert-manager.io/), if you want to enable the validating webhook of the operator ([More Details](#operator))
 
 If you have an existing cluster make sure the prerequisites are installed and go directly to [Usage](#usage).
 
@@ -228,165 +229,54 @@ This configuration will download the required certificates, create a Kubernetes 
 
 ### Operator
 
-The Operator is not designed to be used on a cluster level. Each namespace should have its own operator installation. The operator is responsible for managing the lifecycle of Shopware stores, including creating and updating deployments, services, and other resources.
+The Operator is not designed to be used on a cluster level. Each namespace should have its own operator
+installation. The operator is responsible for managing the lifecycle of Shopware stores, including creating
+and updating deployments, services, and other resources. It is installed with the operator chart, see
+[Minimal Installation](#minimal-installation).
 
-The operator chart renders its Custom Resource Definitions (CRDs) as regular templates, so `helm install` and `helm upgrade`
-install and update the CRDs together with the operator. No separate CRD installation step is required.
+The operator chart renders its Custom Resource Definitions (CRDs) as regular templates, so `helm install`
+and `helm upgrade` install and update the CRDs together with the operator. No separate CRD installation
+step is required.
 
-If you prefer to manage the CRD lifecycle yourself, you can still split the installation into two steps:
+Optional features are disabled by default and have to be activated in the operator chart:
 
-```sh
-# Step 1: Install only the CRDs
-helm install shopware-crds shopware/operator --set crds.installOnly=true
+- `metrics.enabled=true` exposes an HTTP endpoint with store metrics and the queue length API. A
+  `ServiceMonitor` for Prometheus can be enabled on top of it.
+- `webhook.enabled=true` installs a `ValidatingWebhookConfiguration` that validates the schemaless
+  container override fields of a `Store` on create and update. This requires cert-manager in the cluster.
+- `keda.enabled=true` lets the operator manage [KEDA](https://keda.sh/) resources for the worker
+  deployments, see [Worker autoscaling with KEDA](#worker-autoscaling-with-keda). This requires the KEDA
+  CRDs and `metrics.enabled=true`.
 
-# Step 2: Install the operator without CRDs
-helm install operator shopware/operator --namespace shopware --create-namespace --set crds.install=false
-```
-
-#### Metrics server
-
-The operator can expose an HTTP endpoint with metrics about the stores it manages. It is disabled by
-default and is enabled with `metrics.enabled=true` in the operator chart. Prometheus is not required for
-this. When enabled, the operator chart creates a `shopware-operator` `Service` that exposes the endpoint
-on `metrics.port` (default `8080`), and the operator injects `OPERATOR_SERVICE_URL` into every store
-container (admin, storefront and worker) so the Shopware consumer can reach it. The URL defaults to
-`http://shopware-operator.<namespace>.svc.cluster.local:<port>` and can be overridden with
-`metrics.shopwareOperatorUrl`, for example when the operator is reachable under a different service name.
-
-```sh
-helm upgrade --install operator shopware/operator --namespace shopware --create-namespace \
-  --set metrics.enabled=true
-```
-
-The endpoint serves two things:
-
-- `/metrics` with the store metrics in the Prometheus text format, for example the store state, the
-  scheduled task status and, when KEDA is enabled, `shopware_store_queue_count` per messenger transport.
-- `/api/queue/<namespace>/<store>/<queue>` with the current length of a single queue as JSON, for example
-  `{"store":"my-shop","namespace":"shopware","queue":"async","count":42}`. This route is only registered
-  when KEDA is enabled in the operator chart and is what the `ScaledObject` polls, see
-  [Worker autoscaling with KEDA](#worker-autoscaling-with-keda). The counts are read from the admin pod
-  on demand and cached for 10 seconds.
-
-Both routes can be used without any monitoring stack, which is useful to check the values by hand:
-
-```sh
-kubectl port-forward -n shopware svc/shopware-operator 8080:8080
-curl http://localhost:8080/metrics
-curl http://localhost:8080/api/queue/shopware/my-shop/async
-```
-
-If you do run Prometheus, the operator chart can additionally render a `ServiceMonitor` with
-`metrics.serviceMonitor.enabled=true` so the endpoint is scraped automatically. This is optional and only
-this part needs Prometheus. The chart does not ship the Prometheus Operator CRDs, so they have to be
-installed beforehand, for example with the kube-prometheus-stack chart:
-
-```sh
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack \
-  --namespace monitoring --create-namespace
-```
-
-Afterwards, enable the `ServiceMonitor` and match the label selector of your Prometheus instance:
-
-```yaml
-metrics:
-  enabled: true
-  port: 8080
-  serviceMonitor:
-    enabled: true
-    interval: 30s
-    scrapeTimeout: 10s
-    additionalLabels:
-      release: kube-prometheus-stack
-```
-
-> [!WARNING]
-> Do not enable `metrics.serviceMonitor.enabled` without the Prometheus Operator CRDs being installed in
-> the cluster. The `ServiceMonitor` resource cannot be created and the release will fail.
-
-#### Webhook
-
-The `Store` resource contains schemaless container override fields, which the Kubernetes API server cannot
-validate on its own. A mistake in those fields is therefore only noticed when the operator reconciles the
-store. To catch this earlier, the operator chart can install a `ValidatingWebhookConfiguration` that
-validates every `Store` on `CREATE` and `UPDATE` before it is persisted. The webhook is disabled by default.
-
-The webhook needs a TLS certificate. The operator chart creates a self signed cert-manager `Issuer` and
-`Certificate` for it and lets cert-manager inject the CA bundle into the webhook configuration, so
-cert-manager has to be installed in the cluster. This chart does not ship it:
-
-```sh
-helm repo add jetstack https://charts.jetstack.io
-helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace \
-  --set crds.enabled=true
-```
-
-Then install or upgrade the operator with the webhook enabled:
-
-```sh
-helm upgrade --install operator shopware/operator --namespace shopware --create-namespace \
-  --set webhook.enabled=true
-```
-
-By default the webhook only validates stores in the release namespace of the operator. Use
-`webhook.namespaceSelector` to change this, for example to validate stores in all namespaces:
-
-```yaml
-webhook:
-  enabled: true
-  namespaceSelector:
-    matchExpressions: []
-```
-
-After the installation you can verify that the webhook is serving:
-
-```sh
-kubectl get validatingwebhookconfigurations | grep shopware-operator
-kubectl get certificate -n shopware
-```
-
-> [!WARNING]
-> The webhook uses `failurePolicy: Fail`. If cert-manager is missing or the webhook pod is not reachable,
-> every create and update of a `Store` is rejected.
+For the CRD lifecycle, the available values and a more advanced setup, see the
+[operator chart README](https://github.com/shopware/helm-charts/tree/main/charts/shopware-operator).
 
 #### Worker autoscaling with KEDA
 
-The operator can scale the Shopware message queue workers based on the queue length using [KEDA](https://keda.sh/).
-This is optional. Without KEDA the operator creates a single worker deployment that consumes all queues
-(`failed`, `async` and `low_priority`) and uses the fixed replica count from `store.container.replicas`
-or `store.workerDeploymentContainer.replicas`.
+> [!IMPORTANT]
+> Worker autoscaling requires shopware-operator 1.9.0 or newer. Older operator versions ship a `Store`
+> CRD without the KEDA fields, so `spec.worker.enableKedaScaling` and the tuning fields below are pruned
+> by the API server and the setting has no effect.
 
-With KEDA enabled the operator creates one worker deployment per queue and a KEDA `ScaledObject` for each of them.
-The `ScaledObject` uses the `metrics-api` trigger and polls the queue length from
-`<operator metrics url>/api/queue/<namespace>/<store>/<queue>`, see [Metrics server](#metrics-server).
-By default it scales a queue deployment between 0 and 3 replicas, targets 100 messages per replica, polls every
-10 seconds and waits 30 seconds before scaling back down. These values can be changed with the `store.worker`
-fields of this chart, see below. Additional transports configured in your shop are picked up automatically once the operator has collected the queue
-statistics from the admin pod.
+The operator can scale the Shopware message queue workers based on the queue length using
+[KEDA](https://keda.sh/). This is optional. Without KEDA the operator creates a single worker deployment
+that consumes all queues (`failed`, `async` and `low_priority`) and uses the fixed replica count from
+`store.container.replicas` or `store.workerDeploymentContainer.replicas`.
 
-KEDA has to be enabled in two places: in the operator chart, so the operator watches the KEDA resources, and in this
-chart for the store, so the operator creates the per queue deployments and `ScaledObject` resources for it. To use it you need to:
+With KEDA enabled the operator creates one worker deployment per queue and a KEDA `ScaledObject` for each
+of them, which scales on the queue length read from the operator metrics endpoint. Additional transports
+configured in your shop are picked up automatically once the operator has collected the queue statistics
+from the admin pod.
 
-1. Install the KEDA operator together with its CRDs. This chart does not ship them.
+KEDA has to be enabled in two places: in the operator chart, so the operator watches the KEDA resources,
+and in this chart for the store, so the operator creates the per queue deployments and `ScaledObject`
+resources for it. To use it you need to:
 
-   ```sh
-   helm repo add kedacore https://kedacore.github.io/charts
-   helm install keda kedacore/keda --namespace keda --create-namespace
-   ```
+1. Install the KEDA operator together with its CRDs and enable `keda.enabled=true` and
+   `metrics.enabled=true` in the operator chart (1.9.0 or newer), see the
+   [operator chart README](https://github.com/shopware/helm-charts/tree/main/charts/shopware-operator).
 
-2. Install or upgrade the operator with KEDA and the metrics endpoint enabled. The metrics endpoint is
-   required because the `ScaledObject` reads the queue length from it. The operator chart fails the render
-   if `keda.enabled` is set without `metrics.enabled`, and the operator exits on startup if the KEDA CRDs
-   are missing in the cluster.
-
-   ```sh
-   helm upgrade --install operator shopware/operator --namespace shopware --create-namespace \
-     --set keda.enabled=true \
-     --set metrics.enabled=true
-   ```
-
-3. Install this chart with KEDA scaling enabled for the store:
+2. Install this chart with KEDA scaling enabled for the store:
 
    ```sh
    helm install my-shop shopware/shopware --namespace shopware --create-namespace \
@@ -413,10 +303,6 @@ After the store is ready you can inspect the created resources:
 kubectl get deployments -n shopware -l shop.shopware.com/store.app=shopware-worker
 kubectl get scaledobjects -n shopware
 ```
-
-> [!WARNING]
-> Do not enable `keda.enabled` in the operator chart without the KEDA CRDs being installed in the cluster.
-> The operator will fail to reconcile the `ScaledObject` resources and the store will not become ready.
 
 > [!NOTE]
 > The replica count from `store.container.replicas` and `store.workerDeploymentContainer.replicas` is only
