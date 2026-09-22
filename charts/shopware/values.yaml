@@ -1,32 +1,16 @@
-# This is for more production and enterprise solution. To see a full
-# example see `examples/values_istio.yaml`.
-#useIstio: false
-
-# Istio-specific configuration. Only used when useIstio is true.
-istio:
-  virtualService:
-    # Optional retry policy applied to the store-shopware VirtualService route.
-    # Leave empty (default) to omit the retries block entirely.
-    # Example:
-    #   retries:
-    #     attempts: 3
-    #     perTryTimeout: 5s
-    #     retryOn: reset,connect-failure,refused-stream,unavailable,gateway-error,503
-    retries: {}
-
 percona:
   # You can disable Percona and use your own database. Just modify the storage database
   # part in this file.
-  # TODO: Not tested yet, database part is not variable
   enabled: true
 
   # The version for Percona to use. This is also the image version for the percona-xtradb-cluster
-  version: 1.14.0
-  # Allows only one database and allows to overwrite the topologySpreadConstraints
+  version: 1.20.0
+  # Allows only one database so it runs local in a small way
   allowUnsafeConfigurations: true
 
   database:
-    version: "8.0"
+    #version: "8.0"
+    version: "8.4"
     # These are the default values for the data
     # size: 1
 
@@ -47,7 +31,7 @@ percona:
     # storageSize: 8Gi
 
     # We overwrite the topologySpreadConstraints for this to schedule only one database
-    topologySpreadConstraints:
+    # topologySpreadConstraints:
 
   # This is only useful if you want more performance since the sql-proxy is using connection-pooling.
   proxy:
@@ -270,10 +254,10 @@ store:
   container:
     # This image is used for the setup job and the deployment. If you want to migrate to a new
     # version just update this and the operator makes sure to handle the migrations.
-    image: ghcr.io/shopware/shopware-kubernetes:latest
+    image: ghcr.io/shopware/shopware-kubernetes:6.7.13.1
     # imagePullPolicy: IfNotPresent
     # restartPolicy: Always
-    # replicas: 2
+    replicas: 1
     # progressDeadlineSeconds: 30
     # topologySpreadConstraints:
     # affinity:
@@ -426,6 +410,32 @@ store:
   #   minReplicas: 1
   #   maxReplicas: 10
 
+  # Worker autoscaling with KEDA requires shopware-operator 1.9.0 or newer. On older operator
+  # versions the Store CRD has no KEDA fields, so the API server prunes them and the settings
+  # below have no effect.
+  # KEDA has to be enabled in two places: in the operator chart
+  # (keda.enabled together with metrics.enabled) and here for the store.
+  # - Disabled (default): the operator creates a single worker deployment that consumes all
+  #   queues with the replica count from store.container.replicas or
+  #   store.workerDeploymentContainer.replicas.
+  # - Enabled: the operator creates one worker deployment per queue and a KEDA ScaledObject for
+  #   each of them, scaling based on the queue length. The KEDA operator and its CRDs must be
+  #   installed in the cluster: https://keda.sh/docs/latest/deploy/
+  # The remaining fields only take effect with enableKedaScaling: true. They are commented out
+  # here, so the defaults of the Store resource are used.
+  worker:
+    enableKedaScaling: false
+    # MaxReplicas which are spawned per queue. Minimum 1.
+    # maxReplicas: 3
+    # MinReplicas which are spawned per queue. Minimum 0, so a queue can scale to zero.
+    # minReplicas: 0
+    # Seconds keda waits after the last trigger before scaling down to minReplicas. Minimum 0.
+    # cooldownPeriod: 30
+    # Seconds between keda queue length checks. Minimum 1.
+    # pollingInterval: 10
+    # Queue length per worker replica keda scales towards. Minimum 1.
+    # targetQueueLength: 100
+
   # You can overwrite the default store.container values for each deployment and job. This is useful if you want to
   # add labels or other values to the containers.
   # adminDeploymentContainer:
@@ -497,6 +507,14 @@ rustfs:
       nginx.ingress.kubernetes.io/session-cookie-max-age: "3600"
       nginx.ingress.kubernetes.io/session-cookie-name: rustfs
     # tls: []
+
+  # Post-install/upgrade job that creates the shopware-private and shopware-public
+  # buckets and sets the public read policy. Uses the AWS CLI against the RustFS S3 API.
+  # This is managed by the Shopware chart, not the rustfs subchart
+  bucketInit:
+    image:
+      repository: amazon/aws-cli
+      tag: 2.36.44
 
   # S3 API endpoint ingress (port 9000)
   # This is managed by the Shopware chart, not the rustfs subchart
@@ -583,54 +601,6 @@ valkeyworker:
         cpu: 2000m
   auth:
     enabled: false
-
-redisapp:
-  enabled: false
-  # architecture: standalone
-  # replica:
-  #   replicaCount: 1
-  # master:
-  #   resources:
-  #     requests:
-  #       memory: 500Mi
-  #       cpu: 1000m
-  #     limits:
-  #       memory: 1Gi
-  #       cpu: 1000m
-  # auth:
-  #   enabled: false
-
-redissession:
-  enabled: false
-  # architecture: standalone
-  # replica:
-  #   replicaCount: 1
-  # master:
-  #   resources:
-  #     requests:
-  #       memory: 500Mi
-  #       cpu: 1000m
-  #     limits:
-  #       memory: 1Gi
-  #       cpu: 1000m
-  # auth:
-  #   enabled: false
-
-redisworker:
-  enabled: false
-  # architecture: standalone
-  # replica:
-  #   replicaCount: 1
-  # master:
-  #   resources:
-  #     requests:
-  #       memory: 500Mi
-  #       cpu: 1000m
-  #     limits:
-  #       memory: 1Gi
-  #       cpu: 2000m
-  # auth:
-  #   enabled: false
 
 # blackfire:
 #   serverIDRef:
@@ -777,48 +747,6 @@ otel-collector:
       servicePort: 8888
       protocol: TCP
 
-grafana:
-  enabled: false
-  podAnnotations:
-    sidecar.istio.io/inject: "false"
-  datasources:
-    datasources.yaml:
-      apiVersion: 1
-      datasources:
-        - name: Prometheus
-          type: prometheus
-          uid: prometheus
-          url: http://{{ .Release.Name }}-prometheus-server.{{ .Release.Namespace }}.svc.cluster.local
-        - name: Loki
-          type: loki
-          url: http://loki-gateway.loki.svc.cluster.local
-          jsonData:
-            httpHeaderName1: "X-Scope-OrgID"
-          secureJsonData:
-            httpHeaderValue1: tenant-{{ .Release.Namespace }}
-        - name: Tempo
-          type: tempo
-          url: http://tempo.tempo.svc.cluster.local
-          jsonData:
-            httpHeaderName1: "X-Scope-OrgID"
-          secureJsonData:
-            httpHeaderValue1: tenant-{{ .Release.Namespace }}
-
-prometheus:
-  enabled: false
-  prometheus-node-exporter:
-    enabled: false
-  alertmanager:
-    enabled: false
-  kube-state-metrics:
-    enabled: false
-  # This configuration excludes Prometheus from scraping the Kubernetes API.
-  # To collect additional metrics beyond those provided by Shopware, either uncomment this section or apply a different configuration.
-  rbac:
-    create: true
-  server:
-    configMapOverrideName: "prometheus-config"
-    releaseNamespace: true
 # additional kubernetes objects
 # extraObjects:
 #   - apiVersion: v1
