@@ -5,6 +5,50 @@ metadata:
   namespace: '{{ .Release.Namespace }}'
 data:
   Caddyfile: |
+{{- if eq (default "php-fpm" .Values.store.caddy.runtime) "frankenphp" }}
+    {
+      skip_install_trust
+      admin 0.0.0.0:2019
+      frankenphp {
+        max_wait_time 3s
+      }
+      servers {
+        trusted_proxies static private_ranges
+      }
+    }
+
+    :8000 {
+      root * /var/www/html/public
+      encode zstd gzip
+
+{{- if hasKey .Values.store "sidecarLogging" }}
+      log {
+        output stdout
+        format json
+
+        output file {{ include "caddyLogPath" . }} {
+          roll_size 10MB
+          roll_keep 5
+          roll_keep_for 24h
+        }
+      }
+{{- else }}
+      log
+{{- end }}
+
+      @static {
+        path /theme/* /media/* /thumbnail/* /bundles/* /sitemap/* /favicon.ico /robots.txt
+      }
+      handle @static {
+        file_server
+      }
+
+      handle {
+        rewrite * /index.php
+        php
+      }
+    }
+{{- else }}
     {
       servers {
         timeouts {
@@ -72,3 +116,4 @@ data:
         }
       }
     }
+{{- end }}
