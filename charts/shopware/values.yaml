@@ -75,6 +75,20 @@ mariadb:
     repository: mariadb
     tag: "12.3" # current MariaDB LTS
 
+  # Use an existing secret for the root password instead of letting the operator
+  # generate "<release>-root". The store connects with the same secret.
+  # rootPasswordSecretKeyRef:
+  #   name: my-db-credentials
+  #   key: password
+
+  # Annotations for the MariaDB resource, e.g. Argo CD sync options.
+  # annotations: {}
+
+  # Labels and annotations for the MariaDB pods.
+  # podMetadata:
+  #   labels: {}
+  #   annotations: {}
+
   resources:
     requests:
       memory: 512Mi
@@ -86,6 +100,11 @@ mariadb:
   persistence:
     storageClassName: ""
     size: 8Gi
+    # What happens to the data volume when the MariaDB resource is deleted or
+    # scaled down. Unset, the operator keeps it until it is deleted by hand.
+    # pvcRetentionPolicy:
+    #   whenDeleted: Delete   # or Retain
+    #   whenScaled: Retain
 
   # nodeSelector: {}
   # affinity: {}

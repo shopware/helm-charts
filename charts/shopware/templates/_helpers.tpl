@@ -76,7 +76,19 @@ secretAccessKeyRef:
 {{- end -}}
 
 {{ define "getMariaDBSecretName" -}}
+{{- if .Values.mariadb.rootPasswordSecretKeyRef }}
+{{- .Values.mariadb.rootPasswordSecretKeyRef.name }}
+{{- else }}
 {{- printf "%s-root" .Release.Name }}
+{{- end }}
+{{- end -}}
+
+{{ define "getMariaDBSecretKey" -}}
+{{- if .Values.mariadb.rootPasswordSecretKeyRef }}
+{{- .Values.mariadb.rootPasswordSecretKeyRef.key | default "password" }}
+{{- else }}
+{{- "password" }}
+{{- end }}
 {{- end -}}
 
 {{ define "getBlackfireServiceName" -}}

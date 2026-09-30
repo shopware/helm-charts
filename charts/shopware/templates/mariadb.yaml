@@ -8,20 +8,39 @@ kind: MariaDB
 metadata:
   name: {{ .Release.Name | quote }}
   namespace: '{{ .Release.Namespace }}'
+  {{- with .Values.mariadb.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   image: "{{ .Values.mariadb.image.repository }}:{{ .Values.mariadb.image.tag }}"
   port: {{ .Values.store.database.port | default 3306 }}
   database: {{ .Values.store.database.name | default "shopware" | quote }}
 
-  # rootPasswordSecretKeyRef intentionally omitted: the operator defaults it to
-  # "<release>-root" / key "password" with generate:true, which is what
-  # getMariaDBSecretName in _helpers.tpl mirrors.
+  # Without rootPasswordSecretKeyRef the operator defaults it to "<release>-root" /
+  # key "password" with generate:true. getMariaDBSecretName and
+  # getMariaDBSecretKey in _helpers.tpl mirror both cases.
+  {{- with .Values.mariadb.rootPasswordSecretKeyRef }}
+  rootPasswordSecretKeyRef:
+    name: {{ .name | quote }}
+    key: {{ .key | default "password" | quote }}
+    generate: false
+  {{- end }}
 
   storage:
     size: {{ .Values.mariadb.persistence.size | default "8Gi" | quote }}
     {{- with .Values.mariadb.persistence.storageClassName }}
     storageClassName: {{ . }}
     {{- end }}
+    {{- with .Values.mariadb.persistence.pvcRetentionPolicy }}
+    pvcRetentionPolicy:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+
+  {{- with .Values.mariadb.podMetadata }}
+  podMetadata:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 
   {{- with .Values.mariadb.resources }}
   resources:

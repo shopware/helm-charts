@@ -195,7 +195,7 @@ spec:
     host: {{ template "getMariaDBHost" . }}
     passwordSecretRef:
       name: {{ template "getMariaDBSecretName" . }}
-      key: password
+      key: {{ template "getMariaDBSecretKey" . }}
     {{- else if hasKey .Values.store.database "host" }}
     host: {{ .Values.store.database.host }}
     passwordSecretRef:
