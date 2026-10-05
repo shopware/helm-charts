@@ -1436,6 +1436,50 @@ entries:
     version: 0.0.1
   shopware:
   - apiVersion: v2
+    appVersion: 2.2.2
+    created: "2026-10-05T07:18:16.548945377Z"
+    dependencies:
+    - condition: percona.enabled
+      name: pxc-operator
+      repository: https://percona.github.io/percona-helm-charts/
+      version: 1.20.0
+    - condition: mariadb.deployOperator
+      name: mariadb-operator
+      repository: https://mariadb-operator.github.io/mariadb-operator
+      version: 26.6.0
+    - condition: rustfs.enabled
+      name: rustfs
+      repository: https://rustfs.github.io/helm
+      version: 0.0.73
+    - alias: valkeyapp
+      condition: valkeyapp.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 1.0.1
+    - alias: valkeysession
+      condition: valkeysession.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 1.0.1
+    - alias: valkeyworker
+      condition: valkeyworker.enabled
+      name: valkey
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 1.0.1
+    - alias: otel-collector
+      condition: otel-collector.enabled
+      name: opentelemetry-collector
+      repository: https://open-telemetry.github.io/opentelemetry-helm-charts
+      version: 0.108.0
+    description: A Helm chart for deploying a Shopware shop on Kubernetes. Requires
+      the Shopware Operator chart to be installed.
+    digest: 29bba2c3ac825504f44ae063ce713119fc331912b95e72e0423285256ecc7b12
+    name: shopware
+    type: application
+    urls:
+    - https://github.com/shopware/helm-charts/releases/download/shopware-2.2.2/shopware-2.2.2.tgz
+    version: 2.2.2
+  - apiVersion: v2
     appVersion: 2.2.1
     created: "2026-09-22T07:55:42.795189797Z"
     dependencies:
@@ -5518,4 +5562,4 @@ entries:
     urls:
     - https://github.com/shopware/helm-charts/releases/download/shopware-0.0.3/shopware-0.0.3.tgz
     version: 0.0.3
-generated: "2026-09-30T15:05:29.758033475Z"
+generated: "2026-10-05T07:18:16.549545672Z"
