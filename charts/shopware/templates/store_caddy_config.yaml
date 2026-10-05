@@ -61,9 +61,14 @@ data:
           }
         }
       }
-      # php-fpm ping, answered by the fpm master (no app bootstrap, no DB). Used
-      # by the operator storefront liveness/startup probes so DB slowness never
-      # restarts pods.
+      # Answered by Caddy itself, never reaches a php-fpm worker. Used by the
+      # operator storefront and admin liveness probes so a saturated worker
+      # pool under load does not restart pods.
+      handle /-/healthz {
+        respond "OK" 200
+      }
+      # php-fpm ping, served by an fpm worker.
+      # Used by the operator storefront startup probe to verify php-fpm is up.
       handle /-/fpm/ping {
         reverse_proxy unix//tmp/php-fpm.sock {
           transport fastcgi {
