@@ -52,6 +52,24 @@ spec:
               type: object
             spec:
               properties:
+                cleanupPeriodErrorExec:
+                  default: 1h
+                  description: |-
+                    How long a failed StoreExec is kept before it is deleted.
+                    Zero disables cleanup for failed executions.
+                  type: string
+                  x-kubernetes-validations:
+                    - message: must be a valid duration, e.g. 30s, 5m or 1h
+                      rule: self.matches('^(0|([0-9]+([.][0-9]+)?(ns|us|ms|s|m|h))+)$')
+                cleanupPeriodSuccessfulExec:
+                  default: 5m
+                  description: |-
+                    How long a successfully finished StoreExec is kept before it is deleted.
+                    Zero disables cleanup for successful executions.
+                  type: string
+                  x-kubernetes-validations:
+                    - message: must be a valid duration, e.g. 30s, 5m or 1h
+                      rule: self.matches('^(0|([0-9]+([.][0-9]+)?(ns|us|ms|s|m|h))+)$')
                 container:
                   properties:
                     affinity:
