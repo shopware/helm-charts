@@ -7273,6 +7273,9 @@ spec:
                   default: /setup
                   type: string
                 network:
+                  default:
+                    enabledGateway: false
+                    enabledIngress: false
                   properties:
                     annotations:
                       additionalProperties:
@@ -7324,6 +7327,18 @@ spec:
                     port:
                       default: 8000
                       format: int32
+                      type: integer
+                    preStopDelaySeconds:
+                      default: 15
+                      description: |-
+                        PreStopDelaySeconds is how long storefront and admin pods keep serving
+                        requests after termination starts, before Caddy is stopped. Ingress
+                        controllers and load balancers need time to remove a terminating pod from
+                        their backends; stopping Caddy earlier causes 502s and connect timeouts
+                        during rolling updates. Increase it for slow load balancers (e.g. cloud
+                        LBs). Must be lower than terminationGracePeriodSeconds.
+                      format: int64
+                      minimum: 1
                       type: integer
                     tlsSecretName:
                       default: store-tls
