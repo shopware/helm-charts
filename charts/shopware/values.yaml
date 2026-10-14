@@ -184,7 +184,6 @@ store:
   #   enabled: false
   #   host: tideways
   #   port: 9135
-  #   service: shopware
   #   apiKeyRef:
   #     name: tideways-credentials
   #     key: api-key
@@ -625,7 +624,6 @@ valkeyworker:
 #     key: api-key
 #   image: tideways/daemon:latest
 #   port: 9135
-#   service: shopware
 #   environment: production
 #   resources:
 #     requests:

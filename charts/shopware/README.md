@@ -422,7 +422,7 @@ The agent is deployed as `shopware-blackfire` and exposed as a Service named `bl
 
 The chart can deploy a [Tideways](https://tideways.com/) daemon alongside the store for profiling and monitoring PHP requests.
 
-Two values are required. `store.tideways.enabled` writes the daemon address into the `Store` resource, so the operator injects `TIDEWAYS_CONNECTION`, `TIDEWAYS_SERVICE` and `TIDEWAYS_APIKEY` into the storefront, admin and worker containers. `tideways.apiKeyRef` references the Secret key holding the API key:
+Two values are required. `store.tideways.enabled` writes the daemon address into the `Store` resource, so the operator injects `TIDEWAYS_CONNECTION` and `TIDEWAYS_APIKEY` into the storefront, admin and worker containers. `tideways.apiKeyRef` references the Secret key holding the API key:
 
 ```yaml
 store:
@@ -446,7 +446,7 @@ kubectl -n <namespace> create secret generic tideways-credentials \
 
 - `tideways.image` — daemon image, defaults to `tideways/daemon:latest`
 - `tideways.port` — daemon port, defaults to `9135`
-- `tideways.service` — service name reported to Tideways, defaults to `shopware`
+- `tideways.service` — service name reported to Tideways as `TIDEWAYS_SERVICE`. Unset by default, so data goes to the Tideways project's default service
 - `tideways.environment` — environment name passed to the daemon as `--env`
 - `tideways.resources` — resource requests and limits for the daemon container
 
