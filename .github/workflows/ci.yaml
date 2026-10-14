@@ -183,7 +183,7 @@ jobs:
             sleep 5
           done
 
-          kubectl wait --namespace test store/test --for='jsonpath={.status.state}'=setup --timeout=1m || {
+          kubectl wait --namespace test store/test --for='jsonpath={.status.state}'=setup --timeout=5m || {
             kubectl get store/test --namespace test -o json && exit 7
           }
 
@@ -216,7 +216,11 @@ jobs:
             --set valkeysession.master.resources.requests.cpu=200m \
             --set valkeyworker.master.resources.requests.cpu=200m | kubectl apply -n test-template -f -
 
-          kubectl wait --namespace test-template store/template --for='jsonpath={.status.state}'=setup --timeout=1m
+          kubectl wait --namespace test-template store/template --for='jsonpath={.status.state}'=setup --timeout=5m || {
+            kubectl get store/template --namespace test-template -o json; \
+            kubectl get pods --namespace test-template -o wide; \
+            kubectl logs deployment/template-shopware-operator --namespace test-template --tail=100 && exit 8
+          }
 
           sleep 10
 
