@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   CheckVersionUpdate:
-    runs-on: runs-on=${{ github.run_id }}/runner=sw-amd64/cpu=1
+    runs-on: runs-on=${{ github.run_id }}/runner=sw-amd64/cpu=1/family=m7a
     container: "ghcr.io/shopware-redstone/k8s-tooling-image:latest"
     steps:
       - name: Checkout
@@ -48,13 +48,9 @@ jobs:
 
   helm-lint:
     name: helm lint
-    runs-on: runs-on=${{ github.run_id }}/runner=sw-amd64/cpu=1
+    runs-on: runs-on=${{ github.run_id }}/runner=sw-amd64/cpu=1/family=m7a
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - name: Setup Go
-        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-        with:
-          go-version: stable
       - name: Set up Helm
         uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
         with:
