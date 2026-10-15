@@ -58,7 +58,9 @@ spec:
     enabled: true
     host: {{ template "getTidewaysServiceName" . }}
     port: {{ .Values.tideways.port | default 9135 }}
-    service: {{ .Values.tideways.service | default "shopware" }}
+    {{- with .Values.tideways.service }}
+    service: {{ . }}
+    {{- end }}
     apiKeyRef:
       {{- toYaml .Values.tideways.apiKeyRef | nindent 6 }}
   {{- end }}
