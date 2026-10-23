@@ -309,6 +309,22 @@ kubectl get scaledobjects -n shopware
 > used as the initial value for the worker deployments when KEDA is enabled. KEDA takes over the scaling afterwards.
 > The queue statistics are collected from the admin pod, so the admin deployment must be running for the workers to scale.
 
+### Block cloud metadata access
+
+Set `blockCloudMetadata.enabled: true` to stop the store's pods from reaching the cloud
+metadata service (`169.254.169.254`). On AWS, GCP and Azure this endpoint returns
+credentials for the node's identity, so a code-execution bug in the shop or a plugin
+could otherwise be used to act as the node in your cloud account. Shopware does not
+use this endpoint; all other traffic is unaffected.
+
+Keep it disabled if the store obtains cloud credentials from the node (for example S3
+access via the node IAM role, or GKE Workload Identity). IRSA and EKS Pod Identity keep
+working. Requires a CNI that enforces NetworkPolicy.
+
+NetworkPolicies are additive: don't enable this if you already restrict egress for the
+store's pods with your own NetworkPolicies, because this policy allows all other egress.
+Add a metadata exception to your own policies instead.
+
 ### RustFS S3 Storage
 
 RustFS is automatically installed as part of the Shopware chart and provides S3-compatible object storage.
