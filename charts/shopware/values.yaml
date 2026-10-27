@@ -127,6 +127,20 @@ store:
   # Disables mounting the kubernetes service account token
   automountServiceAccountToken: false
 
+  # NetworkPolicy for the store pods (storefront, admin, worker, setup and scheduled-task jobs).
+  # Allows all ingress and all egress except the CIDRs in deniedEgressCIDRs.
+  # Requires a CNI that enforces NetworkPolicy.
+  networkPolicy:
+    # Create the store NetworkPolicy
+    create: true
+    # Egress destinations the store pods are not allowed to reach. Defaults block the cloud
+    # metadata service (AWS, GCP, Azure), which serves node credentials. Set to [] to allow all egress.
+    # Keep the metadata endpoints allowed if the store gets cloud credentials from the node
+    # (e.g. S3 via the node IAM role, GKE Workload Identity). IRSA and EKS Pod Identity keep working.
+    deniedEgressCIDRs:
+      - 169.254.169.254/32
+      - fd00:ec2::254/128
+
   caddy:
     # This is the read timeout for the caddy server. Default is 60s.
     readTimeout: 60s
