@@ -1,0 +1,45 @@
+{{- if .Values.store.networkPolicy.create }}
+{{- $ipv4Except := list }}
+{{- $ipv6Except := list }}
+{{- range .Values.store.networkPolicy.deniedEgressCIDRs }}
+{{- if contains ":" . }}
+{{- $ipv6Except = append $ipv6Except . }}
+{{- else }}
+{{- $ipv4Except = append $ipv4Except . }}
+{{- end }}
+{{- end }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ printf "%s-store" .Release.Name | trunc 63 | trimSuffix "-" }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      shop.shopware.com/store.name: {{ .Release.Name | quote }}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - {}
+  egress:
+    {{- if .Values.store.networkPolicy.deniedEgressCIDRs }}
+    - to:
+        - namespaceSelector: {}
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            {{- with $ipv4Except }}
+            except:
+              {{- toYaml . | nindent 14 }}
+            {{- end }}
+        - ipBlock:
+            cidr: ::/0
+            {{- with $ipv6Except }}
+            except:
+              {{- toYaml . | nindent 14 }}
+            {{- end }}
+    {{- else }}
+    - {}
+    {{- end }}
+{{- end }}
