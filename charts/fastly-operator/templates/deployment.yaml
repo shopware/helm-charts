@@ -79,6 +79,32 @@ spec:
         - name: LOG_FORMAT
           value: "{{ .Values.logFormat }}"
         {{- end }}
+        {{- if .Values.environment }}
+        - name: ENVIRONMENT
+          value: "{{ .Values.environment }}"
+        {{- end }}
+        {{- if and .Values.tracing .Values.tracing.enabled }}
+        - name: TRACING_ENABLED
+          value: "true"
+        - name: TRACING_RECORD_BODY
+          value: "{{ .Values.tracing.recordBody | default false }}"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "{{ required "tracing.enabled requires tracing.endpoint" .Values.tracing.endpoint }}"
+        - name: OTEL_EXPORTER_OTLP_INSECURE
+          value: "{{ .Values.tracing.insecure }}"
+        {{- if .Values.tracing.sampler }}
+        - name: OTEL_TRACES_SAMPLER
+          value: "{{ .Values.tracing.sampler }}"
+        {{- end }}
+        {{- if .Values.tracing.samplerArg }}
+        - name: OTEL_TRACES_SAMPLER_ARG
+          value: "{{ .Values.tracing.samplerArg }}"
+        {{- end }}
+        {{- with .Values.tracing.resourceAttributes }}
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "{{ range $i, $k := keys . | sortAlpha }}{{ if $i }},{{ end }}{{ $k }}={{ index $.Values.tracing.resourceAttributes $k }}{{ end }}"
+        {{- end }}
+        {{- end }}
         {{- if hasKey .Values "sources" }}
         - name: SOURCES
           value: "{{ .Values.sources | join "," }}"
