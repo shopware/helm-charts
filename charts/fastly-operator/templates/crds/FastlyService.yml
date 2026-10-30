@@ -40,6 +40,9 @@ spec:
         - jsonPath: .status.snippetReady
           name: Snippets
           type: string
+        - jsonPath: .status.imageOptimizer.state
+          name: Image Optimizer
+          type: string
         - jsonPath: .metadata.creationTimestamp
           name: Age
           type: date
@@ -162,6 +165,9 @@ spec:
                     port:
                       description: OverrideHost        *string
                       type: integer
+                    shield:
+                      description: https://www.fastly.com/documentation/guides/concepts/shielding/#choosing-a-shield-location
+                      type: string
                     sslCertHostname:
                       description: |-
                         RequestCondition    *string
@@ -213,6 +219,13 @@ spec:
                     required:
                       - domainState
                     type: object
+                  type: object
+                imageOptimizer:
+                  properties:
+                    errorMessage:
+                      type: string
+                    state:
+                      type: string
                   type: object
                 message:
                   type: string

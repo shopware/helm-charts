@@ -106,6 +106,27 @@ logLevel: info
 # Supported formats: json, text, zap-pretty
 # Use zap-pretty for the makefile run command, as it will be properly formatted
 logFormat: json
+
+# Sets the ENVIRONMENT variable. Used as `environment`/`dd.env` in the logs and as
+# `deployment.environment.name` on the traces, so Datadog can correlate both.
+# environment: "staging"
+
+# OpenTelemetry tracing. Traces are exported via OTLP gRPC.
+tracing:
+  enabled: false
+  # OTLP gRPC endpoint, e.g. http://otel-collector.observability.svc.cluster.local:4317
+  endpoint: ""
+  insecure: true
+  # Records Fastly API request/response bodies as span attributes. Known secret fields are redacted,
+  # but keep this disabled in production.
+  recordBody: false
+  # Sampler, see https://opentelemetry.io/docs/languages/sdk-configuration/general/#otel_traces_sampler
+  # sampler: parentbased_traceidratio
+  # samplerArg: "0.1"
+  # Extra resource attributes, rendered into OTEL_RESOURCE_ATTRIBUTES
+  resourceAttributes: {}
+  #   team: paas
+
 # Array of extra K8s manifests to deploy
 # extraObjects:
 #   - apiVersion: v1
