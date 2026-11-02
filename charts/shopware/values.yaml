@@ -127,6 +127,22 @@ store:
   # Disables mounting the kubernetes service account token
   automountServiceAccountToken: false
 
+  # NetworkPolicy for the store pods (storefront, admin, worker, setup and scheduled-task jobs).
+  # Allows all egress except the CIDRs in deniedEgressCIDRs. Requires a CNI that enforces NetworkPolicy.
+  # NetworkPolicies are additive: don't enable this if you already restrict egress for the store's
+  # pods with your own NetworkPolicies; add a metadata exception to those instead.
+  networkPolicy:
+    # Create the store NetworkPolicy
+    create: true
+    # Egress destinations the store pods may not reach. The defaults block the cloud metadata
+    # service (AWS, GCP, Azure), which serves node credentials; Shopware does not use it.
+    # Set to [] to allow all egress. Keep the metadata endpoints reachable if the store gets cloud
+    # credentials from the node (e.g. S3 via the node IAM role, GKE Workload Identity).
+    # IRSA and EKS Pod Identity keep working.
+    deniedEgressCIDRs:
+      - 169.254.169.254/32
+      - fd00:ec2::254/128
+
   caddy:
     # This is the read timeout for the caddy server. Default is 60s.
     readTimeout: 60s

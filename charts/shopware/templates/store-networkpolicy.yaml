@@ -1,0 +1,46 @@
+{{- if .Values.store.networkPolicy.create }}
+{{- $ipv4Except := list }}
+{{- $ipv6Except := list }}
+{{- range .Values.store.networkPolicy.deniedEgressCIDRs }}
+{{- if contains ":" . }}
+{{- $ipv6Except = append $ipv6Except . }}
+{{- else }}
+{{- $ipv4Except = append $ipv4Except . }}
+{{- end }}
+{{- end }}
+# Egress policy for the store's pods: everything is allowed except the CIDRs in
+# store.networkPolicy.deniedEgressCIDRs (by default the cloud metadata service).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ printf "%s-store" .Release.Name | trunc 63 | trimSuffix "-" }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      shop.shopware.com/store.name: {{ .Release.Name | quote }}
+  policyTypes:
+    - Egress
+  egress:
+    {{- if .Values.store.networkPolicy.deniedEgressCIDRs }}
+    # Keep in-cluster pod traffic explicit: some CNIs (e.g. Cilium) don't match
+    # pod IPs with ipBlock.
+    - to:
+        - namespaceSelector: {}
+    - to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+            {{- with $ipv4Except }}
+            except:
+              {{- toYaml . | nindent 14 }}
+            {{- end }}
+        - ipBlock:
+            cidr: ::/0
+            {{- with $ipv6Except }}
+            except:
+              {{- toYaml . | nindent 14 }}
+            {{- end }}
+    {{- else }}
+    - {}
+    {{- end }}
+{{- end }}

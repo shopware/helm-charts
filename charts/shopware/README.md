@@ -309,6 +309,30 @@ kubectl get scaledobjects -n shopware
 > used as the initial value for the worker deployments when KEDA is enabled. KEDA takes over the scaling afterwards.
 > The queue statistics are collected from the admin pod, so the admin deployment must be running for the workers to scale.
 
+### Network policies
+
+The chart creates a NetworkPolicy for the store's pods (storefront, admin, worker and jobs) by default. It only
+takes effect with a CNI that enforces NetworkPolicy. Set `store.networkPolicy.create: false` to disable it.
+
+```yaml
+store:
+  networkPolicy:
+    create: true
+    deniedEgressCIDRs:
+      - 169.254.169.254/32
+      - fd00:ec2::254/128
+```
+
+The policy allows all egress except `store.networkPolicy.deniedEgressCIDRs`. By default this blocks the cloud
+metadata service, which returns credentials for the node's identity on AWS, GCP and Azure, so a code-execution bug
+in the shop or a plugin can't be used to act as the node. Shopware does not use this endpoint.
+
+Set `deniedEgressCIDRs: []` if the store obtains cloud credentials from the node (for example S3 access via the
+node IAM role, or GKE Workload Identity). IRSA and EKS Pod Identity keep working.
+
+NetworkPolicies are additive: this policy allows all other egress, so don't use it if you already restrict egress
+for the store's pods with your own NetworkPolicies. Disable it and add a metadata exception to yours instead.
+
 ### RustFS S3 Storage
 
 RustFS is automatically installed as part of the Shopware chart and provides S3-compatible object storage.
