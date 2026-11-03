@@ -2,6 +2,29 @@
 # This is a YAML-formatted file.
 # Declare variables that will be passed into your templates.
 
+fastly:
+  enabled: true
+  ngwafAssociation:
+    enabled: true
+    name: fastly-ngwaf-association
+    serviceName: myServiceName
+    workspaceName: myWorkspaceName
+  ddosProtection:
+    enabled: true
+    name: fastly-ddos-protection
+    serviceName: myServiceName
+    # Available modes are: "off". "block", "log"
+    mode: block
+  snippets: {}
+  # snippets:
+  #   test-snippet:
+  #     type: deliver
+  #     priority: 100
+  #     content: |
+  #       set resp.http.X-Compress-Hint = "on";
+  defaultSnippet:
+    enabled: true
+
 image:
   repository: ghcr.io/shopware/frontends
   # if not set appVersion field from Chart.yaml is used
