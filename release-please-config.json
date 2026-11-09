@@ -1,0 +1,19 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "include-v-in-tag": false,
+  "tag-separator": "-",
+  "skip-github-release": true,
+  "packages": {
+    "charts/shopware": {
+      "release-type": "helm",
+      "component": "shopware",
+      "package-name": "shopware",
+      "extra-files": [
+        {
+          "type": "generic",
+          "path": "Chart.yaml"
+        }
+      ]
+    }
+  }
+}
