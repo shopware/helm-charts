@@ -14,6 +14,7 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   backoffLimit: 10
+  ttlSecondsAfterFinished: {{ .Values.rustfs.bucketInit.ttlSecondsAfterFinished }}
   template:
     metadata:
       labels:
@@ -21,6 +22,15 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       restartPolicy: OnFailure
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      volumes:
+      - name: tmp
+        emptyDir: {}
       containers:
       - name: create-buckets
         image: {{ .Values.rustfs.bucketInit.image.repository }}:{{ .Values.rustfs.bucketInit.image.tag }}
@@ -66,7 +76,20 @@ spec:
 
           echo "Buckets created successfully!"
           aws s3api list-buckets
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        resources:
+          {{- toYaml .Values.rustfs.bucketInit.resources | nindent 10 }}
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
         env:
+        - name: HOME
+          value: /tmp
         - name: AWS_ENDPOINT_URL
           value: http://{{ .Release.Name }}-rustfs-svc.{{ .Release.Namespace }}.svc.cluster.local:9000
         - name: AWS_DEFAULT_REGION

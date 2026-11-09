@@ -19,6 +19,12 @@ spec:
         labels:
           app: blackfire
       spec:
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 999
+          runAsGroup: 101
+          seccompProfile:
+            type: RuntimeDefault
         containers:
         - name: blackfire
           image: {{ .Values.blackfire.image | default "blackfire/blackfire:2" | quote }}
@@ -37,10 +43,14 @@ spec:
                 {{- end }}
           ports:
           - containerPort: {{ .Values.blackfire.port | default 8307 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+              - ALL
           resources:
-            {{- with .Values.blackfire.resources }}
-                {{- toYaml . | nindent 12 }}
-            {{- end }}
+            {{- toYaml (.Values.blackfire.resources | default (dict "requests" (dict "cpu" "10m" "memory" "64Mi") "limits" (dict "memory" "256Mi"))) | nindent 12 }}
 ---
 # Service for blackfire
 apiVersion: v1

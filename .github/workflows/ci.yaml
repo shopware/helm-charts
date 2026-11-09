@@ -75,6 +75,39 @@ jobs:
             exit 1
           fi
 
+  kube-linter:
+    name: kube-linter
+    runs-on: runs-on=${{ github.run_id }}/runner=sw-amd64/cpu=1/family=m7a
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Helm
+        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
+        with:
+          version: v3.16.4
+      - name: Render shopware chart
+        run: |
+          helm repo add percona https://percona.github.io/percona-helm-charts
+          helm repo add mariadb https://mariadb-operator.github.io/mariadb-operator
+          helm repo add opentelemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+          helm repo add rustfs https://rustfs.github.io/helm
+          helm dependency build charts/shopware
+          render() {
+            helm template test charts/shopware "$@" | awk '
+              BEGIN { RS="---\n"; ORS="---\n" }
+              /^# Source: shopware\/templates\// { print }
+            '
+          }
+          mkdir -p kube-linter-rendered
+          render > kube-linter-rendered/default.yaml
+          for values in .github/kube-linter/values-*.yaml; do
+            render -f "$values" > "kube-linter-rendered/$(basename "$values")"
+          done
+      - name: Run kube-linter
+        uses: stackrox/kube-linter-action@87802a2f4e01abebb3ee3c67a3002fea71f6eae5 # v1.0.7
+        with:
+          directory: kube-linter-rendered
+          version: v0.8.3
+
   test-on-cluster:
     name: Cluster E2E Test
     runs-on: runs-on=${{ github.run_id }}/runner=sw-amd64/cpu=4

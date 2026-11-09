@@ -530,6 +530,13 @@ rustfs:
     image:
       repository: amazon/aws-cli
       tag: 2.36.44
+    ttlSecondsAfterFinished: 3600
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
 
   # S3 API endpoint ingress (port 9000)
   # This is managed by the Shopware chart, not the rustfs subchart
