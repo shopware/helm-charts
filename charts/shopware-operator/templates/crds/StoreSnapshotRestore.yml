@@ -55,7 +55,7 @@ spec:
               properties:
                 container:
                   default:
-                    image: ghcr.io/shopware/shopware-operator-snapshot:1.12.2
+                    image: ghcr.io/shopware/shopware-operator-snapshot:1.12.3
                     terminationGracePeriodSeconds: 30
                   description: The Image gets replaces with the tag of the crd
                   properties:
@@ -6508,6 +6508,9 @@ spec:
                   type: string
               type: object
           type: object
+          x-kubernetes-validations:
+            - message: metadata.name must be at most 63 characters
+              rule: size(self.metadata.name) <= 63
       served: true
       storage: true
       subresources:
