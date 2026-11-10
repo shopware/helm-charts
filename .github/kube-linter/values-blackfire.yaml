@@ -1,0 +1,10 @@
+blackfire:
+  serverIDRef:
+    name: blackfire-credentials
+    key: server-id
+  serverTokenRef:
+    name: blackfire-credentials
+    key: server-token
+store:
+  blackfire:
+    enabled: true

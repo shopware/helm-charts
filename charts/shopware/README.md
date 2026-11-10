@@ -426,7 +426,7 @@ Both references carry their own `name` and `key`, so the two values may live in 
 
 - `blackfire.image` — agent image, defaults to `blackfire/blackfire:2`
 - `blackfire.port` — agent port, defaults to `8307`
-- `blackfire.resources` — resource requests and limits for the agent container
+- `blackfire.resources` — resource requests and limits for the agent container, defaults to `10m` CPU and `64Mi` memory requested with a `256Mi` memory limit
 
 The agent is deployed as `shopware-blackfire` and exposed as a Service named `blackfire`.
 
@@ -468,11 +468,11 @@ kubectl -n <namespace> create secret generic tideways-credentials \
 
 **Optional values:**
 
-- `tideways.image` — daemon image, defaults to `tideways/daemon:latest`
+- `tideways.image` — daemon image, defaults to `ghcr.io/tideways/daemon:1.19.0`
 - `tideways.port` — daemon port, defaults to `9135`
 - `tideways.service` — service name reported to Tideways as `TIDEWAYS_SERVICE`. Unset by default, so data goes to the Tideways project's default service
 - `tideways.environment` — environment name passed to the daemon as `--env`
-- `tideways.resources` — resource requests and limits for the daemon container
+- `tideways.resources` — resource requests and limits for the daemon container, defaults to `10m` CPU and `64Mi` memory requested with a `256Mi` memory limit
 
 The daemon is deployed as `shopware-tideways` and exposed as a Service named `tideways`.
 

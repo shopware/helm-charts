@@ -19,9 +19,15 @@ spec:
         labels:
           app: tideways
       spec:
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 999
+          runAsGroup: 999
+          seccompProfile:
+            type: RuntimeDefault
         containers:
         - name: tideways
-          image: {{ .Values.tideways.image | default "ghcr.io/tideways/daemon" | quote }}
+          image: {{ .Values.tideways.image | default "ghcr.io/tideways/daemon:1.19.0" | quote }}
           args:
           - --address=0.0.0.0:{{ .Values.tideways.port | default 9135 }}
           {{- with .Values.tideways.environment }}
@@ -29,10 +35,14 @@ spec:
           {{- end }}
           ports:
           - containerPort: {{ .Values.tideways.port | default 9135 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+              - ALL
           resources:
-            {{- with .Values.tideways.resources }}
-                {{- toYaml . | nindent 12 }}
-            {{- end }}
+            {{- toYaml (.Values.tideways.resources | default (dict "requests" (dict "cpu" "10m" "memory" "64Mi") "limits" (dict "memory" "256Mi"))) | nindent 12 }}
 ---
 apiVersion: v1
 kind: Service

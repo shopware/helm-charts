@@ -1,0 +1,7 @@
+tideways:
+  apiKeyRef:
+    name: tideways-credentials
+    key: api-key
+store:
+  tideways:
+    enabled: true

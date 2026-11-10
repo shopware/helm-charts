@@ -1,0 +1,70 @@
+name: Release Please
+
+on:
+  workflow_run:
+    workflows: ["Publish charts to repo"]
+    branches:
+      - main
+    types:
+      - completed
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: release-please
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    name: Release Please
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Authenticate to helm-charts repository
+        id: octo-sts
+        uses: octo-sts/action@f603d3be9d8dd9871a265776e625a27b00effe05 # v1.1.1
+        with:
+          scope: shopware/helm-charts
+          identity: shopware-helm-charts-release-please
+
+      - name: Mark merged release PR as tagged
+        env:
+          GH_TOKEN: ${{ steps.octo-sts.outputs.token }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+
+          PRS=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${HEAD_SHA}/pulls" \
+            --jq '.[] | select(any(.labels[]; .name == "autorelease: pending")) | .number')
+
+          if [ -z "$PRS" ]; then
+            echo "No pending release PR merged in ${HEAD_SHA}."
+            exit 0
+          fi
+
+          VERSION=$(yq '.version' charts/shopware/Chart.yaml)
+          if ! gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/shopware-${VERSION}" > /dev/null; then
+            echo "::error::Tag shopware-${VERSION} was not created by chart-releaser."
+            exit 1
+          fi
+
+          for PR in $PRS; do
+            gh api -X POST "repos/${GITHUB_REPOSITORY}/issues/${PR}/labels" -f 'labels[]=autorelease: tagged' > /dev/null
+            gh api -X DELETE "repos/${GITHUB_REPOSITORY}/issues/${PR}/labels/autorelease:%20pending" > /dev/null
+            echo "Marked #${PR} as released with shopware-${VERSION}."
+          done
+
+      - name: Create or update release PR
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        with:
+          token: ${{ steps.octo-sts.outputs.token }}
+          target-branch: main
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json

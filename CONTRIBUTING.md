@@ -22,6 +22,14 @@ We actively welcome your pull requests:
 5. Make sure your code lints.
 6. Issue that pull request!
 
+## Releasing the shopware chart
+
+Releases of `charts/shopware` are managed by [release-please](https://github.com/googleapis/release-please).
+Do not bump `version` or `appVersion` in `charts/shopware/Chart.yaml` yourself.
+Write commit messages following [Conventional Commits](https://www.conventionalcommits.org/), e.g. `fix(shopware): ...` or `feat(shopware): ...`.
+After merging to `main`, release-please opens or updates a release pull request that bumps the chart version and updates the changelog.
+Merging that pull request publishes the chart.
+
 ## Any contributions you make will be under the MIT Software License
 
 In short, when you submit code changes, your submissions are understood to be under the same [MIT License](http://choosealicense.com/licenses/mit/) that covers the project.
