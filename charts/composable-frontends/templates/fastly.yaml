@@ -1,0 +1,52 @@
+{{- if .Values.fastly.enabled }}
+{{- if .Values.fastly.ngwafAssociation.enabled }}
+---
+apiVersion: fastly.shopware.com/v1
+kind: FastlyNGWAFAssociation
+metadata:
+  name: "{{ .Values.fastly.ngwafAssociation.name }}"
+  namespace: "{{ .Release.Namespace }}"
+spec:
+  serviceName: "{{ .Values.fastly.ngwafAssociation.serviceName }}"
+  workspaceName: "{{ .Values.fastly.ngwafAssociation.workspaceName }}"
+{{- end }}
+{{- if .Values.fastly.ddosProtection.enabled }}
+---
+apiVersion: fastly.shopware.com/v1
+kind: FastlyDDoSProtection
+metadata:
+  name: "{{ .Values.fastly.ddosProtection.name }}"
+  namespace: "{{ .Release.Namespace }}"
+spec:
+  serviceName: "{{ .Values.fastly.ddosProtection.serviceName }}"
+  mode: "{{ .Values.fastly.ddosProtection.mode }}"
+{{- end }}
+{{- range $name, $snippet := .Values.fastly.snippets }}
+---
+apiVersion: fastly.shopware.com/v1
+kind: FastlySnippet
+metadata:
+  name: "{{ $name }}"
+  namespace: "{{ $.Release.Namespace }}"
+spec:
+  type: "{{ $snippet.type }}"
+  priority: {{ $snippet.priority }}
+  content: |
+    {{- $snippet.content | nindent 4 }}
+{{- end }}
+{{- if .Values.fastly.defaultSnippet.enabled }}
+{{- range $path, $_ := .Files.Glob "fastly-snippets/*.vcl" }}
+{{- $type := trimPrefix "default_" (trimSuffix ".vcl" (base $path)) }}
+---
+apiVersion: fastly.shopware.com/v1
+kind: FastlySnippet
+metadata:
+  name: default-{{ $type }}
+  namespace: "{{ $.Release.Namespace }}"
+spec:
+  type: "{{ $type }}"
+  priority: 50
+  content: |{{ $.Files.Get $path | nindent 4 }}
+{{- end }}
+{{- end }}
+{{- end }}
