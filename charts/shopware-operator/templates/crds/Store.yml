@@ -90,6 +90,9 @@ spec:
                         - name
                       type: object
                   type: object
+                  x-kubernetes-validations:
+                    - message: admin username or usernameSecretRef is required
+                      rule: (has(self.username) && size(self.username) > 0) || has(self.usernameSecretRef)
                 adminDeploymentContainer:
                   default: {}
                   x-kubernetes-preserve-unknown-fields: true
@@ -6575,6 +6578,9 @@ spec:
                     - user
                     - version
                   type: object
+                  x-kubernetes-validations:
+                    - message: either database host or hostRef must be set
+                      rule: (has(self.host) && size(self.host) > 0) || has(self.hostRef)
                 disableChecks:
                   default: false
                   type: boolean
@@ -7395,6 +7401,9 @@ spec:
                   required:
                     - enabled
                   type: object
+                  x-kubernetes-validations:
+                    - message: opensearch passwordSecretRef is required when opensearch is enabled
+                      rule: '!self.enabled || has(self.passwordSecretRef)'
                 otel:
                   properties:
                     enabled:
@@ -7572,6 +7581,9 @@ spec:
                             - name
                           type: object
                       type: object
+                      x-kubernetes-validations:
+                        - message: fastly tokenRef is required when serviceRef is set
+                          rule: '!has(self.serviceRef) || has(self.tokenRef)'
                     locale:
                       default: en-GB
                       type: string
@@ -7742,6 +7754,8 @@ spec:
                         type: string
                       type: array
                   type: object
+                secretHash:
+                  type: string
                 state:
                   type: string
                 storefrontState:
@@ -7776,6 +7790,9 @@ spec:
                   type: object
               type: object
           type: object
+          x-kubernetes-validations:
+            - message: metadata.name must be at most 63 characters
+              rule: size(self.metadata.name) <= 63
       served: true
       storage: true
       subresources:
