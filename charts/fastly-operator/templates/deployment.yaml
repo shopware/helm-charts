@@ -79,6 +79,10 @@ spec:
         - name: LOG_FORMAT
           value: "{{ .Values.logFormat }}"
         {{- end }}
+        {{- range $kind, $value := .Values.requeue }}
+        - name: REQUEUE_{{ $kind | upper }}
+          value: "{{ $value }}"
+        {{- end }}
         {{- if .Values.environment }}
         - name: ENVIRONMENT
           value: "{{ .Values.environment }}"
