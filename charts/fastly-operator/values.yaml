@@ -101,6 +101,11 @@ fastlyLogging:
 #   - istio-gateway
 #   - istio-virtualservice
 
+requeue:
+  short: 10s
+  long: 10m
+  error: 5m
+
 # Supported levels: debug, info, warn, error, dpanic, panic, fatal
 logLevel: info
 # Supported formats: json, text, zap-pretty
