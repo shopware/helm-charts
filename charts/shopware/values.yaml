@@ -145,6 +145,9 @@ store:
 
   caddy:
     # This is the read timeout for the caddy server. Default is 60s.
+    # php-fpm request_terminate_timeout of the admin and storefront pods is derived from it (readTimeout + 5s).
+    # Override each separately with store.adminDeploymentContainer.requestTerminateTimeout and
+    # store.storefrontDeploymentContainer.requestTerminateTimeout, e.g. "65s". 0s disables it.
     readTimeout: 60s
     # This is the write timeout for the caddy server. Default is 60s.
     writeTimeout: 60s

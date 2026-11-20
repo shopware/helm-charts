@@ -423,17 +423,17 @@ spec:
         {{- toYaml . | nindent 6 }}
       {{- end }}
 
-  {{- with .Values.store.adminDeploymentContainer }}
+  {{- with include "renderFpmDeploymentContainer" (dict "root" . "spec" .Values.store.adminDeploymentContainer) }}
   adminDeploymentContainer:
-    {{- toYaml . | nindent 4 }}
+    {{- . | nindent 4 }}
   {{- end }}
   {{- with .Values.store.workerDeploymentContainer }}
   workerDeploymentContainer:
     {{- toYaml . | nindent 4 }}
   {{- end }}
-  {{- with .Values.store.storefrontDeploymentContainer }}
+  {{- with include "renderFpmDeploymentContainer" (dict "root" . "spec" .Values.store.storefrontDeploymentContainer) }}
   storefrontDeploymentContainer:
-    {{- toYaml . | nindent 4 }}
+    {{- . | nindent 4 }}
   {{- end }}
 
   {{- with .Values.store.setupJobContainer }}
