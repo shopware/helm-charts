@@ -235,6 +235,10 @@ store:
     #   clientCertificate: false
     #   dontVerifyServerCertificate: false
 
+    # Enables MySQL protocol compression (DATABASE_PROTOCOL_COMPRESSION=1) on the shop containers.
+    # Reduces traffic between the shop and the database at the cost of some CPU.
+    protocolCompression: true
+
   # You can define a Monolog configuration here.
   # Please refer to the official Monolog documentation for details.
   # This configuration will be mounted in the deployment as a ConfigMap.

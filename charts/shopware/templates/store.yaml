@@ -396,9 +396,15 @@ spec:
     resources:
       {{- toYaml . | nindent 6 }}
     {{- end }}
-    {{- with .Values.store.container.extraEnvs }}
+    {{- if or .Values.store.database.protocolCompression .Values.store.container.extraEnvs }}
     extraEnvs:
+      {{- if .Values.store.database.protocolCompression }}
+      - name: DATABASE_PROTOCOL_COMPRESSION
+        value: "1"
+      {{- end }}
+      {{- with .Values.store.container.extraEnvs }}
       {{- toYaml . | nindent 6 }}
+      {{- end }}
     {{- end }}
     volumes:
       - configMap:
