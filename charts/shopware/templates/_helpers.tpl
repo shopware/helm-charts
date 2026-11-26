@@ -178,3 +178,41 @@ true
     tenant_id    tenant-{{ .Release.Namespace }}
 {{- end }}
 {{- end }}
+
+{{/*
+php-fpm kills workers after this many seconds. It stays 5s above the Caddy read timeout
+so that Caddy answers with a timeout (504) first and php-fpm then frees the worker.
+A lower value would kill requests Caddy still waits for and turn them into 502s.
+Supports Caddy durations made of hours, minutes and seconds ("60s", "1m", "1m30s").
+Renders nothing when the read timeout is disabled.
+*/}}
+{{ define "getRequestTerminateTimeout" -}}
+{{- $duration := toString .Values.store.caddy.readTimeout -}}
+{{- $seconds := 0 -}}
+{{- range $unit, $factor := dict "h" 3600 "m" 60 "s" 1 -}}
+{{- with regexFind (printf "[0-9]+%s" $unit) $duration -}}
+{{- $seconds = add $seconds (mul (trimSuffix $unit . | atoi) $factor) -}}
+{{- end -}}
+{{- end -}}
+{{- if gt $seconds 0 -}}
+{{- add $seconds 5 -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Renders an admin or storefront deployment container spec. The requestTerminateTimeout is
+derived from the Caddy read timeout unless the user set it, so both can be overridden separately.
+Expects a dict with the root context ("root") and the user supplied spec ("spec").
+*/}}
+{{ define "renderFpmDeploymentContainer" -}}
+{{- $spec := deepCopy (default dict .spec) -}}
+{{- if not (hasKey $spec "requestTerminateTimeout") -}}
+{{- $seconds := include "getRequestTerminateTimeout" .root -}}
+{{- if $seconds -}}
+{{- $_ := set $spec "requestTerminateTimeout" (printf "%ss" $seconds) -}}
+{{- end -}}
+{{- end -}}
+{{- if $spec -}}
+{{- toYaml $spec -}}
+{{- end -}}
+{{- end }}
