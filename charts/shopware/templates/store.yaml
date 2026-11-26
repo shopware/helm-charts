@@ -97,7 +97,11 @@ spec:
     {{- end }}
 
   worker:
-    {{- if .Values.valkeyworkerSentinel.enabled }}
+    {{- if and (hasKey .Values.store "worker") .Values.store.worker.sqs }}
+    adapter: sqs
+    sqs:
+      {{- toYaml .Values.store.worker.sqs | nindent 6 }}
+    {{- else if .Values.valkeyworkerSentinel.enabled }}
     adapter: redis
     redisDsn: 'redis:?host[{{ .Values.valkeyworkerSentinel.host }}:{{ .Values.valkeyworkerSentinel.port | default 26379 }}]&redis_sentinel=mymaster&dbindex={{ .Values.valkeyworkerSentinel.dbindex | default 0 }}'
     {{- else if .Values.valkeyworker.enabled }}
@@ -111,7 +115,7 @@ spec:
     {{- end }}
     {{- if and (hasKey .Values.store "worker") .Values.store.worker.enableKedaScaling }}
     enableKedaScaling: true
-    {{- with omit .Values.store.worker "enableKedaScaling" "keepalive" }}
+    {{- with omit .Values.store.worker "enableKedaScaling" "keepalive" "sqs" }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
     {{- end }}
