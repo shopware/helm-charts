@@ -440,10 +440,15 @@ store:
   # - Enabled: the operator creates one worker deployment per queue and a KEDA ScaledObject for
   #   each of them, scaling based on the queue length. The KEDA operator and its CRDs must be
   #   installed in the cluster: https://keda.sh/docs/latest/deploy/
-  # The remaining fields only take effect with enableKedaScaling: true. They are commented out
+  # The KEDA fields below only take effect with enableKedaScaling: true. They are commented out
   # here, so the defaults of the Store resource are used.
   worker:
     enableKedaScaling: false
+    # Interval in seconds for `messenger:consume --keepalive`, independent of KEDA. Unset or 0
+    # disables it. Requires a shopware/symfony release with keepalive support (6.6.10.0+, 6.7.2.0+).
+    # The transport must support it, otherwise the worker stops on the first keepalive:
+    # Keep it below the transport timeout
+    # keepalive: 5
     # MaxReplicas which are spawned per queue. Minimum 1.
     # maxReplicas: 3
     # MinReplicas which are spawned per queue. Minimum 0, so a queue can scale to zero.

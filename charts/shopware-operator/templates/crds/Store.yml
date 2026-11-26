@@ -7642,6 +7642,13 @@ spec:
                       type: integer
                     enableKedaScaling:
                       type: boolean
+                    keepalive:
+                      description: Interval in seconds for the messenger:consume
+                        --keepalive option. Requires a Symfony version and transport
+                        that support keepalive. 0 disables it.
+                      format: int32
+                      minimum: 0
+                      type: integer
                     maxReplicas:
                       default: 3
                       format: int32

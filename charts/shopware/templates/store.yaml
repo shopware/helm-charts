@@ -106,9 +106,12 @@ spec:
     {{- else }}
     adapter: builtin
     {{- end }}
+    {{- if and (hasKey .Values.store "worker") .Values.store.worker.keepalive }}
+    keepalive: {{ .Values.store.worker.keepalive | int }}
+    {{- end }}
     {{- if and (hasKey .Values.store "worker") .Values.store.worker.enableKedaScaling }}
     enableKedaScaling: true
-    {{- with omit .Values.store.worker "enableKedaScaling" }}
+    {{- with omit .Values.store.worker "enableKedaScaling" "keepalive" }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
     {{- end }}
