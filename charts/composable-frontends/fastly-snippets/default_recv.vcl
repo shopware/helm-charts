@@ -58,3 +58,15 @@ if (req.url.path ~ "^/(checkout|account)(/.*)?$") {
 if (fastly.ff.visits_this_service > 0) {
     set req.max_stale_while_revalidate = 0s;
 }
+
+# Make sure the Accept-Encoding header is set according to the original client request, prioritizing brotli over gzip and disabling Fastly normalization of the header. 
+# Without this, we never get br compression as we don't have it enable by default on our service.
+if (req.http.Fastly-Orig-Accept-Encoding) {
+  if (req.http.Fastly-Orig-Accept-Encoding ~ "\bbr\b") {
+    set req.http.Accept-Encoding = "br";
+  } elsif (req.http.Fastly-Orig-Accept-Encoding ~ "\bgzip\b") {
+    set req.http.Accept-Encoding = "gzip";
+  } else {
+    unset req.http.Accept-Encoding;
+  }
+}
